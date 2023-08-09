@@ -1,0 +1,19 @@
+//-----------------------------------------
+//
+//          log.hpp
+//
+//-----------------------------------------
+
+
+#ifndef __LOG__
+#define __LOG__
+
+    #define LOG_INFO    0
+    #define LOG_WARNING 1
+    #define LOG_ERROR   2
+    #define LOG_DEBUG   3
+
+    extern void log(int logLevel, const char *format, ...);
+    extern void setLogLevel(int logLevel);
+
+#endif
