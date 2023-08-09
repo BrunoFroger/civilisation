@@ -11,7 +11,7 @@ il est possible d'indenter les lignes
 liste des commandes disponibles 
 - si <item> <opTest> <item> <commande>
 
-
+'''
 <item> = <variable> | <valeur>
 <opTest> = "=" | "!=" | "<" | ">" | "<=" | ">="
 <commande> = "mort" | "chercheConjoint"
