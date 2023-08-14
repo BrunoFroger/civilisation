@@ -9,7 +9,7 @@
 
 #include "../inc/humain.hpp"
 #include "../inc/log.hpp"
-#include "../inc/tools.hpp"
+#include "../inc/element.hpp"
 
 //-----------------------------------------
 //
@@ -17,7 +17,7 @@
 //
 //-----------------------------------------
 void Humain::init(long id, int sexe, const char *nom){
-    //log(LOG_INFO, "Humain::init : debut");
+    //log(LOG_INFO, "Humain::initHumain : debut");
     /*if (sexe == 0){
         log(LOG_INFO, (char *)"Creation d'un homme (%s) id=%ld", nom, id);
     } else if (sexe == 1){
@@ -30,7 +30,7 @@ void Humain::init(long id, int sexe, const char *nom){
     strcpy(this->nom ,nom);
     this->age = 0;
     this->celibataire = true;
-    //log(LOG_INFO, "Humain::init : fin");
+    //log(LOG_INFO, "Humain::initHumain : fin");
 }
 
 //-----------------------------------------
@@ -41,7 +41,6 @@ void Humain::init(long id, int sexe, const char *nom){
 void Humain::evolution(void){
     log(LOG_INFO, "evolution de %s", this->nom);
     this->age++;
-    execScript();
 }
 
 //-----------------------------------------
@@ -73,7 +72,7 @@ int Humain::getSexe(void){
 
 //-----------------------------------------
 //
-//          Humain::getSexe
+//          Humain::getAge
 //
 //-----------------------------------------
 int Humain::getAge(void){
@@ -111,17 +110,8 @@ bool Humain::isVariable(char *valeur){
 //-----------------------------------------
 int Humain::getIntValue(char *valeur){
     if (strcmp(valeur, "sexe") == 0) return sexe;
-    if (strcmp(valeur, "celibataire") == 0) return celibataire;
-    return -1;
-}
-
-//-----------------------------------------
-//
-//          Humain::getLongValue
-//
-//-----------------------------------------
-long Humain::getLongValue(char *valeur){
     if (strcmp(valeur, "age") == 0) return age;
+    if (strcmp(valeur, "celibataire") == 0) return celibataire;
     return -1;
 }
 
@@ -137,74 +127,43 @@ char *Humain::getCharValue(char *valeur){
 
 //-----------------------------------------
 //
-//          Humain::testCommandeSiVraiValide
+//          Humain::testSiCommandeValide
 //
 //-----------------------------------------
-bool Humain::testCommandeSiVraiValide(char *valeur){
+bool Humain::testSiCommandeValide(char *valeur){
+    //printf("test si commande '%s' valide\n", valeur);
     if (strcmp(valeur, "mort") == 0) return true;
     if (strcmp(valeur, "chercheConjoint") == 0) return true;
+    if (strcmp(valeur, "ecole") == 0) return true;
+    if (strcmp(valeur, "naissancePossible") == 0) return true;
     return false;
 }
 
 //-----------------------------------------
 //
-//          Humain::execScript
+//          Humain::testSiListeCommandeValide
 //
 //-----------------------------------------
-bool Humain::execScript(void){
-    FILE *fic;
-    int numLigne=0;
-    char ligne[100];
-    const char filename[30] = "scripts/humain.scr";
-
-    fic = fopen(filename, "r");
-    if (fic == NULL){
-        log(LOG_ERROR, "Humain::execScript => impossible d'ouvrir le fichier script ");
-        return false;
-    }
-    //printf("lecture du fichier '%s'\n", filename);
-    while (!feof(fic)){
-        fgets(ligne, 100, fic);
-        numLigne++;
-        ligne[strlen(ligne) - 1] = '\0';
-        char *tmp = &ligne[0];
-        while (tmp[0] == ' ') tmp++;
-        //printf("ligne a analyser = '%s'\n", tmp);
-        if (tmp[0] == '#') continue;    // commentaire on passe
-
-        if (strlen(tmp) == 0) continue;    // ligne vide on passe
-        
-        //printf("ligne a analyser = '%s'\n", tmp);
-        if (strncmp(tmp, "si", 2) == 0){
-            //printf("Analyse d'une ligne contenant un 'si'\n");
-            structIf resultat;
-            if (!decomposeSi(tmp, &resultat)){
-                log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
+bool Humain::testSiListeCommandeValide(char *valeur){
+    char *tmp;
+    tmp = &valeur[0];
+    char buffer[50];
+    int i;
+    while (tmp[0] != '\0'){
+        i=0;
+        strcpy(buffer,"");
+        while (*tmp == ' ') tmp++;  // suppression des blancs au debut
+        if (strlen(tmp) == 0) return true;
+        while (*tmp != ' '){
+            buffer[i++] = *tmp++;
+            buffer[i] = '\0';
+        }
+        if (strlen(buffer) != 0){
+            if (!testSiCommandeValide(buffer)){
+                log(LOG_ERROR, "commande %s inconnue", buffer);
                 return false;
-            } else {
-                // traitement de la ligne si
-                if (!testCommandeSiVraiValide(resultat.commandeSiVrai)){
-                    log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.commandeSiVrai);
-                    return false;
-                }
-                int val1, val2;
-                if (isVariable(resultat.dataOrigine)){
-                    val1 = getIntValue(resultat.dataOrigine);
-                } else {
-                    val1 = atoi(resultat.dataOrigine);
-                }
-                if (isVariable(resultat.dataReference)){
-                    val2 = getIntValue(resultat.dataReference);
-                } else {
-                    val2 = atoi(resultat.dataReference);
-                }
-                evaluation(val1, resultat.operateurTest, val2);
-            } 
-        } else {
-            log(LOG_ERROR, "instruction inconnue dans la ligne '%s'\n", ligne);
-            return false;
+            }
         }
     }
-    //printf("\n");
     return true;
 }

@@ -19,18 +19,17 @@
             int getSexe();
             int getAge();
             bool getCelibataire();
-            bool execScript(void);
             bool isVariable(char *nomVariable);
             int getIntValue(char *nomVariable);
-            long getLongValue(char *nomVariable);
             char *getCharValue(char *nomVariable);
-            bool testCommandeSiVraiValide(char *valeur);
+            bool testSiCommandeValide(char *valeur);
+            bool testSiListeCommandeValide(char *valeur);
 
         private:
             long id;
             int sexe;   // 0 : homme, 1 = femme
             char nom[50];
-            long age;
+            int age;
             bool celibataire;
     };
 

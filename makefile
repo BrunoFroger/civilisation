@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 09/08/2023 à 14:20:30
+#     généré automatiquement le 10/08/2023 à 11:04:00
 #         avec buildMakefile (version du 19 Oct 2022)
 #                 (c) B. Froger 
 # 
@@ -40,10 +40,15 @@ $(EXEC): $(OBJ)
 #------------------------------------------------------------
 # Définition des règles pour chaque fichier source
 #------------------------------------------------------------
+$(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
+	$(INCDIR)/element.hpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
 $(OBJDIR)/humain.o: $(SRCDIR)/humain.cpp \
 	$(INCDIR)/humain.hpp \
 	$(INCDIR)/log.hpp \
-	$(INCDIR)/tools.hpp
+	$(INCDIR)/element.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -54,20 +59,14 @@ $(OBJDIR)/log.o: $(SRCDIR)/log.cpp
 $(OBJDIR)/main.o: $(SRCDIR)/main.cpp \
 	$(INCDIR)/log.hpp \
 	$(INCDIR)/humain.hpp \
-	$(INCDIR)/tools.hpp \
-	$(INCDIR)/tests.hpp
+	$(INCDIR)/tests.hpp \
+	$(INCDIR)/element.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
 $(OBJDIR)/tests.o: $(SRCDIR)/tests.cpp \
-	$(INCDIR)/tools.hpp
-	@$(CC) $(CCFLAGS) $< -c -o $@
-	@echo "Compilation de $< OK"
-
-$(OBJDIR)/tools.o: $(SRCDIR)/tools.cpp \
-	$(INCDIR)/humain.hpp \
-	$(INCDIR)/log.hpp \
-	$(INCDIR)/tools.hpp
+	$(INCDIR)/element.hpp \
+	$(INCDIR)/log.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

@@ -9,11 +9,14 @@ il est possible d'indenter les lignes
 
 ### pour l'ojet Humain :
 liste des commandes disponibles 
-- si <item> <opTest> <item> <commande>
+<test> = si <expression> alors <ListeCommandes> sinon <ListeCommandes> finsi
 
-'''
-<item> = <variable> | <valeur>
+<expression> = (<expression>) <operateur> (<expression<>) | <item> <opTest> <item>
+<operateur> = "&&" | "||"
+<item> = <variable> | <valeur> | "("<expression>")"
 <opTest> = "=" | "!=" | "<" | ">" | "<=" | ">="
-<commande> = "mort" | "chercheConjoint"
-<Variable> = "age" | "sexe" | "nom" | "celibataire"
-<valeur> = nombre ou chaine de caratere
+<Variable> = texte du nom de la variable depend de l'objet
+<valeur> = nombre
+
+<listeCommandes> = <commande> | <listeCommandes>
+<commande> = texte du nom de la fonction a realiser depend de l'objet

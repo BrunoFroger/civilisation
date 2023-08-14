@@ -1,0 +1,7 @@
+
+si (celibataire = 0) &&
+    (age > 20) &&
+    (age < 40) alors    
+        naissancePossible
+sinon chercheConjoint
+finsi

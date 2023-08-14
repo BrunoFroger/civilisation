@@ -1,0 +1,7 @@
+
+si age > 80 alors
+    mort
+sinon    
+    chercheConjoint
+    mort
+finsi

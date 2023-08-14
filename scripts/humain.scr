@@ -1,6 +1,12 @@
 # commentaire
      # commenatire
-si age > 50 mort
+si age > 50 alors mort finsi
 
-    si age > 20 chercheConjoint
+si age > 80 alors
+    mort
+sinon    
+    chercheConjoint
+finsi
+
+    si age > 20 alors chercheConjoint finsi
      
