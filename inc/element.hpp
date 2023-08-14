@@ -28,7 +28,7 @@
 
     extern void remove_extra_spaces(char *chaine);
 
-    class Element : public Humain{
+    class Element : public Humain, public Entreprise{
         public:
             void creeHumain(int sexe, const char *nom);
             void initPopulation(void);   
