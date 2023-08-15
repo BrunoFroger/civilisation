@@ -10,10 +10,18 @@
 #include "../inc/humain.hpp"
 #include "../inc/log.hpp"
 #include "../inc/element.hpp"
+//
+//          Humain::evolution
+//
+//-----------------------------------------
+void Humain::evolution(void){
+    log(LOG_INFO, "evolution de %s", this->nom);
+    this->age++;
+}
 
 //-----------------------------------------
 //
-//          Humain::Humain
+//          Humain::init
 //
 //-----------------------------------------
 void Humain::init(long id, int sexe, const char *nom){
@@ -34,14 +42,6 @@ void Humain::init(long id, int sexe, const char *nom){
 }
 
 //-----------------------------------------
-//
-//          Humain::evolution
-//
-//-----------------------------------------
-void Humain::evolution(void){
-    log(LOG_INFO, "evolution de %s", this->nom);
-    this->age++;
-}
 
 //-----------------------------------------
 //

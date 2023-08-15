@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 10/08/2023 à 11:04:00
+#     généré automatiquement le 15/08/2023 à 22:37:22
 #         avec buildMakefile (version du 19 Oct 2022)
 #                 (c) B. Froger 
 # 
@@ -41,7 +41,12 @@ $(EXEC): $(OBJ)
 # Définition des règles pour chaque fichier source
 #------------------------------------------------------------
 $(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
-	$(INCDIR)/element.hpp
+	$(INCDIR)/element.hpp \
+	$(INCDIR)/log.hpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
+$(OBJDIR)/entreprise.o: $(SRCDIR)/entreprise.cpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -66,6 +71,7 @@ $(OBJDIR)/main.o: $(SRCDIR)/main.cpp \
 
 $(OBJDIR)/tests.o: $(SRCDIR)/tests.cpp \
 	$(INCDIR)/element.hpp \
+	$(INCDIR)/humain.hpp \
 	$(INCDIR)/log.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"

@@ -10,6 +10,7 @@
 #define __ELEMENT__
 
     #include "humain.hpp"
+    #include "entreprise.hpp"
 
     #define MAX_HUMAIN  3
 
