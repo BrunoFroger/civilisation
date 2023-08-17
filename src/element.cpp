@@ -13,101 +13,46 @@
 
 #define MAX_HUMAIN  3
 
-Humain population[MAX_HUMAIN];
-long courantId;
-
 //-----------------------------------------
 //
-//          initPopulation
+//          Element
 //
 //-----------------------------------------
-void Element::initPopulation(void){
-    //log(LOG_INFO, "initPopulation : debut");
-    for (int i = 0 ; i < MAX_HUMAIN ; i++){
-        population[i].init(-1,-1,"");
-    }
-    //log(LOG_INFO, "initPopulation : fin");
-}
-
-
-//-----------------------------------------
-//
-//          killPopulation
-//
-//-----------------------------------------
-void Element::killPopulation(void){
-    for (int i = 0 ; i < MAX_HUMAIN ; i++){
-        //delete population[i];
-    }
+Element::Element(){
+    int id = -1;
+    int type = TYPE_INDEFINI;
+    Element(id, type);
 }
 
 //-----------------------------------------
 //
-//          getId
+//          Element
 //
 //-----------------------------------------
-long Element::getCourantId(){
-    printf("courant id : %ld\n", courantId);
-    return courantId;
-}
-
-//-----------------------------------------
-//
-//          evolutionPopulation
-//
-//-----------------------------------------
-void Element::evolutionPopulation(void){
-    for (int i = 0 ; i < MAX_HUMAIN ; i++){
-        if (population[i].getId() != -1){
-            population[i].evolution();
-            execScript();
-        }
+Element::Element(int id, int type){
+    this->typeElement = type;
+    switch (type){
+        case TYPE_HUMAIN:
+            log(LOG_DEBUG, "Element::Element => construction d'un Humain");
+            break;
+        case TYPE_ENTREPRISE:
+            log(LOG_DEBUG, "Element::Element => construction d'une entreprise");
+            break;
+        default:
+        log(LOG_ERROR, "type d'element inconnu %d \n", type);
+            break;
     }
 }
+
 //-----------------------------------------
 //
 //          creeHumain
 //
 //-----------------------------------------
-void Element::creeHumain(int sexe, const char *nom){
-    population[courantId].init(courantId, sexe, nom);
-    newId();
-}
-
-//-----------------------------------------
-//
-//          newId
-//
-//-----------------------------------------
-long Element::newId(){
-    courantId ++;
-    //printf("nouvel id : %ld\n", courantId);
-    return courantId;
-}
-
-//-----------------------------------------
-//
-//          listePopulation
-//
-//-----------------------------------------
-void Element::listePopulation(void){
-    printf("+--------------------------------------------------------+\n");
-    printf("|             population  %4ld individus                 |\n", courantId);
-    printf("+--------+---------------------------+-----+-------+-----+\n");
-    printf("|   id   |                       nom | sexe|  age  |celib|\n");
-    printf("+--------+---------------------------+-----+-------+-----+\n");
-    for (int i = 0 ; i < MAX_HUMAIN ; i++){
-        Humain *ptr = &population[i];
-        if (ptr->getId() != -1){
-            printf("| %5ld  | %25s |  %d  | %5d |  %d  |\n", 
-                ptr->getId(),
-                ptr->getNom(), 
-                ptr->getSexe(),
-                ptr->getAge(),
-                ptr->getCelibataire());
-        }
-    }
-    printf("+--------+---------------------------+-----+-------+-----+\n");
+Humain *Element::creeHumain(int id, int sexe, char *nom){
+    //population[courantId].init(courantId, sexe, nom);
+    //newId();
+    return new Humain(id, sexe, nom);
 }
 
 //-----------------------------------------

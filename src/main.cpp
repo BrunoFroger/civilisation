@@ -11,15 +11,13 @@
 #include "../inc/humain.hpp"
 #include "../inc/tests.hpp"
 #include "../inc/element.hpp"
+#include "../inc/civilisation.hpp"
 
-Element elementRacine;
+Civilisation civilisation;
 
 int main(int argc, char **argv){
-    log(LOG_INFO, "===================================");
-    log(LOG_INFO, "     C I V I L I S A T I O N ");
-    log(LOG_INFO, "===================================");
-    elementRacine.initPopulation();
 
+    setLogLevel(LOG_DEBUG);
     if (argc > 1){
         if (strcmp(argv[1], "tests") == 0){
             log(LOG_INFO, "     execution des tests ");
@@ -28,15 +26,15 @@ int main(int argc, char **argv){
             return 0;
         }
     }
-    elementRacine.creeHumain(HOMME, "adam");
+    civilisation.creeElementHumain(HOMME, (char *)"adam");
     //creeHumain(HOMME, "adam");
     //creeHumain(FEMME, "eve");
-    elementRacine.listePopulation();
+    civilisation.listeCivilisation();
 
     while (1){
-        elementRacine.evolutionPopulation();
-        elementRacine.listePopulation();
+        civilisation.evolutionCivilisation();
+        civilisation.listeCivilisation();
         getchar();
     }
-    elementRacine.killPopulation();
+    civilisation.killCivilisation();
 }

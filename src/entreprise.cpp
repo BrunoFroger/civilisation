@@ -25,7 +25,7 @@ void Entreprise::initEntreprise(long id, const char *nom){
 //          Humain::getId
 //
 //-----------------------------------------
-long Entreprise::getId(void){
+long Entreprise::getIdEntreprise(void){
     return id;
 }
 
@@ -34,6 +34,6 @@ long Entreprise::getId(void){
 //          Humain::getNom
 //
 //-----------------------------------------
-char *Entreprise::getNom(void){
+char *Entreprise::getNomEntreprise(void){
     return nom;
 }

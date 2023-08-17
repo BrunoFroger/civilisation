@@ -1,6 +1,9 @@
 # civilisation
 
 
+# differents niveau de log
+LOG_DEBUG : utilise pour la mise au point du programme
+
 ## description du fichier de script
 ce fichier doit contenir le comportement qui regit chaque evolution de l'objet concerné
 '#' designe un commentaire => ligne ignoree

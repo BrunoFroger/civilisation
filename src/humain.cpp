@@ -10,21 +10,26 @@
 #include "../inc/humain.hpp"
 #include "../inc/log.hpp"
 #include "../inc/element.hpp"
+
+//-----------------------------------------
 //
-//          Humain::evolution
+//          Humain::Humain
 //
 //-----------------------------------------
-void Humain::evolution(void){
-    log(LOG_INFO, "evolution de %s", this->nom);
-    this->age++;
+Humain::Humain(){
+    this->id = id;
+    this->sexe = -1;
+    strcpy(this->nom , "");
+    this->age = -1;
+    this->celibataire = true;
 }
 
 //-----------------------------------------
 //
-//          Humain::init
+//          Humain::Humain
 //
 //-----------------------------------------
-void Humain::init(long id, int sexe, const char *nom){
+Humain::Humain(int id, int sexe, char *nom){
     //log(LOG_INFO, "Humain::initHumain : debut");
     /*if (sexe == 0){
         log(LOG_INFO, (char *)"Creation d'un homme (%s) id=%ld", nom, id);
@@ -42,6 +47,14 @@ void Humain::init(long id, int sexe, const char *nom){
 }
 
 //-----------------------------------------
+//
+//          Humain::evolution
+//
+//-----------------------------------------
+void Humain::evolution(void){
+    log(LOG_DEBUG, "Humain::evolution => evolution de %s", this->nom);
+    this->age++;
+}
 
 //-----------------------------------------
 //
@@ -63,11 +76,29 @@ char *Humain::getNom(void){
 
 //-----------------------------------------
 //
+//          Humain::setNom
+//
+//-----------------------------------------
+void Humain::setNom(char *nom){
+    strcpy(this->nom, nom);
+}
+
+//-----------------------------------------
+//
 //          Humain::getSexe
 //
 //-----------------------------------------
 int Humain::getSexe(void){
     return sexe;
+}
+
+//-----------------------------------------
+//
+//          Humain::setSexe
+//
+//-----------------------------------------
+void Humain::setSexe(int sexe){
+    this->sexe = sexe;
 }
 
 //-----------------------------------------

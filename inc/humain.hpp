@@ -12,11 +12,15 @@
 
     class Humain{
         public:
+            Humain();
+            Humain(int id, int sexe, char *nom);
             void init(long id, int sexe, const char *nom);
             void evolution(void);
             long getId();
             char *getNom();
+            void setNom(char *nom);
             int getSexe();
+            void setSexe(int sexe);
             int getAge();
             bool getCelibataire();
             bool isVariable(char *nomVariable);

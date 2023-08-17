@@ -7,6 +7,7 @@
 #include <string.h>
 #include <cstdlib>
 
+#include "../inc/civilisation.hpp"
 #include "../inc/element.hpp"
 #include "../inc/humain.hpp"
 #include "../inc/log.hpp"
@@ -15,6 +16,7 @@ int nbTests=0;
 int nbOK=0;
 int nbKO=0;
 bool exec_all=false;
+Civilisation civilisation;
 
 //-----------------------------------------
 //
@@ -35,6 +37,19 @@ bool resultatTest(bool status){
 
 //-----------------------------------------
 //
+//          bilanTest
+//
+//-----------------------------------------
+void bilanTests(void){
+    printf("-----------------------------\n");
+    printf("Bilan des tests : \n");
+    printf(" nb executés : %d\n", nbTests);
+    printf(" nb OK       : %d\n", nbOK);
+    printf(" nb KO       : %d\n", nbKO);
+}
+
+//-----------------------------------------
+//
 //          executeTests
 //
 //-----------------------------------------
@@ -44,13 +59,55 @@ void executeTests(void){
     char ligne[500];
     structIf resultat;
 
+    /*
     Element elementHumain;
     elementHumain.creeHumain(HOMME, "albert");
     long idHumain = elementHumain.getId();
     int ageHumain = elementHumain.getAge();
     printf("age albert : %d\n", elementHumain.getAge());
     printf("getIntValue(age) : %d\n", elementHumain.getIntValue((char *)"age"));
+    */
 
+
+    //=======================================
+    //
+    //         tests classe Civilisation
+    //
+    //=======================================
+    if (0 || exec_all){
+        
+    }
+
+    //=======================================
+    //
+    //         tests classe Element
+    //
+    //=======================================
+    if (0 || exec_all){
+        
+    }
+
+    //=======================================
+    //
+    //         tests classe Humain
+    //
+    //=======================================
+    if (0 || exec_all){
+        
+    }
+
+    //=======================================
+    //
+    //         tests classe Entreprise
+    //
+    //=======================================
+    if (0 || exec_all){
+        
+    }
+
+
+
+/*
     //=======================================
     //
     //         tests fonctions tools
@@ -187,7 +244,7 @@ void executeTests(void){
         res &= (strcmp(resultat.opTest, "=") == 0);
         res &= (strcmp(resultat.item2, "20") == 0);
         resultatTest(res);
-        /*
+        
         
         strcpy(expression, "  age  =  0  ");
         elementHumain.decomposeExpression(expression, &resultat);
@@ -202,7 +259,7 @@ void executeTests(void){
         res = (strcmp(resultat.item1, "age - 20") == 0);
         res &= (strcmp(resultat.opTest, "=") == 0);
         res &= (strcmp(resultat.item2, "age - 10") == 0);
-        resultatTest(res);*/
+        resultatTest(res);
     }
 
     if (0 || exec_all){ // tests execScript Humain
@@ -230,11 +287,7 @@ void executeTests(void){
         resultatTest(humain.testSiCommandeValide((char *)"mort"));
         resultatTest(humain.testSiCommandeValide((char *)"chercheConjoint"));
         resultatTest(!humain.testSiCommandeValide((char *)"gfqhjksgdf"));
-    }
+    }*/
 
-    printf("-----------------------------\n");
-    printf("Bilan des tests : \n");
-    printf(" nb executés : %d\n", nbTests);
-    printf(" nb OK       : %d\n", nbOK);
-    printf(" nb KO       : %d\n", nbKO);
+    bilanTests();
 }

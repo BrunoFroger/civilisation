@@ -1,8 +1,8 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 15/08/2023 à 22:37:22
-#         avec buildMakefile (version du 19 Oct 2022)
+#     généré automatiquement le 17/08/2023 à 14:22:32
+#         avec buildMakefile (version du 17 Aug 2023)
 #                 (c) B. Froger 
 # 
 #############################################################
@@ -27,11 +27,12 @@ TMPC=$(patsubst %.c, %.o, $(SRCC))
 TMP=$(TMPCPP) $(TMPC)
 OBJ=$(patsubst $(SRCDIR)/%.o, $(OBJDIR)/%.o, $(TMP))
 EXEC = $(BINDIR)/civilisation
+ENTETE = $(info ******************************) $(info *) $(info *         M A K E) $(info *) $(info ******************************)
 
 #------------------------------------------------------------
 # Définition des règles génériques
 #------------------------------------------------------------
-ALL : $(EXEC)
+ALL : $(info $(ENTETE))  $(EXEC)
 
 $(EXEC): $(OBJ)
 	@$(CC) $(LDFLAGS) $(OBJ) -o $@
@@ -40,13 +41,21 @@ $(EXEC): $(OBJ)
 #------------------------------------------------------------
 # Définition des règles pour chaque fichier source
 #------------------------------------------------------------
+$(OBJDIR)/civilisation.o: $(SRCDIR)/civilisation.cpp \
+	$(INCDIR)/civilisation.hpp \
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/element.hpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
 $(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
 	$(INCDIR)/element.hpp \
 	$(INCDIR)/log.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
-$(OBJDIR)/entreprise.o: $(SRCDIR)/entreprise.cpp
+$(OBJDIR)/entreprise.o: $(SRCDIR)/entreprise.cpp \
+	$(INCDIR)/entreprise.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -57,7 +66,8 @@ $(OBJDIR)/humain.o: $(SRCDIR)/humain.cpp \
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
-$(OBJDIR)/log.o: $(SRCDIR)/log.cpp
+$(OBJDIR)/log.o: $(SRCDIR)/log.cpp \
+	$(INCDIR)/log.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -65,11 +75,13 @@ $(OBJDIR)/main.o: $(SRCDIR)/main.cpp \
 	$(INCDIR)/log.hpp \
 	$(INCDIR)/humain.hpp \
 	$(INCDIR)/tests.hpp \
-	$(INCDIR)/element.hpp
+	$(INCDIR)/element.hpp \
+	$(INCDIR)/civilisation.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
 $(OBJDIR)/tests.o: $(SRCDIR)/tests.cpp \
+	$(INCDIR)/civilisation.hpp \
 	$(INCDIR)/element.hpp \
 	$(INCDIR)/humain.hpp \
 	$(INCDIR)/log.hpp

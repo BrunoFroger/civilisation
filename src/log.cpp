@@ -9,7 +9,10 @@
 #include <string.h>
 #include <time.h>
 
-int logLevelLimit=0;
+#include "../inc/log.hpp"
+
+int logLevelLimit=LOG_INFO;
+
 //-----------------------------------------
 //
 //          log

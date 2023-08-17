@@ -10,9 +10,9 @@
     class Entreprise{
         public:
             void initEntreprise(long id, const char *nom);
-            void evolution(void);
-            long getId();
-            char *getNom();
+            void evolutionEntreprise(void);
+            long getIdEntreprise();
+            char *getNomEntreprise();
 
         private:
             int id;
