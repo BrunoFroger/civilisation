@@ -56,8 +56,8 @@ void bilanTests(void){
 void executeTests(void){
     //printf("Executions des tests du programme civilisation\n");
 
-    char ligne[500];
-    structIf resultat;
+    //char ligne[500];
+    //structIf resultat;
 
     /*
     Element elementHumain;
@@ -266,14 +266,14 @@ void executeTests(void){
         printf("-----------------------------\n");
         printf("tests script humain.scr\n");
         Humain humain;
-        humain.init(10, 0, "marcel");
+        humain.initHumain(10, 0, "marcel");
         resultatTest(elementHumain.execScript());
     }
     if (0 || exec_all){     // tests isVariable
         printf("-----------------------------\n");
         printf("tests isVariable\n");
         Humain humain;
-        humain.init(10, 0, "marcel");
+        humain.initHumain(10, 0, "marcel");
         printf("test si 'age' est une variable connue\n");
         resultatTest(humain.isVariable((char *)"age"));
         printf("test si 'toto' n'est pas une variable connue\n");
@@ -283,7 +283,7 @@ void executeTests(void){
         printf("-----------------------------\n");
         printf("tests si commande valide\n");
         Humain humain;
-        humain.init(10, 0, "marcel");
+        humain.initHumain(10, 0, "marcel");
         resultatTest(humain.testSiCommandeValide((char *)"mort"));
         resultatTest(humain.testSiCommandeValide((char *)"chercheConjoint"));
         resultatTest(!humain.testSiCommandeValide((char *)"gfqhjksgdf"));

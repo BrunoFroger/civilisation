@@ -11,7 +11,7 @@
 
 //-----------------------------------------
 //
-//          Entreprise::init
+//          Entreprise::initHumain
 //
 //-----------------------------------------
 void Entreprise::initEntreprise(long id, const char *nom){

@@ -14,7 +14,7 @@
         public:
             Humain();
             Humain(int id, int sexe, char *nom);
-            void init(long id, int sexe, const char *nom);
+            void initHumain(int id, int sexe, char *nom);
             void evolution(void);
             long getId();
             char *getNom();

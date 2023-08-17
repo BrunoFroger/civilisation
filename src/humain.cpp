@@ -17,7 +17,7 @@
 //
 //-----------------------------------------
 Humain::Humain(){
-    this->id = id;
+    this->id = -1;
     this->sexe = -1;
     strcpy(this->nom , "");
     this->age = -1;
@@ -30,6 +30,25 @@ Humain::Humain(){
 //
 //-----------------------------------------
 Humain::Humain(int id, int sexe, char *nom){
+    /*
+    //log(LOG_INFO, "Humain::initHumain : debut");
+
+    this->id = id;
+    this->sexe = sexe;
+    strcpy(this->nom ,nom);
+    this->age = 0;
+    this->celibataire = true;
+    */
+   initHumain(id, sexe, nom);
+    //log(LOG_INFO, "Humain::initHumain : fin");
+}
+
+//-----------------------------------------
+//
+//          Humain::initHumain
+//
+//-----------------------------------------
+void Humain::initHumain(int id, int sexe, char *nom){
     //log(LOG_INFO, "Humain::initHumain : debut");
     /*if (sexe == 0){
         log(LOG_INFO, (char *)"Creation d'un homme (%s) id=%ld", nom, id);

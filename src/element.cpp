@@ -50,7 +50,7 @@ Element::Element(int id, int type){
 //
 //-----------------------------------------
 Humain *Element::creeHumain(int id, int sexe, char *nom){
-    //population[courantId].init(courantId, sexe, nom);
+    //population[courantId].initHumain(courantId, sexe, nom);
     //newId();
     return new Humain(id, sexe, nom);
 }
