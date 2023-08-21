@@ -13,12 +13,25 @@
 
 #define MAX_HUMAIN  3
 
+Humain *ptrHumain;
+
+//-----------------------------------------
+//
+//          ~Element
+//
+//-----------------------------------------
+Element::~Element(){
+    //log(LOG_DEBUG, "Element::~Element()");
+    //delete ptrHumain;
+}
+
 //-----------------------------------------
 //
 //          Element
 //
 //-----------------------------------------
 Element::Element(){
+    //log(LOG_DEBUG, "Element::Element()");
     int id = -1;
     int type = TYPE_INDEFINI;
     Element(id, type);
@@ -30,6 +43,8 @@ Element::Element(){
 //
 //-----------------------------------------
 Element::Element(int id, int type){
+    //log(LOG_DEBUG, "Element::Element(int id, int type)");
+    this->idElement = id;
     this->typeElement = type;
     switch (type){
         case TYPE_HUMAIN:
@@ -39,20 +54,27 @@ Element::Element(int id, int type){
             log(LOG_DEBUG, "Element::Element => construction d'une entreprise");
             break;
         default:
-        log(LOG_ERROR, "type d'element inconnu %d \n", type);
+        log(LOG_ERROR, "Element::Element => construction type d'element inconnu %d", type);
             break;
     }
 }
 
 //-----------------------------------------
 //
-//          creeHumain
+//          decomposeIf
 //
 //-----------------------------------------
-Humain *Element::creeHumain(int id, int sexe, char *nom){
-    //population[courantId].initHumain(courantId, sexe, nom);
-    //newId();
-    return new Humain(id, sexe, nom);
+int Element::getElementId(void){
+    return this->idElement;
+}
+
+//-----------------------------------------
+//
+//          decomposeIf
+//
+//-----------------------------------------
+void Element::setElementId(int id){
+    this->idElement = id;
 }
 
 //-----------------------------------------
@@ -205,22 +227,6 @@ bool Element::evaluationExpressionChar(char *data1, char *test, char *data2){
     if (strcmp(test, "<=") == 0) return (strcmp((const char*)data1, (const char*)data2) <= 0);
     //printf("aucun test valide\n");
     return false;
-}
-
-void remove_extra_spaces(char* str) {
-    int i, j;
-    int len = strlen(str);
-
-    for (i = 0, j = 0; i < len; i++) {
-        if (str[i] != ' ' || (i > 0 && str[i - 1] != ' ')) {
-            str[j++] = str[i];
-        }
-    }
-    while (str[j - 1] == ' '){
-        str[j - 1] = '\0';
-        j--;
-    }
-    str[j] = '\0';
 }
 
 //-----------------------------------------

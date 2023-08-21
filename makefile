@@ -1,8 +1,8 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 17/08/2023 à 15:38:36
-#         avec buildMakefile (version du 17 Aug 2023)
+#     généré automatiquement le 21/08/2023 à 14:23:13
+#         avec buildMakefile (version du 18 Aug 2023)
 #                 (c) B. Froger 
 # 
 #############################################################
@@ -11,7 +11,7 @@
 # Définition des variables
 #------------------------------------------------------------
 # de compilation
-CC=gcc
+CC=g++
 CCFLAGS=-Wall 
 LDFLAGS=
 
@@ -32,7 +32,7 @@ OBJ=$(patsubst $(SRCDIR)/%.o, $(OBJDIR)/%.o, $(TMP))
 EXEC = $(BINDIR)/civilisation
 
 # des autres variables
-ENTETE = $(info ******************************) $(info *) $(info *         M A K E) $(info *) $(info ******************************)
+ENTETE = $(info ******************************) $(info *) $(info *   M A K E (civilisation)) $(info *) $(info ******************************)
 
 #------------------------------------------------------------
 # Définition des règles génériques
@@ -46,6 +46,12 @@ $(EXEC): $(OBJ)
 #------------------------------------------------------------
 # Définition des règles pour chaque fichier source
 #------------------------------------------------------------
+$(OBJDIR)/analyseParametre.o: $(SRCDIR)/analyseParametre.cpp \
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/tests.hpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
 $(OBJDIR)/civilisation.o: $(SRCDIR)/civilisation.cpp \
 	$(INCDIR)/civilisation.hpp \
 	$(INCDIR)/log.hpp \
@@ -60,7 +66,8 @@ $(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
 	@echo "Compilation de $< OK"
 
 $(OBJDIR)/entreprise.o: $(SRCDIR)/entreprise.cpp \
-	$(INCDIR)/entreprise.hpp
+	$(INCDIR)/entreprise.hpp \
+	$(INCDIR)/log.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -81,7 +88,8 @@ $(OBJDIR)/main.o: $(SRCDIR)/main.cpp \
 	$(INCDIR)/humain.hpp \
 	$(INCDIR)/tests.hpp \
 	$(INCDIR)/element.hpp \
-	$(INCDIR)/civilisation.hpp
+	$(INCDIR)/civilisation.hpp \
+	$(INCDIR)/analyseParametres.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -90,6 +98,10 @@ $(OBJDIR)/tests.o: $(SRCDIR)/tests.cpp \
 	$(INCDIR)/element.hpp \
 	$(INCDIR)/humain.hpp \
 	$(INCDIR)/log.hpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
+$(OBJDIR)/tools.o: $(SRCDIR)/tools.cpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

@@ -7,6 +7,9 @@
 #ifndef __TESTS__
 #define __TESTS__
 
-    extern void executeTests(void);
+    #define TEST_MODE_STD   0
+    #define TEST_MODE_ALL   1
+
+    extern void executeTests(bool mode);
 
 #endif

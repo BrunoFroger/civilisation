@@ -15,9 +15,9 @@
             Humain();
             Humain(int id, int sexe, char *nom);
             void initHumain(int id, int sexe, char *nom);
-            void evolution(void);
-            long getId();
-            char *getNom();
+            void evolutionHumain(void);
+            int getIdHumain();
+            char *getNomHumain();
             void setNom(char *nom);
             int getSexe();
             void setSexe(int sexe);
@@ -30,7 +30,7 @@
             bool testSiListeCommandeValide(char *valeur);
 
         private:
-            long id;
+            int id;
             int sexe;   // 0 : homme, 1 = femme
             char nom[50];
             int age;

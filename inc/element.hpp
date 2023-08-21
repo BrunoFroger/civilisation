@@ -36,25 +36,29 @@
     class Element : public Humain, public Entreprise{
         public:
             Element();
+            ~Element();
             Element(int id, int type);
-            void initPopulation(int id);
-            Humain *creeHumain(int id, int sexe, char *nom);
+            //void initPopulation(int id);
+            void creeHumain(int id, int sexe, char *nom);
             bool execScript(void);
             bool execScript(char *filename);
             long getCourantId();
-            void listePopulation(void);
-            void killPopulation(void);
-            void evolutionPopulation(void);
+            //void listePopulation(void);
+            //void killPopulation(void);
+            //void evolutionPopulation(void);
             bool decomposeSi(FILE *fic, char *ligne, structIf *resultat);
             bool decomposeExpression(char *chaine, structExpression *resultat);
             bool evaluationExpressionInt(int data1, char *test, int data2);
             bool evaluationExpressionChar(char *data1, char *test, char *data2);
             int calculExpression(char *data1, char op, char *data2);
+            int getElementId(void);
+            void setElementId(int id);
             int typeElement;
 
         protected:
 
         private:
+            int idElement;
 
     };
 

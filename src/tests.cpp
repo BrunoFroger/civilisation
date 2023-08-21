@@ -16,7 +16,6 @@ int nbTests=0;
 int nbOK=0;
 int nbKO=0;
 bool exec_all=false;
-Civilisation civilisation;
 
 //-----------------------------------------
 //
@@ -53,8 +52,10 @@ void bilanTests(void){
 //          executeTests
 //
 //-----------------------------------------
-void executeTests(void){
-    //printf("Executions des tests du programme civilisation\n");
+void executeTests(bool mode){
+    printf("Executions des tests du programme civilisation mode = %d\n", mode);
+    setLogLevel(LOG_DEBUG);
+    exec_all = mode;
 
     //char ligne[500];
     //structIf resultat;
@@ -68,6 +69,23 @@ void executeTests(void){
     printf("getIntValue(age) : %d\n", elementHumain.getIntValue((char *)"age"));
     */
 
+    //=======================================
+    //
+    //         tests fonction de tools
+    //
+    //=======================================
+    if (0 || exec_all){
+        log(LOG_DEBUG, "=====================================================");
+        log(LOG_DEBUG, "execution des tests de la fonction de tools");
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test de suppression des blancs inutiles d'une chaine");
+        char expression[200] = "   1234   12345     12345678     123   123456789   ";
+        char resultat_attendu[200] = "1234 12345 12345678 123 123456789";
+        remove_extra_spaces(expression);
+        resultatTest((strcmp(expression, resultat_attendu) == 0));
+    }
 
     //=======================================
     //
@@ -75,7 +93,9 @@ void executeTests(void){
     //
     //=======================================
     if (0 || exec_all){
-        
+        log(LOG_DEBUG, "=====================================================");
+        log(LOG_DEBUG, "execution des tests de la classe civilisation");
+        log(LOG_DEBUG, "-----------------------------------------------------");
     }
 
     //=======================================
@@ -84,7 +104,9 @@ void executeTests(void){
     //
     //=======================================
     if (0 || exec_all){
-        
+        log(LOG_DEBUG, "=====================================================");
+        log(LOG_DEBUG, "execution des tests de la classe civilisation");
+        log(LOG_DEBUG, "-----------------------------------------------------");
     }
 
     //=======================================
@@ -93,7 +115,9 @@ void executeTests(void){
     //
     //=======================================
     if (0 || exec_all){
-        
+        log(LOG_DEBUG, "=====================================================");
+        log(LOG_DEBUG, "execution des tests de la classe civilisation");
+        log(LOG_DEBUG, "-----------------------------------------------------");
     }
 
     //=======================================
@@ -102,7 +126,9 @@ void executeTests(void){
     //
     //=======================================
     if (0 || exec_all){
-        
+        log(LOG_DEBUG, "=====================================================");
+        log(LOG_DEBUG, "execution des tests de la classe civilisation");
+        log(LOG_DEBUG, "-----------------------------------------------------");
     }
 
 

@@ -10,22 +10,25 @@
 
     #include "element.hpp"
 
-    #define MAX_ELEMENTS    500
+    #define MAX_ELEMENTS    5
 
     class Civilisation{
         public:
             Civilisation();
+            ~Civilisation();
             void creeElementHumain(int sexe, char *nom);
             void creeElementEntreprise(int activite, char *nom);
             void evolutionCivilisation(void);
             void listeCivilisation(void);
             void killCivilisation(void);
-            int getTypeElement(Element element);
+            int getCourantElementId(void);
+            void listeElements(void);
 
         private:
             void incElementId(void);
             int getNbHumain(void);
-            Element elements[MAX_ELEMENTS];
+            int getNbEntreprise(void);
+            Element *elements[MAX_ELEMENTS];
             int courantElementId;
             int nbHumains;
             int nbEntreprises;

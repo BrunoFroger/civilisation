@@ -55,7 +55,7 @@ void log(int logLevel, const char *format, ...){
     }
 
     va_start(args, format);
-    if (logLevel >= logLevelLimit){
+    if (logLevel <= logLevelLimit){
         if (sizeof(args) > 1) {
             vsprintf(message, format, args);
         }
@@ -71,5 +71,6 @@ void log(int logLevel, const char *format, ...){
 //
 //-----------------------------------------
 void setLogLevel(int logLevel){
+    log(LOG_DEBUG, "setLogLevel %d", logLevel);
     logLevelLimit = logLevel;
 }

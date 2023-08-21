@@ -31,7 +31,7 @@ Humain::Humain(){
 //-----------------------------------------
 Humain::Humain(int id, int sexe, char *nom){
     /*
-    //log(LOG_INFO, "Humain::initHumain : debut");
+    log(LOG_INFO, "Humain::initHumain : debut");
 
     this->id = id;
     this->sexe = sexe;
@@ -49,7 +49,7 @@ Humain::Humain(int id, int sexe, char *nom){
 //
 //-----------------------------------------
 void Humain::initHumain(int id, int sexe, char *nom){
-    //log(LOG_INFO, "Humain::initHumain : debut");
+    log(LOG_DEBUG, "Humain::initHumain : debut");
     /*if (sexe == 0){
         log(LOG_INFO, (char *)"Creation d'un homme (%s) id=%ld", nom, id);
     } else if (sexe == 1){
@@ -70,7 +70,7 @@ void Humain::initHumain(int id, int sexe, char *nom){
 //          Humain::evolution
 //
 //-----------------------------------------
-void Humain::evolution(void){
+void Humain::evolutionHumain(void){
     log(LOG_DEBUG, "Humain::evolution => evolution de %s", this->nom);
     this->age++;
 }
@@ -80,7 +80,7 @@ void Humain::evolution(void){
 //          Humain::getId
 //
 //-----------------------------------------
-long Humain::getId(void){
+int Humain::getIdHumain(void){
     return id;
 }
 
@@ -89,7 +89,7 @@ long Humain::getId(void){
 //          Humain::getNom
 //
 //-----------------------------------------
-char *Humain::getNom(void){
+char *Humain::getNomHumain(void){
     return nom;
 }
 
