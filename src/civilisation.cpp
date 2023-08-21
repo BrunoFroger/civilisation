@@ -152,14 +152,12 @@ void Civilisation::listeCivilisation(void){
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
         if (ptr->typeElement == TYPE_HUMAIN)
-            if (ptr->getIdHumain() != -1){
-                printf("| %5d  | %25s |  %d  | %5d |  %d  |\n", 
-                    ptr->getIdHumain(),
-                    ptr->getNomHumain(), 
-                    ptr->getSexe(),
-                    ptr->getAge(),
-                    ptr->getCelibataire());
-            }
+            printf("| %5d  | %25s |  %d  | %5d |  %d  |\n", 
+                ptr->getIdHumain(),
+                ptr->getNomHumain(), 
+                ptr->getSexe(),
+                ptr->getAge(),
+                ptr->getCelibataire());
     }
     printf("+--------+---------------------------+-----+-------+-----+\n");
 
@@ -175,12 +173,10 @@ void Civilisation::listeCivilisation(void){
         Element *ptr = elements[i];
         if (ptr->typeElement == TYPE_ENTREPRISE)
             printf("c'est une entreprise\n");
-            if (ptr->getIdEntreprise() != -1){
-                printf("| %5d  | %25s |   %5d  |\n", 
-                    ptr->getIdEntreprise(),
-                    ptr->getNomEntreprise(), 
-                    ptr->getActivite());
-            }
+            printf("| %5d  | %25s |   %5d  |\n", 
+                ptr->getIdEntreprise(),
+                ptr->getNomEntreprise(), 
+                ptr->getActivite());
     }
     printf("+--------+---------------------------+----------+\n");
 
