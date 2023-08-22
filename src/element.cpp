@@ -54,7 +54,9 @@ Element::Element(int id, int type){
             log(LOG_DEBUG, "Element::Element => construction d'une entreprise");
             break;
         default:
-        log(LOG_ERROR, "Element::Element => construction type d'element inconnu %d", type);
+            if (id != -1){
+                log(LOG_ERROR, "Element::Element => construction type d'element inconnu %d", type);
+            }
             break;
     }
 }
@@ -336,7 +338,20 @@ bool Element::decomposeExpression(char *expression, structExpression *resultat){
 //
 //-----------------------------------------
 bool Element::execScript(void){
-    return execScript((char *)"scripts/humain.scr");
+    bool result = false;
+    log(LOG_DEBUG, "Element::execScript => debut");
+    switch(typeElement){
+        case TYPE_HUMAIN:
+            result = execScript((char *)"scripts/humain.scr");
+            break;
+        case TYPE_ENTREPRISE:
+            result = execScript((char *)"scripts/entreprise.scr");
+            break;
+        default:
+            result = false;
+            break;
+    }
+    return result;
 }
 
 //-----------------------------------------
@@ -368,7 +383,7 @@ bool Element::execScript(char *filename){
                 if (strncmp(tmp, "si", 2) == 0){
                     //printf("Analyse d'une ligne contenant un 'si'\n");
                     structIf resultat;
-                    if (!Element::decomposeSi(fic, tmp, &resultat)){
+                    if (!decomposeSi(fic, tmp, &resultat)){
                         log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
                         return false;
                     } else {

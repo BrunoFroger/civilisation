@@ -12,10 +12,28 @@
 
 //-----------------------------------------
 //
+//          Entreprise::Entreprise
+//
+//-----------------------------------------
+Entreprise::Entreprise(){
+    this->compteBancaireEntreprise = new CompteBancaire();
+}
+
+//-----------------------------------------
+//
+//          Entreprise::~Entreprise
+//
+//-----------------------------------------
+Entreprise::~Entreprise(){
+    delete this->compteBancaireEntreprise;
+}
+
+//-----------------------------------------
+//
 //          Entreprise::initEntreprise
 //
 //-----------------------------------------
-void Entreprise::initEntreprise(int id, int activite, char *nom){
+void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInitial){
     log(LOG_DEBUG, "Entreprise::initEntreprise : debut");
     this->id = id;
     this->activite = activite;
@@ -56,5 +74,6 @@ char *Entreprise::getNomEntreprise(void){
 //-----------------------------------------
 void Entreprise::evolutionEntreprise(void){
     log(LOG_DEBUG, "Entreprise::evolution => evolution de %s", this->nom);
+    log(LOG_DEBUG, "Entreprise::evolution => TODO");
     // TODO
 }

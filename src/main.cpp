@@ -24,15 +24,9 @@ int main(int argc, char **argv){
         exit (1);
     }
 
-    civilisation.listeElements();
     civilisation.creeElementHumain(HOMME, (char *)"adam");
-    civilisation.listeElements();
     civilisation.creeElementHumain(FEMME, (char *)"eve");
-    civilisation.listeElements();
-    civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"Boulangerie");
-    civilisation.listeElements();
-    //creeHumain(HOMME, "adam");
-    //creeHumain(FEMME, "eve");
+    civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"Boulangerie", 10000);
 
     while (1){
         civilisation.evolutionCivilisation();

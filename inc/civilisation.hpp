@@ -17,12 +17,13 @@
             Civilisation();
             ~Civilisation();
             void creeElementHumain(int sexe, char *nom);
-            void creeElementEntreprise(int activite, char *nom);
+            void creeElementEntreprise(int activite, char *nom, int capitalInitial);
             void evolutionCivilisation(void);
             void listeCivilisation(void);
             void killCivilisation(void);
             int getCourantElementId(void);
             void listeElements(void);
+            Element *getElement(int index);
 
         private:
             void incElementId(void);

@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 21/08/2023 à 14:23:13
+#     généré automatiquement le 21/08/2023 à 21:44:12
 #         avec buildMakefile (version du 18 Aug 2023)
 #                 (c) B. Froger 
 # 
@@ -56,6 +56,11 @@ $(OBJDIR)/civilisation.o: $(SRCDIR)/civilisation.cpp \
 	$(INCDIR)/civilisation.hpp \
 	$(INCDIR)/log.hpp \
 	$(INCDIR)/element.hpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
+$(OBJDIR)/compteBancaire.o: $(SRCDIR)/compteBancaire.cpp \
+	$(INCDIR)/compteBancaire.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

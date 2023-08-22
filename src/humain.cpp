@@ -11,6 +11,9 @@
 #include "../inc/log.hpp"
 #include "../inc/element.hpp"
 
+#define NB_COMMANDES_VALIDES    4
+char listeCommandes[20][20]= {"mort", "chercheConjoint", "ecole", "naissancePossible"};
+
 //-----------------------------------------
 //
 //          Humain::Humain
@@ -22,6 +25,7 @@ Humain::Humain(){
     strcpy(this->nom , "");
     this->age = -1;
     this->celibataire = true;
+    this->compteBancaireHumain = new CompteBancaire();
 }
 
 //-----------------------------------------
@@ -50,19 +54,11 @@ Humain::Humain(int id, int sexe, char *nom){
 //-----------------------------------------
 void Humain::initHumain(int id, int sexe, char *nom){
     log(LOG_DEBUG, "Humain::initHumain : debut");
-    /*if (sexe == 0){
-        log(LOG_INFO, (char *)"Creation d'un homme (%s) id=%ld", nom, id);
-    } else if (sexe == 1){
-        log(LOG_INFO, (char *)"Creation d'une femme (%s) id=%ld", nom, id);
-    } else {
-        log(LOG_INFO, (char *)"sexe indefini id = %d", id);
-    }*/
     this->id = id;
     this->sexe = sexe;
     strcpy(this->nom ,nom);
     this->age = 0;
     this->celibataire = true;
-    //log(LOG_INFO, "Humain::initHumain : fin");
 }
 
 //-----------------------------------------
@@ -182,11 +178,16 @@ char *Humain::getCharValue(char *valeur){
 //-----------------------------------------
 bool Humain::testSiCommandeValide(char *valeur){
     //printf("test si commande '%s' valide\n", valeur);
+    for (int i = 0 ; i < NB_COMMANDES_VALIDES ; i++){
+        if (strcmp(valeur, listeCommandes[i]) == 0) return true;
+    }
+    return false;
+    /*
     if (strcmp(valeur, "mort") == 0) return true;
     if (strcmp(valeur, "chercheConjoint") == 0) return true;
     if (strcmp(valeur, "ecole") == 0) return true;
     if (strcmp(valeur, "naissancePossible") == 0) return true;
-    return false;
+    return false;*/
 }
 
 //-----------------------------------------
@@ -216,4 +217,12 @@ bool Humain::testSiListeCommandeValide(char *valeur){
         }
     }
     return true;
+}
+//-----------------------------------------
+//
+//          Humain::execCommande
+//
+//-----------------------------------------
+bool Humain::execCommande(char *valeur){
+    return false;
 }

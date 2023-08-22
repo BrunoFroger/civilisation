@@ -15,7 +15,7 @@ bool analyseParametres(int argc, char **argv){
     log(LOG_DEBUG, "analyseParametres");
     if (argc > 1){
         for (int i = 1 ; i < argc ; i++){
-            printf("Analyse du parametre %s\n", argv[i]);
+            //printf("Analyse du parametre %s\n", argv[i]);
             if (strcmp(argv[i], "tests") == 0){
                 log(LOG_INFO, "     execution des tests ");
                 log(LOG_INFO, "===================================");
@@ -23,7 +23,7 @@ bool analyseParametres(int argc, char **argv){
                 return false;
             }
             if (argv[i][0] == '-'){
-                bool tmpExecTest = TEST_MODE_STD;
+                int tmpExecTest = TEST_MODE_STD;
                 // analyse d'une option
                 switch(argv[i][1]){
                     case 'l':
@@ -55,7 +55,27 @@ bool analyseParametres(int argc, char **argv){
                             if (strcmp(argv[i+1], "all") == 0){
                                 printf("set test mode exec all\n");
                                 tmpExecTest = TEST_MODE_ALL;
-                            } 
+                            } else if (strcmp(argv[i+1], "civilisation") == 0){
+                                printf("set test mode exec civilisation\n");
+                                tmpExecTest = TEST_MODE_CIVI;
+                            } else if (strcmp(argv[i+1], "element") == 0){
+                                printf("set test mode exec element\n");
+                                tmpExecTest = TEST_MODE_ELEM;
+                            } else if (strcmp(argv[i+1], "humain") == 0){
+                                printf("set test mode exec humain\n");
+                                tmpExecTest = TEST_MODE_HUMA;
+                            } else if (strcmp(argv[i+1], "entreprise") == 0){
+                                printf("set test mode exec entreprise\n");
+                                tmpExecTest = TEST_MODE_ENTR;
+                            } else if (strcmp(argv[i+1], "tools") == 0){
+                                printf("set test mode exec tools\n");
+                                tmpExecTest = TEST_MODE_TOOL;
+                            } else if (strcmp(argv[i+1], "banque") == 0){
+                                printf("set test mode exec tools\n");
+                                tmpExecTest = TEST_MODE_BANK;
+                            } else {
+                                printf("ERREUR mode de selectiond e test (%s) inconnu\n", argv[i+1]);
+                            }
                             i++;
                         }
                         executeTests(tmpExecTest);

@@ -11,11 +11,19 @@
 #include "../inc/element.hpp"
 #include "../inc/humain.hpp"
 #include "../inc/log.hpp"
+#include "../inc/tests.hpp"
 
 int nbTests=0;
+int nbTestsRubrique=0;
 int nbOK=0;
 int nbKO=0;
 bool exec_all=false;
+bool exec_civilisation=false;
+bool exec_element=false;
+bool exec_humain=false;
+bool exec_entreprise=false;
+bool exec_tools=false;
+bool exec_banque=false;
 
 //-----------------------------------------
 //
@@ -24,6 +32,7 @@ bool exec_all=false;
 //-----------------------------------------
 bool resultatTest(bool status){
     nbTests++;
+    nbTestsRubrique++;
     if (status){
         printf("    Test OK \n");
         nbOK++;
@@ -32,6 +41,19 @@ bool resultatTest(bool status){
         nbKO++;
     }
     return status;
+}
+
+//-----------------------------------------
+//
+//          bilanTestrubrique
+//
+//-----------------------------------------
+void bilanTestsRubrique(void){
+    if (nbTestsRubrique > 0){
+        printf("    %d tests executés dans cette rubrique\n", nbTestsRubrique);
+        nbTestsRubrique = 0;
+    }
+    printf("\n");
 }
 
 //-----------------------------------------
@@ -52,10 +74,34 @@ void bilanTests(void){
 //          executeTests
 //
 //-----------------------------------------
-void executeTests(bool mode){
+void executeTests(int mode){
     printf("Executions des tests du programme civilisation mode = %d\n", mode);
     setLogLevel(LOG_DEBUG);
-    exec_all = mode;
+    switch (mode){
+        case TEST_MODE_ALL:
+            exec_all = true;
+            break;
+        case TEST_MODE_CIVI:
+            exec_civilisation = true;
+            break;
+        case TEST_MODE_ELEM:
+            exec_element = true;
+            break;
+        case TEST_MODE_HUMA:
+            exec_humain = true;
+            break;
+        case TEST_MODE_ENTR:
+            exec_entreprise = true;
+            break;
+        case TEST_MODE_TOOL:
+            exec_tools = true;
+            break;
+        case TEST_MODE_BANK:
+            exec_banque = true;
+            break;
+        default :
+            break;
+    }
 
     //char ligne[500];
     //structIf resultat;
@@ -74,7 +120,7 @@ void executeTests(bool mode){
     //         tests fonction de tools
     //
     //=======================================
-    if (0 || exec_all){
+    if (0 || exec_all || exec_tools){
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests de la fonction de tools");
         log(LOG_DEBUG, "-----------------------------------------------------");
@@ -85,6 +131,8 @@ void executeTests(bool mode){
         char resultat_attendu[200] = "1234 12345 12345678 123 123456789";
         remove_extra_spaces(expression);
         resultatTest((strcmp(expression, resultat_attendu) == 0));
+
+        bilanTestsRubrique();
     }
 
     //=======================================
@@ -92,10 +140,23 @@ void executeTests(bool mode){
     //         tests classe Civilisation
     //
     //=======================================
-    if (0 || exec_all){
+    if (0 || exec_all || exec_civilisation){
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests de la classe civilisation");
         log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test de creation de la classe");
+        Civilisation civilisation;
+        bool result;
+        resultatTest((civilisation.getCourantElementId() == 0));
+        log(LOG_DEBUG, "test de creation d'un element humain");
+        civilisation.creeElementHumain(HOMME,"Marcel");
+        resultatTest(strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomHumain(), "Marcel") == 0);
+        log(LOG_DEBUG, "test de creation d'un element entreprise");
+        civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, "boulangerie", 25000);
+        resultatTest(strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomEntreprise(), "boulangerie") == 0);
+        resultatTest(civilisation.getElement(civilisation.getCourantElementId()-1)->compteBancaireEntreprise->getSolde() == 25000);
+
+        bilanTestsRubrique();
     }
 
     //=======================================
@@ -103,10 +164,12 @@ void executeTests(bool mode){
     //         tests classe Element
     //
     //=======================================
-    if (0 || exec_all){
+    if (0 || exec_all || exec_element){
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests de la classe civilisation");
+        log(LOG_DEBUG, "execution des tests de la classe element");
         log(LOG_DEBUG, "-----------------------------------------------------");
+
+        bilanTestsRubrique();
     }
 
     //=======================================
@@ -114,10 +177,17 @@ void executeTests(bool mode){
     //         tests classe Humain
     //
     //=======================================
-    if (0 || exec_all){
+    if (0 || exec_all || exec_humain){
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests de la classe civilisation");
+        log(LOG_DEBUG, "execution des tests de la classe humain");
         log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test fonction liste de commandes valide");
+        Humain humain(0,1, (char *)"adam");
+        resultatTest(humain.testSiCommandeValide((char *)"mort"));
+        resultatTest(humain.testSiCommandeValide((char *)"ecole"));
+        resultatTest(!humain.testSiCommandeValide((char *)"sdfqsdfqdf"));
+
+        bilanTestsRubrique();
     }
 
     //=======================================
@@ -125,13 +195,28 @@ void executeTests(bool mode){
     //         tests classe Entreprise
     //
     //=======================================
-    if (0 || exec_all){
+    if (0 || exec_all || exec_entreprise){
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests de la classe civilisation");
+        log(LOG_DEBUG, "execution des tests de la classe entreprise");
         log(LOG_DEBUG, "-----------------------------------------------------");
+
+        bilanTestsRubrique();
     }
 
+    //=======================================
+    //
+    //         tests classe CompteBancaire
+    //
+    //=======================================
+    if (0 || exec_all || exec_banque){
+        log(LOG_DEBUG, "=====================================================");
+        log(LOG_DEBUG, "execution des tests de la classe CompteBancaire");
+        log(LOG_DEBUG, "-----------------------------------------------------");
 
+        bilanTestsRubrique();
+    }
+
+    bilanTests();
 
 /*
     //=======================================
@@ -184,16 +269,6 @@ void executeTests(bool mode){
         strcpy(ligne, "si   age   ");
         printf("analyse d'une ligne erronee '%s'\n", ligne);
         resultatTest(!elementHumain.decomposeSi(fic, ligne, &resultat));
-    }
-
-    if (0 || exec_all){ // test suppression des blancs
-        printf("-----------------------------\n");
-        printf("test de suppression des blancs inutiles d'une chaine");
-        char expression[200] = "   1234   12345     12345678     123   123456789   ";
-        char resultat_attendu[200] = "1234 12345 12345678 123 123456789";
-        remove_extra_spaces(expression);
-        printf("nouvelle expression : '%s'\n", expression);
-        resultatTest((strcmp(expression, resultat_attendu) == 0));
     }
 
     if (0 || exec_all){
@@ -305,15 +380,5 @@ void executeTests(bool mode){
         printf("test si 'toto' n'est pas une variable connue\n");
         resultatTest(!humain.isVariable((char *)"toto"));
     }
-    if (0 || exec_all){
-        printf("-----------------------------\n");
-        printf("tests si commande valide\n");
-        Humain humain;
-        humain.initHumain(10, 0, "marcel");
-        resultatTest(humain.testSiCommandeValide((char *)"mort"));
-        resultatTest(humain.testSiCommandeValide((char *)"chercheConjoint"));
-        resultatTest(!humain.testSiCommandeValide((char *)"gfqhjksgdf"));
-    }*/
-
-    bilanTests();
+    */
 }

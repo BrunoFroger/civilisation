@@ -7,6 +7,8 @@
 #ifndef __HUMAIN__
 #define __HUMAIN__
 
+    #include "../inc/compteBancaire.hpp"
+
     #define HOMME   0
     #define FEMME   1
 
@@ -28,6 +30,8 @@
             char *getCharValue(char *nomVariable);
             bool testSiCommandeValide(char *valeur);
             bool testSiListeCommandeValide(char *valeur);
+            bool execCommande(char *commande);
+            CompteBancaire *compteBancaireHumain;
 
         private:
             int id;
