@@ -10,6 +10,7 @@
 
 #include "../inc/element.hpp"
 #include "../inc/log.hpp"
+#include "../inc/tools.hpp"
 
 #define MAX_HUMAIN  3
 
@@ -78,7 +79,7 @@ int Element::getElementId(void){
 void Element::setElementId(int id){
     this->idElement = id;
 }
-
+/*
 //-----------------------------------------
 //
 //          decomposeIf
@@ -193,43 +194,7 @@ bool Element::decomposeSi(FILE *fic, char *ligne, structIf *resultat){
         //printf("Element::decomposeSi => fin 220\n");
         return true;
     }
-}
-
-//-----------------------------------------
-//
-//          evaluationExpressionInt
-//
-//-----------------------------------------
-bool Element::evaluationExpressionInt(int data1, char *test, int data2){
-    //printf("test '='\n");
-    if (strcmp(test, "=") == 0) return (data1==data2);
-    //printf("test '!='\n");
-    if (strcmp(test, "!=") == 0) return !(data1==data2);
-    if (strcmp(test, ">") == 0) return (data1>data2);
-    if (strcmp(test, "<") == 0) return (data1<data2);
-    if (strcmp(test, ">=") == 0) return (data1 >= data2);
-    if (strcmp(test, "<=") == 0) return (data1 <= data2);
-    //printf("aucun test valide\n");
-    return false;
-}
-
-//-----------------------------------------
-//
-//          evaluationExpressionChar
-//
-//-----------------------------------------
-bool Element::evaluationExpressionChar(char *data1, char *test, char *data2){
-    //printf("test '='\n");
-    if (strcmp(test, "=") == 0) return (strcmp((const char*)data1, (const char*)data2) == 0);
-    //printf("test '!='\n");
-    if (strcmp(test, "!=") == 0) return !(strcmp((const char*)data1, (const char*)data2) == 0);
-    if (strcmp(test, ">") == 0) return (strcmp((const char*)data1, (const char*)data2) > 0);
-    if (strcmp(test, "<") == 0) return (strcmp((const char*)data1, (const char*)data2) < 0);
-    if (strcmp(test, ">=") == 0) return (strcmp((const char*)data1, (const char*)data2) >= 0);
-    if (strcmp(test, "<=") == 0) return (strcmp((const char*)data1, (const char*)data2) <= 0);
-    //printf("aucun test valide\n");
-    return false;
-}
+}*/
 
 //-----------------------------------------
 //
@@ -383,7 +348,7 @@ bool Element::execScript(char *filename){
                 if (strncmp(tmp, "si", 2) == 0){
                     //printf("Analyse d'une ligne contenant un 'si'\n");
                     structIf resultat;
-                    if (!decomposeSi(fic, tmp, &resultat)){
+                    if (!decomposeSi(tmp, &resultat)){
                         log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
                         return false;
                     } else {
@@ -429,40 +394,4 @@ bool Element::execScript(char *filename){
     }
     //printf("\n");
     return true;
-}
-
-//-----------------------------------------
-//
-//          Element::calculExpression
-//
-//-----------------------------------------
-int Element::calculExpression(char *data1, char op, char *data2){
-    int val1;
-    int val2;
-    int res;
-    if (isVariable(data1)){
-        val1 = getIntValue(data1);
-    } else {
-        val1 = atoi(data1);
-    }
-    if (isVariable(data1)){
-        val2 = getIntValue(data2);
-    } else {
-        val2 = atoi(data2);
-    }
-    switch(op){
-        case '+' : 
-            res = val1 + val2;
-            break;
-        case '-' : 
-            res = val1 - val2;
-            break;
-        case '*' : 
-            res = val1 * val2;
-            break;
-        case '/' : 
-            res = val1 / val2;
-            break;
-    }
-    return res;
 }

@@ -11,18 +11,13 @@
 
     #include "humain.hpp"
     #include "entreprise.hpp"
+    #include "tools.hpp"
 
     #define MAX_HUMAIN  3
 
     #define TYPE_INDEFINI   0
     #define TYPE_HUMAIN     1
     #define TYPE_ENTREPRISE 2
-
-    typedef struct {
-        char expression[500];
-        char ListeCommandeSiVrai[1000];
-        char ListeCommandeSiFaux[1000];
-    } structIf;
 
     typedef struct{
         char item1[500];
@@ -46,11 +41,7 @@
             //void listePopulation(void);
             //void killPopulation(void);
             //void evolutionPopulation(void);
-            bool decomposeSi(FILE *fic, char *ligne, structIf *resultat);
             bool decomposeExpression(char *chaine, structExpression *resultat);
-            bool evaluationExpressionInt(int data1, char *test, int data2);
-            bool evaluationExpressionChar(char *data1, char *test, char *data2);
-            int calculExpression(char *data1, char op, char *data2);
             int getElementId(void);
             void setElementId(int id);
             int typeElement;

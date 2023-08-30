@@ -97,6 +97,7 @@ void Civilisation::creeElementHumain(int sexe, char *nom){
     Element *tmpElement = this->elements[courantElementId];
     tmpElement->initHumain(courantElementId, sexe, nom);
     tmpElement->typeElement=TYPE_HUMAIN;
+    tmpElement->setElementId(courantElementId);
     incElementId();
     this->nbHumains++;
 }
@@ -167,7 +168,7 @@ void Civilisation::listeCivilisation(void){
                 ptr->getNomHumain(), 
                 ptr->getSexe(),
                 ptr->getAge(),
-                ptr->getCelibataire(),
+                ptr->getStatusMarital(),
                 ptr->compteBancaireHumain->getSolde(),
                 ptr->compteBancaireHumain->getEpargne());
     }

@@ -1,8 +1,8 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 21/08/2023 à 21:44:12
-#         avec buildMakefile (version du 18 Aug 2023)
+#     généré automatiquement le 30/08/2023 à 16:32:24
+#         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
 #############################################################
@@ -46,9 +46,14 @@ $(EXEC): $(OBJ)
 #------------------------------------------------------------
 # Définition des règles pour chaque fichier source
 #------------------------------------------------------------
+$(OBJDIR)/aide.o: $(SRCDIR)/aide.cpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
 $(OBJDIR)/analyseParametre.o: $(SRCDIR)/analyseParametre.cpp \
 	$(INCDIR)/log.hpp \
-	$(INCDIR)/tests.hpp
+	$(INCDIR)/tests.hpp \
+	$(INCDIR)/aide.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -66,7 +71,8 @@ $(OBJDIR)/compteBancaire.o: $(SRCDIR)/compteBancaire.cpp \
 
 $(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
 	$(INCDIR)/element.hpp \
-	$(INCDIR)/log.hpp
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/tools.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -102,11 +108,15 @@ $(OBJDIR)/tests.o: $(SRCDIR)/tests.cpp \
 	$(INCDIR)/civilisation.hpp \
 	$(INCDIR)/element.hpp \
 	$(INCDIR)/humain.hpp \
-	$(INCDIR)/log.hpp
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/tests.hpp \
+	$(INCDIR)/tools.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
-$(OBJDIR)/tools.o: $(SRCDIR)/tools.cpp
+$(OBJDIR)/tools.o: $(SRCDIR)/tools.cpp \
+	$(INCDIR)/element.hpp \
+	$(INCDIR)/log.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

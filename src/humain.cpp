@@ -24,7 +24,7 @@ Humain::Humain(){
     this->sexe = -1;
     strcpy(this->nom , "");
     this->age = -1;
-    this->celibataire = true;
+    this->statusMarital = STATUS_MARITAL_CELIB;
     this->compteBancaireHumain = new CompteBancaire();
 }
 
@@ -58,7 +58,7 @@ void Humain::initHumain(int id, int sexe, char *nom){
     this->sexe = sexe;
     strcpy(this->nom ,nom);
     this->age = 0;
-    this->celibataire = true;
+    this->statusMarital = STATUS_MARITAL_CELIB;
 }
 
 //-----------------------------------------
@@ -127,11 +127,11 @@ int Humain::getAge(void){
 
 //-----------------------------------------
 //
-//          Humain::getSexe
+//          Humain::getCelibataire
 //
 //-----------------------------------------
-bool Humain::getCelibataire(void){
-    return celibataire;
+int Humain::getStatusMarital(void){
+    return statusMarital;
 }
 
 //-----------------------------------------
@@ -155,9 +155,19 @@ bool Humain::isVariable(char *valeur){
 //
 //-----------------------------------------
 int Humain::getIntValue(char *valeur){
-    if (strcmp(valeur, "sexe") == 0) return sexe;
-    if (strcmp(valeur, "age") == 0) return age;
-    if (strcmp(valeur, "celibataire") == 0) return celibataire;
+    if (strcmp(valeur, "sexe") == 0){
+        printf("Humain::getIntValue : variable %s = %d\n", valeur, sexe);
+        return sexe;
+    }
+    if (strcmp(valeur, "age") == 0){
+        printf("Humain::getIntValue : variable %s = %d\n", valeur, age);
+        return age;
+    }
+    if (strcmp(valeur, "statusMarital") == 0){
+        printf("Humain::getIntValue : variable %s = %d\n", valeur, statusMarital);
+        return statusMarital;
+    }
+    printf("Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
     return -1;
 }
 
@@ -169,6 +179,47 @@ int Humain::getIntValue(char *valeur){
 char *Humain::getCharValue(char *valeur){
     if (strcmp(valeur, "nom") == 0) return nom;
     return NULL;
+}
+
+//-----------------------------------------
+//
+//          calculExpression
+//
+//-----------------------------------------
+int Humain::calculExpression(char *data1, char op, char *data2){
+    int val1;
+    int val2;
+    int res = false;
+    printf("Humain::calculExpression => debut : calcul de <%s> <%c> <%s>\n", data1, op, data2);
+    if (Humain::isVariable(data1)){
+        val1 = getIntValue(data1);
+        printf("data1 est une variable : <%s> => <%d>\n", data1, val1);
+    } else {
+        val1 = atoi(data1);
+    }
+    if (Humain::isVariable(data2)){
+        val2 = getIntValue(data2);
+        printf("data2 est une variable : <%s> => <%d>\n", data2, val2);
+    } else {
+        val2 = atoi(data2);
+    }
+    printf("Humain::calculExpression => apres evaluation : calcul de <%d> <%c> <%d>\n", val1, op, val2);
+    switch(op){
+        case '+' : 
+            res = val1 + val2;
+            break;
+        case '-' : 
+            res = val1 - val2;
+            break;
+        case '*' : 
+            res = val1 * val2;
+            break;
+        case '/' : 
+            res = val1 / val2;
+            break;
+    }
+    printf("Humain::calculExpression => resultat : <%d> <%c> <%d> = <%d>\n", val1, op, val2, res);
+    return res;
 }
 
 //-----------------------------------------

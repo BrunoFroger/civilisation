@@ -22,12 +22,22 @@
             int getIdEntreprise();
             char *getNomEntreprise();
             int getActivite();
+            int getNbSalaries();
+            int getCoutSalaries();
+            int getCoutProduit();
+            int getPrixProduit();
+            int getStockProduit();
             CompteBancaire *compteBancaireEntreprise;
 
         private:
             int id;
             int activite;
-            char nom[50]; 
+            char nom[50];
+            int nbSalaries;
+            int coutSalarie;
+            int coutProduit;
+            int prixProduit;
+            int stock;
     };
 
 #endif
