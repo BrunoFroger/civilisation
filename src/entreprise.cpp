@@ -67,32 +67,32 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
             tmp = &ligne[3];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             strcpy(this->nom, tmp);
-            printf("nom          :  <%s> <%s>\n", tmp, this->nom);
+            //printf("nom          :  <%s> <%s>\n", tmp, this->nom);
         } else if (strncmp(ligne, "nbSalarie", 9) == 0){
             tmp = &ligne[9];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->nbSalaries = atoi(tmp);
-            printf("nbSalarie    :  <%s> <%d>\n", tmp, atoi(tmp));
+            //printf("nbSalarie    :  <%s> <%d>\n", tmp, atoi(tmp));
         } else if (strncmp(ligne, "cout Salarie", 11) == 0){
             tmp = &ligne[13];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->coutSalarie = atoi(tmp);
-            printf("cout salarie :  <%s> <%d>\n", tmp, this->coutSalarie);
+            //printf("cout salarie :  <%s> <%d>\n", tmp, this->coutSalarie);
         } else if (strncmp(ligne, "prix produit", 11) == 0){
             tmp = &ligne[13];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->prixProduit = atoi(tmp);
-            printf("prix produit :  <%s> <%d>\n", tmp, this->prixProduit);
+            //printf("prix produit :  <%s> <%d>\n", tmp, this->prixProduit);
         } else if (strncmp(ligne, "cout produit", 11) == 0){
             tmp = &ligne[13];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->coutProduit = atoi(tmp);
-            printf("cout produit :  <%s> <%d>\n", tmp, this->coutProduit);
+            //printf("cout produit :  <%s> <%d>\n", tmp, this->coutProduit);
         } else if (strncmp(ligne, "stock", 5) == 0){
             tmp = &ligne[5];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->stock = atoi(tmp);
-            printf("stock        :  <%s> <%d>\n", tmp,this->stock);
+            //printf("stock        :  <%s> <%d>\n", tmp,this->stock);
         }
     }
     fclose(fic);

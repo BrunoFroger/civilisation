@@ -32,13 +32,14 @@ int main(int argc, char **argv){
         printf ("main => evolution (%d) > ", nbEvolutions);
         strcpy(ligneSaisie, "");
         fgets(ligneSaisie, 100, stdin);
+        ligneSaisie[strlen(ligneSaisie) - 1] = '\0';
         switch(ligneSaisie[0]){
             case 'h': // aide
             case 'H': 
             case '?': 
                 printf("commandes disponibles :\n");
                 printf("    h, H, ? : affichage de cette aide\n");
-                printf("    l, L : affichage de la liste des éléments\n");
+                printf("    l, L [id] : affichage de la liste des éléments, ou un element specific\n");
                 printf("    q, Q : quitte le programme\n");
                 printf("    t, T : affichage du tableau de bord\n");
                 break;
@@ -59,8 +60,12 @@ int main(int argc, char **argv){
                 civilisation.tableauDeBord();
                 break; 
             default:
-                civilisation.evolutionCivilisation();
-                nbEvolutions++;
+                if (strlen(ligneSaisie) > 0){
+                    printf("erreur : commade <%s> inconnue\n", ligneSaisie);
+                } else {
+                    civilisation.evolutionCivilisation();
+                    nbEvolutions++;
+                }
                 break;
         }
     }

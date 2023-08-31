@@ -126,7 +126,6 @@ void Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
 //-----------------------------------------
 void Civilisation::listeElement(int id){
     Element *ptr = elements[id];
-    char tmpNom[25]="";
     switch(ptr->typeElement){
         case TYPE_HUMAIN:
             ptr->listeHumain();
@@ -144,8 +143,8 @@ void Civilisation::listeElement(int id){
 //-----------------------------------------
 void Civilisation::listeCivilisation(void){
     // afichage des individus
-    printf("+--------------------------------------------------------+\n");
-    printf("|             population  %4d individus                 |\n", getNbHumain());
+    printf("+---------------------------------------------------------------------------------------+\n");
+    printf("|             population  %4d individus                                                |\n", getNbHumain());
     printf("+--------+---------------------------+-----+-------+-----+------------+-----------------+\n");
     printf("|   id   |                       nom | sexe|  age  |celib|    capital |         epargne |\n");
     printf("+--------+---------------------------+-----+-------+-----+------------+-----------------+\n");
@@ -228,5 +227,11 @@ void Civilisation::killCivilisation(void){
 //-----------------------------------------
 void Civilisation::tableauDeBord(void){
     log(LOG_DEBUG, "Civilisation::tableauDeBord => TODO");
-
+    printf("+-------------------------------------------------------------+\n");
+    printf("|             T A B L E A U   D E   B O R D                   |\n");
+    printf("+------------------------------+------------------------------+\n");
+    printf("|         entreprises          |             humains          |\n");
+    printf("+--------------+---------------+--------------+---------------+\n");
+    printf("| nombre       |   %10d  | nombre       |   %10d  |\n", this->nbEntreprises, this->nbHumains);
+    printf("+--------------+---------------+--------------+---------------+\n");
 }

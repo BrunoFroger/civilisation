@@ -198,7 +198,6 @@ bool decomposeListeInstructions(char *ListeInstructionOrigine, char *instruction
     strcpy(listeInstructionsRestante, (char *)"");
     if (strlen(ListeInstructionOrigine) > 0){
         int j = 0;
-        int i = 0;
         // analyse si la liste d'origine commence par un mot clé d'une instruction complexe
         // multiligne possible
         if (strncmp(ListeInstructionOrigine, "si", 2) == 0){ // traitement d'un si 

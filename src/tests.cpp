@@ -310,8 +310,6 @@ void executeTests(int mode){
         if (0 || exec_all ){ // bloc decomposeListeInstructions
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test decomposeListeInstructions");
-            FILE *fic;
-            char *tmp;
             char script[5000] = "";
             char instruction[100] = "";
             char listeInstructions[5000] = "";
