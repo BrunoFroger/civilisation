@@ -26,19 +26,41 @@ int main(int argc, char **argv){
 
     civilisation.creeElementHumain(HOMME, (char *)"adam");
     civilisation.creeElementHumain(FEMME, (char *)"eve");
-    civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"Boulangerie", 10000);
+    civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
 
     while (1){
-        civilisation.evolutionCivilisation();
-        civilisation.listeCivilisation();
-        printf ("evolution (%d) > ", nbEvolutions++);
+        printf ("main => evolution (%d) > ", nbEvolutions);
+        strcpy(ligneSaisie, "");
         fgets(ligneSaisie, 100, stdin);
         switch(ligneSaisie[0]){
+            case 'h': // aide
+            case 'H': 
+            case '?': 
+                printf("commandes disponibles :\n");
+                printf("    h, H, ? : affichage de cette aide\n");
+                printf("    l, L : affichage de la liste des éléments\n");
+                printf("    q, Q : quitte le programme\n");
+                printf("    t, T : affichage du tableau de bord\n");
+                break;
+            case 'l': // liste un element 
+            case 'L': // 2eme caractere type element, puis id element
+                if (strlen(ligneSaisie) > 2){
+                    civilisation.listeElement(atoi(&ligneSaisie[1]));
+                } else {
+                    civilisation.listeCivilisation();
+                }
+                break;
             case 'q':
             case 'Q':
                 return 0;
                 break;
+            case 't':
+            case 'T':
+                civilisation.tableauDeBord();
+                break; 
             default:
+                civilisation.evolutionCivilisation();
+                nbEvolutions++;
                 break;
         }
     }

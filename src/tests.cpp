@@ -455,9 +455,16 @@ void executeTests(int mode){
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
         log(LOG_DEBUG, "-----------------------------------------------------");
         Civilisation civilisation;
+        Element *element;
+        bool res;
+        int id;
+
+        // test creation entreprise avec fichier de configuration spécifique
+        res = true;
+        id = civilisation.getCourantElementId();
         civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
-        Element *element = civilisation.getElement(civilisation.getCourantElementId()-1);
-        bool res = true;
+        printf("creation entreprise id : %d\n", id);
+        element = civilisation.getElement(id);
         res &= (strcmp(element->getNomEntreprise(), (char *)"au bon pain") == 0);
         res &= (element->getNbSalaries() == 5);
         res &= (element->getCoutSalaries() == 100);
@@ -465,6 +472,21 @@ void executeTests(int mode){
         res &= (element->getPrixProduit() == 10);
         res &= (element->getStockProduit() == 20);
         resultatTest(res);
+
+        // test creation entreprise avec fichier de configuration par default
+        res = true;
+        id = civilisation.getCourantElementId();
+        civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000);
+        printf("creation entreprise id : %d\n", id);
+        element = civilisation.getElement(id);
+        res &= (strcmp(element->getNomEntreprise(), (char *)"entreprise par default") == 0);
+        res &= (element->getNbSalaries() == 0);
+        res &= (element->getCoutSalaries() == 100);
+        res &= (element->getCoutProduit() == 5);
+        res &= (element->getPrixProduit() == 10);
+        res &= (element->getStockProduit() == 0);
+        resultatTest(res);
+
         bilanTestsRubrique(rubrique);
     }
 

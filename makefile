@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 30/08/2023 à 16:32:24
+#     généré automatiquement le 31/08/2023 à 17:49:57
 #         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
@@ -78,7 +78,8 @@ $(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
 
 $(OBJDIR)/entreprise.o: $(SRCDIR)/entreprise.cpp \
 	$(INCDIR)/entreprise.hpp \
-	$(INCDIR)/log.hpp
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/tools.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

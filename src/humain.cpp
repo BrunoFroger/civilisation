@@ -35,13 +35,7 @@ Humain::Humain(){
 //-----------------------------------------
 Humain::Humain(int id, int sexe, char *nom){
     /*
-    log(LOG_INFO, "Humain::initHumain : debut");
-
-    this->id = id;
-    this->sexe = sexe;
-    strcpy(this->nom ,nom);
-    this->age = 0;
-    this->celibataire = true;
+    //log(LOG_INFO, "Humain::initHumain : debut");
     */
    initHumain(id, sexe, nom);
     //log(LOG_INFO, "Humain::initHumain : fin");
@@ -269,11 +263,22 @@ bool Humain::testSiListeCommandeValide(char *valeur){
     }
     return true;
 }
+
 //-----------------------------------------
 //
 //          Humain::execCommande
 //
 //-----------------------------------------
 bool Humain::execCommande(char *valeur){
+    log(LOG_DEBUG,"Humain::execCommande : TODO");
     return false;
+}
+
+//-----------------------------------------
+//
+//          Humain::listeHumain
+//
+//-----------------------------------------
+void Humain::listeHumain(void){
+    log(LOG_DEBUG,"Humain::listeHumain : TODO");
 }

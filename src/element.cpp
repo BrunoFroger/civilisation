@@ -331,7 +331,7 @@ bool Element::execScript(char *filename){
 
     fic = fopen(filename, "r");
     if (fic == NULL){
-        log(LOG_ERROR, "Humain::execScript => impossible d'ouvrir le fichier script ");
+        log(LOG_ERROR, "Element::execScript => impossible d'ouvrir le fichier script <%s>", filename);
         return false;
     }
     //printf("lecture du fichier '%s'\n", filename);

@@ -124,28 +124,17 @@ void Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
 //          listeElements
 //
 //-----------------------------------------
-void Civilisation::listeElements(void){
-    // afichage des elements
-    printf("+--------+---------------------------+-----+\n");
-    printf("|   id   |                       nom | type|\n");
-    printf("+--------+---------------------------+-----+\n");
-    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
-        Element *ptr = elements[i];
-        char tmpNom[25]="";
-        switch(ptr->typeElement){
-            case TYPE_HUMAIN:
-                strcpy(tmpNom, ptr->getNomHumain());
-                break;
-            case TYPE_ENTREPRISE:
-                strcpy(tmpNom, ptr->getNomEntreprise());
-                break;
-        }
-        printf("| %5d  | %25s |  %d  |\n", 
-            ptr->getElementId(),
-            tmpNom, 
-            ptr->typeElement);
+void Civilisation::listeElement(int id){
+    Element *ptr = elements[id];
+    char tmpNom[25]="";
+    switch(ptr->typeElement){
+        case TYPE_HUMAIN:
+            ptr->listeHumain();
+            break;
+        case TYPE_ENTREPRISE:
+            ptr->listeEntreprise();
+            break;
     }
-    printf("+--------+---------------------------+-----+\n");
 }
 
 //-----------------------------------------
@@ -204,7 +193,8 @@ void Civilisation::listeCivilisation(void){
 //-----------------------------------------
 void Civilisation::evolutionCivilisation(void){
     Element *ptr;
-    log(LOG_DEBUG, "Civilisation::evolutionCivilisation => TODO");
+    log(LOG_DEBUG, "===================================");
+    log(LOG_DEBUG, "Civilisation::evolutionCivilisation");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
          ptr = elements[i];
          switch(ptr->typeElement){
@@ -229,4 +219,14 @@ void Civilisation::evolutionCivilisation(void){
 //-----------------------------------------
 void Civilisation::killCivilisation(void){
     log(LOG_DEBUG, "Civilisation::killCivilisation => TODO");
+}
+
+//-----------------------------------------
+//
+//          tableauDeBord
+//
+//-----------------------------------------
+void Civilisation::tableauDeBord(void){
+    log(LOG_DEBUG, "Civilisation::tableauDeBord => TODO");
+
 }

@@ -28,6 +28,7 @@
             int getPrixProduit();
             int getStockProduit();
             CompteBancaire *compteBancaireEntreprise;
+            void listeEntreprise(void);
 
         private:
             int id;

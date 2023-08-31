@@ -38,6 +38,7 @@
             int calculExpression(char *data1, char op, char *data2);
             bool execCommande(char *commande);
             CompteBancaire *compteBancaireHumain;
+            void listeHumain(void);
 
         private:
             int id;

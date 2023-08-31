@@ -22,8 +22,9 @@
             void listeCivilisation(void);
             void killCivilisation(void);
             int getCourantElementId(void);
-            void listeElements(void);
+            void listeElement(int id);
             Element *getElement(int index);
+            void tableauDeBord(void);
 
         private:
             void incElementId(void);

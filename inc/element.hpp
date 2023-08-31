@@ -34,10 +34,10 @@
             ~Element();
             Element(int id, int type);
             //void initPopulation(int id);
-            void creeHumain(int id, int sexe, char *nom);
+            //void creeHumain(int id, int sexe, char *nom);
             bool execScript(void);
             bool execScript(char *filename);
-            long getCourantId();
+            //long getCourantId();
             //void listePopulation(void);
             //void killPopulation(void);
             //void evolutionPopulation(void);
