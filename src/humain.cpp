@@ -281,4 +281,34 @@ bool Humain::execCommande(char *valeur){
 //-----------------------------------------
 void Humain::listeHumain(void){
     log(LOG_DEBUG,"Humain::listeHumain : TODO");
+    char tmp[30];
+    printf("+-------------------------------------------------+\n");
+    printf("|  donnees humain (id = %5d)                    |\n", this->id);
+    printf("+---------------+---------------------------------+\n");
+    printf("| donnee        |     valeur                      |\n");
+    printf("+---------------+---------------------------------+\n");
+    printf("| nom           |     %25s   |\n", this->nom);
+    if (this->sexe == HOMME) strcpy(tmp, "homme"); else strcpy(tmp, "femme");
+    printf("| sexe          |     %25s   |\n", tmp);
+    printf("| age           |               %15d   |\n", this->age);
+    switch(statusMarital){
+        case STATUS_MARITAL_CELIB:
+            strcpy(tmp,"celibataire");
+            break;
+        case STATUS_MARITAL_DIVOR:
+            strcpy(tmp,"divorce");
+            break;
+        case STATUS_MARITAL_MARIE:
+            strcpy(tmp,"marie");
+            break;
+        case STATUS_MARITAL_VEUF:
+            strcpy(tmp,"veuf");
+            break;
+        default:
+            strcpy(tmp,"inconnu");
+    }
+    printf("| status marital|     %25s   |\n", tmp);
+    printf("| cpt bancaire  |               %15d   |\n", this->compteBancaireHumain->getSolde());
+    printf("| epargne       |               %15d   |\n", this->compteBancaireHumain->getEpargne());
+    printf("+---------------+---------------------------------+\n");
 }
