@@ -39,6 +39,8 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
     log(LOG_DEBUG, "Entreprise::initEntreprise : debut");
     this->id = id;
     this->activite = activite;
+    this->nbCommandes = 0;
+    this->maxEmployes = 0;
     strcpy(this->nom ,nom);
     // lecture du fichier de définition de l'entreprise
     char filename[100];
@@ -93,6 +95,11 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->stock = atoi(tmp);
             //printf("stock        :  <%s> <%d>\n", tmp,this->stock);
+        } else if (strncmp(ligne, "maxEmployes", 11) == 0){
+            tmp = &ligne[11];
+            while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
+            this->maxEmployes = atoi(tmp);
+            //printf("maxEmployes  :  <%s> <%d>\n", tmp,this->maxEmployes);
         }
     }
     fclose(fic);
@@ -154,6 +161,24 @@ int Entreprise::getStockProduit(void){
 
 //-----------------------------------------
 //
+//          Entreprise::getMaxEmployes
+//
+//-----------------------------------------
+int Entreprise::getMaxEmployes(void){
+    return maxEmployes;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::getNbCommandes
+//
+//-----------------------------------------
+int Entreprise::getNbCommandes(void){
+    return nbCommandes;
+}
+
+//-----------------------------------------
+//
 //          Entreprise::getActivite
 //
 //-----------------------------------------
@@ -208,8 +233,10 @@ void Entreprise::listeEntreprise(void){
     printf("| nom           |     %25s   |\n", this->nom);
     printf("| nb Salaries   |               %15d   |\n", this->nbSalaries);
     printf("| cout/Salaries |               %15d   |\n", this->coutSalarie);
+    printf("| max Salaries  |               %15d   |\n", this->maxEmployes);
     printf("| prix Produit  |               %15d   |\n", this->prixProduit);
     printf("| stock Produit |               %15d   |\n", this->stock);
+    printf("| nb commandes  |               %15d   |\n", this->nbCommandes);
     printf("| cpt bancaire  |               %15d   |\n", this->compteBancaireEntreprise->getSolde());
     printf("| epargne       |               %15d   |\n", this->compteBancaireEntreprise->getEpargne());
     printf("+---------------+---------------------------------+\n");

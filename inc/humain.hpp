@@ -46,6 +46,8 @@
             char nom[50];
             int age;
             int statusMarital;
+            int nbEnfants;
+            int idEmployeur;    // -1 => sans emploi
     };
 
 #endif

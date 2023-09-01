@@ -24,8 +24,6 @@ Humain::Humain(){
     this->sexe = -1;
     strcpy(this->nom , "");
     this->age = -1;
-    this->statusMarital = STATUS_MARITAL_CELIB;
-    this->compteBancaireHumain = new CompteBancaire();
 }
 
 //-----------------------------------------
@@ -53,6 +51,8 @@ void Humain::initHumain(int id, int sexe, char *nom){
     strcpy(this->nom ,nom);
     this->age = 0;
     this->statusMarital = STATUS_MARITAL_CELIB;
+    this->compteBancaireHumain = new CompteBancaire();
+    this->idEmployeur = -1;
 }
 
 //-----------------------------------------

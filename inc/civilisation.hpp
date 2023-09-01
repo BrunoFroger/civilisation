@@ -10,7 +10,7 @@
 
     #include "element.hpp"
 
-    #define MAX_ELEMENTS    5
+    #define MAX_ELEMENTS    500
 
     class Civilisation{
         public:

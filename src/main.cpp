@@ -39,7 +39,7 @@ int main(int argc, char **argv){
             case '?': 
                 printf("commandes disponibles :\n");
                 printf("    h, H, ? : affichage de cette aide\n");
-                printf("    l, L [id] : affichage de la liste des éléments, ou un element specific\n");
+                printf("    l, L [id] : affichage de la liste des éléments, ou un element specifique\n");
                 printf("    q, Q : quitte le programme\n");
                 printf("    t, T : affichage du tableau de bord\n");
                 break;

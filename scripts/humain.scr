@@ -1,12 +1,16 @@
-# commentaire
-     # commenatire
-si age > 50 alors mort finsi
+# comportement générique d'un humain
 
 si age > 80 alors
-    mort
-sinon    
+    mortPossible
+finsi
+
+si (age > 20) !marie alors    
     chercheConjoint
 finsi
 
-    si age > 20 alors chercheConjoint finsi
+si (age > 20) & (age < 40) & marie alors
+    si nbEnfants <= 4
+        enfantPossible
+    finsi    
+finsi
      

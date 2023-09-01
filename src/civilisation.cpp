@@ -143,22 +143,38 @@ void Civilisation::listeElement(int id){
 //-----------------------------------------
 void Civilisation::listeCivilisation(void){
     // afichage des individus
-    printf("+---------------------------------------------------------------------------------------+\n");
-    printf("|             population  %4d individus                                                |\n", getNbHumain());
-    printf("+--------+---------------------------+-----+-------+-----+------------+-----------------+\n");
-    printf("|   id   |                       nom | sexe|  age  |celib|    capital |         epargne |\n");
-    printf("+--------+---------------------------+-----+-------+-----+------------+-----------------+\n");
+    char tmp[50];
+    printf("+----------------------------------------------------------------------------------------+\n");
+    printf("|             population  %4d individus                                                 |\n", getNbHumain());
+    printf("+--------+---------------------------+-----+-------+------+------------+-----------------+\n");
+    printf("|   id   |                       nom | sexe|  age  |status|    capital |         epargne |\n");
+    printf("+--------+---------------------------+-----+-------+------+------------+-----------------+\n");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
-        if (ptr->typeElement == TYPE_HUMAIN)
-            printf("| %5d  | %25s |  %d  | %5d |  %d  | %10d | %15d |\n", 
+        if (ptr->typeElement == TYPE_HUMAIN){
+            switch(ptr->getStatusMarital()){
+                case STATUS_MARITAL_CELIB: 
+                    strcpy(tmp, "CELI");
+                    break;
+                case STATUS_MARITAL_MARIE: 
+                    strcpy(tmp, "MARI");
+                    break;
+                case STATUS_MARITAL_VEUF: 
+                    strcpy(tmp, "VEUF");
+                    break;
+                case STATUS_MARITAL_DIVOR: 
+                    strcpy(tmp, "DIVO");
+                    break;
+            }
+            printf("| %5d  | %25s |  %d  | %5d | %4s | %10d | %15d |\n", 
                 ptr->getIdHumain(),
                 ptr->getNomHumain(), 
                 ptr->getSexe(),
                 ptr->getAge(),
-                ptr->getStatusMarital(),
+                tmp,
                 ptr->compteBancaireHumain->getSolde(),
                 ptr->compteBancaireHumain->getEpargne());
+        }
     }
     printf("+--------+---------------------------+-----+-------+-----+------------+-----------------+\n");
 
@@ -227,11 +243,72 @@ void Civilisation::killCivilisation(void){
 //-----------------------------------------
 void Civilisation::tableauDeBord(void){
     log(LOG_DEBUG, "Civilisation::tableauDeBord => TODO");
-    printf("+-------------------------------------------------------------+\n");
-    printf("|             T A B L E A U   D E   B O R D                   |\n");
-    printf("+------------------------------+------------------------------+\n");
-    printf("|         entreprises          |             humains          |\n");
-    printf("+--------------+---------------+--------------+---------------+\n");
-    printf("| nombre       |   %10d  | nombre       |   %10d  |\n", this->nbEntreprises, this->nbHumains);
-    printf("+--------------+---------------+--------------+---------------+\n");
+    Element *element;
+    int _nbHumains = 0;
+    int _nbElements =  this->nbEntreprises + this->nbHumains;
+    int _nbElementsIndefinis = 0;
+    int _nbHommes = 0;
+    int _nbFemmes = 0;
+    int _nbCelibs = 0;
+    int _nbMaries = 0;
+    int _nbVeufs = 0;
+    int _nbDivorces = 0;
+    int _nbEntreprises = 0;
+    int _nbCommerces = 0;
+    int _nbIndustries = 0;
+    int _nbAutresEntreprises = 0;
+    int _totalActifs = 0;
+    int _totalEpargne = 0;
+    for (int i = 0 ; i < getCourantElementId() ; i++){
+        printf("Civilisation::tableauDeBord => analyse de l'élément %d\n", i);
+        element = getElement(i);
+        if (element->typeElement == TYPE_HUMAIN){
+            _nbHumains++;
+            if (element->getSexe() == HOMME) _nbHommes++;
+            if (element->getSexe() == FEMME) _nbFemmes++;
+            if (element->getStatusMarital() == STATUS_MARITAL_CELIB) _nbCelibs++;
+            if (element->getStatusMarital() == STATUS_MARITAL_MARIE) _nbMaries++;
+            if (element->getStatusMarital() == STATUS_MARITAL_VEUF) _nbVeufs++;
+            if (element->getStatusMarital() == STATUS_MARITAL_DIVOR) _nbDivorces++;
+            _totalActifs += element->compteBancaireHumain->getSolde();
+            _totalEpargne += element->compteBancaireHumain->getEpargne();
+        } else if (element->typeElement == TYPE_ENTREPRISE) {
+            _nbEntreprises++;
+            _totalActifs += element->compteBancaireEntreprise->getSolde();
+            _totalEpargne += element->compteBancaireEntreprise->getEpargne();
+            switch(element->getActivite()){
+                case ACTIVITE_COMMERCE:
+                    _nbCommerces++;
+                    break;
+                case ACTIVITE_INDUSTRIE:
+                    _nbIndustries++;
+                    break;
+                default:
+                    _nbAutresEntreprises++;
+                    break;
+            }
+        }
+    }
+
+    printf("+-------------------------------------------------------------------------------------------------------------+\n");
+    printf("|                                       T A B L E A U   D E   B O R D                                         |\n");
+    printf("+-------------------------------------------------------------------------------------------------------------+\n");
+    printf("|  constantes   MAX Elements = %5d   MAX Humains = %5d                                                    |\n", MAX_ELEMENTS, MAX_HUMAIN);
+    printf("|               nombres d'éléménts = %5d                                                                    |\n", _nbElements);
+    printf("|               types Elements = INDEFINI/HUMAIN/ENTREPRISE                                                   |\n");
+    printf("|               types Humain = HOMME/FEMME/INDUSTRIE                                                          |\n");
+    printf("|               types status marital = CELIBATAIRE/MARIE/VEUF/DIVORCE                                         |\n");
+    printf("|               types Entreprises = INCONNUE/COMMERCE/INDUSTRIE                                               |\n");
+    printf("+-----------------------------------++-----------------------------------++-----------------------------------+\n");
+    printf("|               humains             ||            entreprises            ||          comptes banquaires       |\n");
+    //printf("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\n"); 
+    printf("+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
+    printf("| %15s | %15d || %15s | %15d || %15s | %15d |\n","nombre", _nbHumains, "nombre", _nbEntreprises, "nombre", _nbElements);
+    printf("| %15s | %15d || %15s | %15d || %15s | %15d |\n","nb hommes", _nbHommes, "nb commerces", _nbCommerces, "total actifs", _totalActifs);
+    printf("| %15s | %15d || %15s | %15d || %15s | %15d |\n","nb femmes", _nbFemmes, "nb industries", _nbIndustries, "total epargne", _totalEpargne);
+    printf("| %15s | %15d || %15s | %15d || %15s | %15s |\n","nb celib", _nbCelibs, "nb autres", _nbAutresEntreprises, "", "");
+    printf("| %15s | %15d || %15s | %15d || %15s | %15s |\n","nb marie", _nbMaries, "max employes", MAX_EMPLOYES, "", "");
+    printf("| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb divorce", _nbDivorces, "", "", "", "");
+    printf("| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb veuf", _nbVeufs, "", "", "", "");
+    printf("+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
 }

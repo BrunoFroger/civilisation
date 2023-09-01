@@ -13,7 +13,7 @@
     #include "entreprise.hpp"
     #include "tools.hpp"
 
-    #define MAX_HUMAIN  3
+    #define MAX_HUMAIN  300
 
     #define TYPE_INDEFINI   0
     #define TYPE_HUMAIN     1

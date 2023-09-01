@@ -13,6 +13,8 @@
     #define ACTIVITE_COMMERCE   1
     #define ACTIVITE_INDUSTRIE  2
 
+    #define MAX_EMPLOYES    25
+
     class Entreprise{
         public:
             Entreprise();
@@ -27,6 +29,8 @@
             int getCoutProduit();
             int getPrixProduit();
             int getStockProduit();
+            int getMaxEmployes(void);
+            int getNbCommandes(void);
             CompteBancaire *compteBancaireEntreprise;
             void listeEntreprise(void);
 
@@ -39,6 +43,9 @@
             int coutProduit;
             int prixProduit;
             int stock;
+            int nbCommandes;
+            int maxEmployes;
+            int listeEmployes[MAX_EMPLOYES];
     };
 
 #endif

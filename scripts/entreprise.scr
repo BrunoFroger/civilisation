@@ -1,0 +1,6 @@
+
+si nbCommande > stock alors produire
+
+si nbCommande = 0 alors debaucher
+
+nb nbCommande > (stock * 2) alors embaucher
