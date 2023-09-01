@@ -92,7 +92,7 @@ Element *Civilisation::getElement(int index){
 //          creeElementHumain
 //
 //-----------------------------------------
-void Civilisation::creeElementHumain(int sexe, char *nom){
+int Civilisation::creeElementHumain(int sexe, char *nom){
     log(LOG_DEBUG, "Civilisation::creeElementHumain(int sexe, char *nom) => (id=%d) %d, %s", courantElementId, sexe, nom);
     Element *tmpElement = this->elements[courantElementId];
     tmpElement->initHumain(courantElementId, sexe, nom);
@@ -100,6 +100,7 @@ void Civilisation::creeElementHumain(int sexe, char *nom){
     tmpElement->setElementId(courantElementId);
     incElementId();
     this->nbHumains++;
+    return tmpElement->getElementId();
 }
 
 //-----------------------------------------
@@ -107,7 +108,7 @@ void Civilisation::creeElementHumain(int sexe, char *nom){
 //          creeElementEntreprise
 //
 //-----------------------------------------
-void Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
+int Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
     log(LOG_DEBUG, "Civilisation::creeElementEntreprise(int activite, char *nom) => (id=%d) %d, %s", courantElementId, activite, nom);
     Element *tmpElement = this->elements[courantElementId];
     tmpElement->initEntreprise(courantElementId, activite, nom, capital);
@@ -116,6 +117,7 @@ void Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
     tmpElement->compteBancaireEntreprise->credite(capital);
     incElementId();
     this->nbEntreprises++;
+    return tmpElement->getElementId();
 }
 
 

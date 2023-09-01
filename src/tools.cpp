@@ -32,7 +32,6 @@ void remove_extra_spaces(char* str) {
     str[j] = '\0';
 }
 
-
 //-----------------------------------------
 //
 //          evaluationExpressionInt

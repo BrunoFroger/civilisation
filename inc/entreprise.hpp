@@ -8,6 +8,7 @@
 #define __ENTREPRISE__
 
     #include "../inc/compteBancaire.hpp"
+    #include "../inc/humain.hpp"
 
     #define ACTIVITE_INCONNUE   0
     #define ACTIVITE_COMMERCE   1
@@ -33,6 +34,7 @@
             int getNbCommandes(void);
             CompteBancaire *compteBancaireEntreprise;
             void listeEntreprise(void);
+            bool verseSalaire(int salaire, Humain *salarie);
 
         private:
             int id;

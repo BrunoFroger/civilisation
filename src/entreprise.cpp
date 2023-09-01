@@ -197,6 +197,21 @@ char *Entreprise::getNomEntreprise(void){
 
 //-----------------------------------------
 //
+//          Entreprise::verseSalaire
+//
+//-----------------------------------------
+bool Entreprise::verseSalaire(int salaire, Humain *salarie){
+    if (compteBancaireEntreprise->getSolde() < salaire){
+        printf("errreur : l'entreprise n'a pas asssez de fond pour payer le salaire\n");
+        return false;
+    }
+    salarie->compteBancaireHumain->credite(salaire);
+    this->compteBancaireEntreprise->debite(salaire);
+    return true;
+}
+
+//-----------------------------------------
+//
 //          Entreprise::evolution
 //
 //-----------------------------------------

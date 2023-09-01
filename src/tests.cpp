@@ -453,37 +453,60 @@ void executeTests(int mode){
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
         log(LOG_DEBUG, "-----------------------------------------------------");
         Civilisation civilisation;
-        Element *element;
+        Element *elementEntreprise, *elementHumain;
         bool res;
-        int id;
+        int idEntreprise, idSalarie;
 
         // test creation entreprise avec fichier de configuration spécifique
         res = true;
-        id = civilisation.getCourantElementId();
-        civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
-        printf("creation entreprise id : %d\n", id);
-        element = civilisation.getElement(id);
-        res &= (strcmp(element->getNomEntreprise(), (char *)"au bon pain") == 0);
-        res &= (element->getNbSalaries() == 5);
-        res &= (element->getCoutSalaries() == 100);
-        res &= (element->getCoutProduit() == 5);
-        res &= (element->getPrixProduit() == 10);
-        res &= (element->getStockProduit() == 20);
+        idEntreprise = civilisation.getCourantElementId();
+        idEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
+        printf("creation entreprise id : %d\n", idEntreprise);
+        elementEntreprise = civilisation.getElement(idEntreprise);
+        res &= (strcmp(elementEntreprise->getNomEntreprise(), (char *)"au bon pain") == 0);
+        //printf("res = %d\n", res);
+        res &= (elementEntreprise->getNbSalaries() == 2);
+        //printf("res = %d\n", res);
+        res &= (elementEntreprise->getCoutSalaries() == 100);
+        //printf("res = %d\n", res);
+        res &= (elementEntreprise->getCoutProduit() == 5);
+        //printf("res = %d\n", res);
+        res &= (elementEntreprise->getPrixProduit() == 10);
+        //printf("res = %d\n", res);
+        res &= (elementEntreprise->getStockProduit() == 20);
+        //printf("res = %d\n", res);
+        res &= (elementEntreprise->getMaxEmployes() == 5);
+        //printf("res = %d\n", res);
         resultatTest(res);
 
         // test creation entreprise avec fichier de configuration par default
         res = true;
-        id = civilisation.getCourantElementId();
+        idEntreprise = civilisation.getCourantElementId();
         civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000);
-        printf("creation entreprise id : %d\n", id);
-        element = civilisation.getElement(id);
-        res &= (strcmp(element->getNomEntreprise(), (char *)"entreprise par default") == 0);
-        res &= (element->getNbSalaries() == 0);
-        res &= (element->getCoutSalaries() == 100);
-        res &= (element->getCoutProduit() == 5);
-        res &= (element->getPrixProduit() == 10);
-        res &= (element->getStockProduit() == 0);
+        printf("creation entreprise id : %d\n", idEntreprise);
+        elementEntreprise = civilisation.getElement(idEntreprise);
+        res &= (strcmp(elementEntreprise->getNomEntreprise(), (char *)"entreprise par default") == 0);
+        res &= (elementEntreprise->getNbSalaries() == 0);
+        res &= (elementEntreprise->getCoutSalaries() == 100);
+        res &= (elementEntreprise->getCoutProduit() == 5);
+        res &= (elementEntreprise->getPrixProduit() == 10);
+        res &= (elementEntreprise->getStockProduit() == 0);
         resultatTest(res);
+
+        // test versement de salaire
+        idSalarie = civilisation.creeElementHumain(HOMME, (char *)"Adam");
+        elementHumain = civilisation.getElement(idSalarie);
+        int ancienSoldeHumain, ancienSoldeEntreprise, soldeAttendu;
+        int salaire = 100;
+        ancienSoldeHumain = elementHumain->compteBancaireHumain->getSolde();
+        ancienSoldeEntreprise = elementEntreprise->compteBancaireEntreprise->getSolde();
+        soldeAttendu = ancienSoldeHumain + salaire;
+        elementEntreprise->verseSalaire(salaire, elementHumain);
+        //printf("ancien solde = %d ; salaire = %d ; nouveau solde = %d\n", ancienSolde, salaire, nouveauSolde);
+        resultatTest(soldeAttendu == elementHumain->compteBancaireHumain->getSolde());
+        soldeAttendu = ancienSoldeEntreprise - salaire;
+        //printf("ancien solde = %d ; salaire = %d ; nouveau solde = %d\n", ancienSoldeEntreprise, salaire, soldeAttendu);
+        resultatTest(soldeAttendu == elementEntreprise->compteBancaireEntreprise->getSolde());
 
         bilanTestsRubrique(rubrique);
     }
