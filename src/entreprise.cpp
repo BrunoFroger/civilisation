@@ -107,6 +107,24 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
 
 //-----------------------------------------
 //
+//          Entreprise::commande
+//
+//-----------------------------------------
+void Entreprise::commande(Humain *humain){
+    log(LOG_DEBUG, "Civilisation::commande => TODO");
+}
+
+//-----------------------------------------
+//
+//          Entreprise::livraison
+//
+//-----------------------------------------
+void Entreprise::livraison(Humain *humain){
+    log(LOG_DEBUG, "Civilisation::commande => TODO");
+}
+
+//-----------------------------------------
+//
 //          Entreprise::getId
 //
 //-----------------------------------------

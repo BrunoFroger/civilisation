@@ -8,6 +8,7 @@
 #define __HUMAIN__
 
     #include "../inc/compteBancaire.hpp"
+    #include "../inc/entreprise.hpp"
 
     #define HOMME   0
     #define FEMME   1
@@ -39,6 +40,7 @@
             bool execCommande(char *commande);
             CompteBancaire *compteBancaireHumain;
             void listeHumain(void);
+            void acheteProduit(Entreprise *entreprise);
 
         private:
             int id;

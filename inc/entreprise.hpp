@@ -35,6 +35,8 @@
             CompteBancaire *compteBancaireEntreprise;
             void listeEntreprise(void);
             bool verseSalaire(int salaire, Humain *salarie);
+            //void commande(Humain *humain);
+            //void livraison(Humain *humain);
 
         private:
             int id;
