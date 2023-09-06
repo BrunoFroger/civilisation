@@ -38,6 +38,8 @@ bool exec_humain=false;
 bool exec_entreprise=false;
 bool exec_tools=false;
 bool exec_banque=false;
+bool stopOnFail = false;
+
 structResultatTest tableauresultatsTests[NB_RUBRIQUES];
 
 //-----------------------------------------
@@ -100,6 +102,7 @@ bool resultatTest(bool status){
         printf("    Test KO \n");
         nbKO++;
         nbKORubrique++;
+        if (stopOnFail) exit(-1);
     }
     return status;
 }
@@ -379,7 +382,7 @@ void executeTests(int mode){
         Civilisation civilisation;
         resultatTest((civilisation.getCourantElementId() == 0));
         log(LOG_DEBUG, "test de creation d'un element humain");
-        civilisation.creeElementHumain(HOMME, (char *)"Marcel");
+        civilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
         resultatTest(strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomHumain(), "Marcel") == 0);
         log(LOG_DEBUG, "test de creation d'un element entreprise");
         civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
@@ -400,7 +403,7 @@ void executeTests(int mode){
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
         log(LOG_DEBUG, "-----------------------------------------------------");
         Element element;
-        element.initHumain(10, FEMME, (char *)"eve");
+        element.initHumain(10, FEMME, (char *)"eve", 1000);
         bool res = true;
         printf("res %d init \n", res);
         res = (element.getIdHumain() == 10);
@@ -424,7 +427,7 @@ void executeTests(int mode){
         Civilisation civilisation;
 
         log(LOG_DEBUG, "test creation humain");
-        Humain humain(0,HOMME, (char *)"adam");
+        Humain humain(0,HOMME, (char *)"adam", 1000);
         resultatTest(humain.getAge() == 0);
         resultatTest(strcmp(humain.getNomHumain(), "adam") == 0);
 
@@ -433,8 +436,7 @@ void executeTests(int mode){
         resultatTest(humain.getAge() == 1);
 
         log(LOG_DEBUG, "test fonction liste de commandes valide");
-        resultatTest(humain.testSiCommandeValide((char *)"mort"));
-        resultatTest(humain.testSiCommandeValide((char *)"ecole"));
+        resultatTest(humain.testSiCommandeValide((char *)"mortPossible"));
         resultatTest(!humain.testSiCommandeValide((char *)"sdfqsdfqdf"));
         resultatTest(humain.calculExpression((char *)"20", '+', (char *)"10") == 30);
         resultatTest(!(humain.calculExpression((char *)"20", '+', (char *)"20") == 30));
@@ -442,6 +444,14 @@ void executeTests(int mode){
         resultatTest(humain.calculExpression((char *)"20", '/', (char *)"10") == 2);
         resultatTest(humain.calculExpression((char *)"20", '-', (char *)"10") == 10);
         resultatTest(humain.calculExpression((char *)"age", '+', (char *)"10") == 11);
+
+        log(LOG_DEBUG, "test execution commandes");
+        resultatTest(humain.execCommande((char *)"mortPossible"));
+        resultatTest(!humain.execCommande((char *)"toto"));
+        resultatTest(!(humain.getStatusMarital() == STATUS_MARITAL_DECES));
+        for (int i = 0 ; i < 100 ; i++) humain.evolutionHumain();
+        humain.execCommande((char *)"mortPossible");
+        resultatTest(humain.getStatusMarital() == STATUS_MARITAL_DECES);
 
         bilanTestsRubrique(rubrique);
     }
@@ -498,7 +508,7 @@ void executeTests(int mode){
         resultatTest(res);
 
         // test versement de salaire
-        idSalarie = civilisation.creeElementHumain(HOMME, (char *)"Adam");
+        idSalarie = civilisation.creeElementHumain(HOMME, (char *)"Adam", 1000);
         elementHumain = civilisation.getElement(idSalarie);
         int ancienSoldeHumain, ancienSoldeEntreprise, soldeAttendu;
         int salaire = 100;
@@ -537,14 +547,12 @@ void executeTests(int mode){
 
         CompteBancaire cpt;
         resultatTest(cpt.getSolde() == 0);
-        cpt.credite(100);
+        cpt.initCompteBancaire(100);
         resultatTest(cpt.getSolde() == 100);
         cpt.sauveEpargne(50);
         resultatTest((cpt.getSolde() == 50) && (cpt.getEpargne() == 50));
         cpt.restitueEpargne(25);
         resultatTest((cpt.getSolde() == 75) && (cpt.getEpargne() == 25));
-        cpt.debite(50);
-        resultatTest(cpt.getSolde() == 25);
 
         CompteBancaire cpt1(1000);
         resultatTest(cpt1.getSolde() == 1000);

@@ -92,10 +92,10 @@ Element *Civilisation::getElement(int index){
 //          creeElementHumain
 //
 //-----------------------------------------
-int Civilisation::creeElementHumain(int sexe, char *nom){
+int Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
     log(LOG_DEBUG, "Civilisation::creeElementHumain(int sexe, char *nom) => (id=%d) %d, %s", courantElementId, sexe, nom);
     Element *tmpElement = this->elements[courantElementId];
-    tmpElement->initHumain(courantElementId, sexe, nom);
+    tmpElement->initHumain(courantElementId, sexe, nom, capitalInitial);
     tmpElement->typeElement=TYPE_HUMAIN;
     tmpElement->setElementId(courantElementId);
     incElementId();
@@ -114,7 +114,6 @@ int Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
     tmpElement->initEntreprise(courantElementId, activite, nom, capital);
     tmpElement->typeElement=TYPE_ENTREPRISE;
     tmpElement->setElementId(courantElementId);
-    tmpElement->compteBancaireEntreprise->credite(capital);
     incElementId();
     this->nbEntreprises++;
     return tmpElement->getElementId();

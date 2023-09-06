@@ -15,7 +15,7 @@
 //
 //-----------------------------------------
 CompteBancaire::CompteBancaire(int CapitalInitial){
-    solde = CapitalInitial;
+    initCompteBancaire(CapitalInitial);
 }
 
 //-----------------------------------------
@@ -25,6 +25,15 @@ CompteBancaire::CompteBancaire(int CapitalInitial){
 //-----------------------------------------
 CompteBancaire::CompteBancaire(){
     CompteBancaire(0);
+}
+
+//-----------------------------------------
+//
+//          initCompteBancaire
+//
+//-----------------------------------------
+void CompteBancaire::initCompteBancaire(int CapitalInitial){
+    solde = CapitalInitial;
 }
 
 //-----------------------------------------

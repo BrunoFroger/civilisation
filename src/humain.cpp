@@ -11,8 +11,10 @@
 #include "../inc/log.hpp"
 #include "../inc/element.hpp"
 
-#define NB_COMMANDES_VALIDES    4
-char listeCommandes[20][20]= {"mort", "chercheConjoint", "ecole", "naissancePossible"};
+
+char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible"};
+char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital"};
+
 
 //-----------------------------------------
 //
@@ -31,11 +33,11 @@ Humain::Humain(){
 //          Humain::Humain
 //
 //-----------------------------------------
-Humain::Humain(int id, int sexe, char *nom){
+Humain::Humain(int id, int sexe, char *nom, int capitalInitial){
     /*
     //log(LOG_INFO, "Humain::initHumain : debut");
     */
-   initHumain(id, sexe, nom);
+   initHumain(id, sexe, nom, capitalInitial);
     //log(LOG_INFO, "Humain::initHumain : fin");
 }
 
@@ -44,14 +46,14 @@ Humain::Humain(int id, int sexe, char *nom){
 //          Humain::initHumain
 //
 //-----------------------------------------
-void Humain::initHumain(int id, int sexe, char *nom){
+void Humain::initHumain(int id, int sexe, char *nom, int capitalInitial){
     log(LOG_DEBUG, "Humain::initHumain : debut");
     this->id = id;
     this->sexe = sexe;
     strcpy(this->nom ,nom);
     this->age = 0;
     this->statusMarital = STATUS_MARITAL_CELIB;
-    this->compteBancaireHumain = new CompteBancaire();
+    this->compteBancaireHumain = new CompteBancaire(capitalInitial);
     this->idEmployeur = -1;
 }
 
@@ -135,10 +137,21 @@ int Humain::getStatusMarital(void){
 //-----------------------------------------
 bool Humain::isVariable(char *valeur){
     //printf("isvariable : test de la variable %s\n", valeur);
-    if (strcmp(valeur, "sexe") == 0) return true;
-    if (strcmp(valeur, "nom") == 0) return true;
-    if (strcmp(valeur, "age") == 0) return true;
-    if (strcmp(valeur, "celibataire") == 0) return true;
+    char *tmp;
+
+    log(LOG_DEBUG, "TODO : a finir de developper");
+    for (int i = 0 ; i < NB_VARIABLE_HUMAIN ; i++){
+        tmp = listeVariablesHumain[i];
+        if (strcmp(tmp, valeur) == 0) {
+            return true;
+        } else {
+            log(LOG_ERROR, "commande <%s> inconnue", valeur);
+        }
+    }
+    //if (strcmp(valeur, "sexe") == 0) return true;
+    //if (strcmp(valeur, "nom") == 0) return true;
+    //if (strcmp(valeur, "age") == 0) return true;
+    //if (strcmp(valeur, "celibataire") == 0) return true;
     //printf("isVariable : return false \n");
     return false;
 }
@@ -223,16 +236,16 @@ int Humain::calculExpression(char *data1, char op, char *data2){
 //-----------------------------------------
 bool Humain::testSiCommandeValide(char *valeur){
     //printf("test si commande '%s' valide\n", valeur);
-    for (int i = 0 ; i < NB_COMMANDES_VALIDES ; i++){
-        if (strcmp(valeur, listeCommandes[i]) == 0) return true;
+    for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
+        //printf("comparaison avec %s : ", listeCommandesHumain[i]);
+        if (strcmp(valeur, listeCommandesHumain[i]) == 0) {
+            //printf("OK\n");
+            return true;
+        } else {
+            //printf("NOK\n");
+        }
     }
     return false;
-    /*
-    if (strcmp(valeur, "mort") == 0) return true;
-    if (strcmp(valeur, "chercheConjoint") == 0) return true;
-    if (strcmp(valeur, "ecole") == 0) return true;
-    if (strcmp(valeur, "naissancePossible") == 0) return true;
-    return false;*/
 }
 
 //-----------------------------------------
@@ -266,11 +279,72 @@ bool Humain::testSiListeCommandeValide(char *valeur){
 
 //-----------------------------------------
 //
+//          Humain::mortPossible
+//
+//-----------------------------------------
+void Humain::mortPossible(void){
+    printf("Humain::mortPossible => TODO a finir\n");
+    double rnd = rand() % 100;
+    printf(" rnd = %3.0f\n", rnd);
+    rnd *= age;
+    printf(" rnd * age = %3.0f\n", rnd);
+    if (rnd > 70){
+        printf("mort de %s \n", nom);
+        statusMarital = STATUS_MARITAL_DECES;
+    }
+}
+
+//-----------------------------------------
+//
+//          Humain::chercheConjoint
+//
+//-----------------------------------------
+void Humain::chercheConjoint(void){
+    printf("Humain::ecole => TODO\n");
+}
+
+//-----------------------------------------
+//
+//          Humain::naissancePossible
+//
+//-----------------------------------------
+void Humain::naissancePossible(void){
+    printf("Humain::naissancePossible => TODO a finir\n");
+    double rnd = rand();
+    if ((age > 20) && (age < 50))
+    if (rnd > 0.7){
+        printf("naissance pour %s\n", nom);
+    }
+}
+
+//-----------------------------------------
+//
 //          Humain::execCommande
 //
 //-----------------------------------------
 bool Humain::execCommande(char *valeur){
-    log(LOG_DEBUG,"Humain::execCommande : TODO");
+    log(LOG_DEBUG,"Humain::execCommande <%s> : TODO", valeur);
+    for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
+        if (strcmp(listeCommandesHumain[i], valeur) == 0){
+            switch(i){ 
+                case 0: // mortPossible
+                    mortPossible();
+                    return true;
+                    break;
+                case 1: // chercheConjoint
+                    chercheConjoint();
+                    return true;
+                    break;
+                case 2: // naissancePossible
+                    naissancePossible();
+                    return true;
+                    break;
+            }
+            break;
+        } 
+    }
+    log(LOG_ERROR, "commande <%s> inconnue", valeur);
+
     return false;
 }
 

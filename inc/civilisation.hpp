@@ -16,7 +16,7 @@
         public:
             Civilisation();
             ~Civilisation();
-            int creeElementHumain(int sexe, char *nom);
+            int creeElementHumain(int sexe, char *nom, int capitalInitial);
             int creeElementEntreprise(int activite, char *nom, int capitalInitial);
             void evolutionCivilisation(void);
             void listeCivilisation(void);

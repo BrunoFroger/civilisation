@@ -16,6 +16,7 @@
     #define TEST_MODE_TOOL  6
     #define TEST_MODE_BANK  7
 
+    extern bool stopOnFail;
     extern void executeTests(int mode);
 
 #endif

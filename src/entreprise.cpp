@@ -47,6 +47,7 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
     char repertoire[50] = "scripts/entreprises";
     char ligne[100];
     char *tmp;
+    compteBancaireEntreprise = new CompteBancaire(capitalInitial);
     sprintf(filename, "%s/%s", repertoire, nom);
     FILE *fic;
     fic = fopen(filename, "r");
@@ -267,9 +268,6 @@ bool Entreprise::verseSalaire(int salaire, Humain *salarie){
         printf("errreur : l'entreprise n'a pas asssez de fond pour payer le salaire\n");
         return false;
     }
-    /*
-    salarie->compteBancaireHumain->credite(salaire);
-    this->compteBancaireEntreprise->debite(salaire);*/
     this->compteBancaireEntreprise->virement(salarie->compteBancaireHumain, salaire);
     return true;
 }

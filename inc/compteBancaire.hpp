@@ -12,8 +12,7 @@
         public:
             CompteBancaire();
             CompteBancaire(int capitalInitial);
-            bool credite(int valeur);
-            bool debite(int valeur);
+            void initCompteBancaire(int capitalInitial);
             int getSolde(void);
             int getEpargne(void);
             bool sauveEpargne(int valeur);
@@ -23,6 +22,8 @@
         private:
             int solde;
             long epargne;
+            bool debite(int valeur);
+            bool credite(int valeur);
     };
 
 #endif

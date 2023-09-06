@@ -12,18 +12,24 @@
     #define HOMME   0
     #define FEMME   1
 
+    #define MAX_ENFANTS 10
+
     #define STATUS_MARITAL_CELIB    0
     #define STATUS_MARITAL_MARIE    1
     #define STATUS_MARITAL_VEUF     2
     #define STATUS_MARITAL_DIVOR    3
+    #define STATUS_MARITAL_DECES    4
 
+    #define NB_COMMANDES_HUMAIN     4
+    #define NB_VARIABLE_HUMAIN      4
     class Entreprise;
+
 
     class Humain{
         public:
             Humain();
-            Humain(int id, int sexe, char *nom);
-            void initHumain(int id, int sexe, char *nom);
+            Humain(int id, int sexe, char *nom, int capitalInitial);
+            void initHumain(int id, int sexe, char *nom, int capitalInitial);
             void evolutionHumain(void);
             int getIdHumain();
             char *getNomHumain();
@@ -51,6 +57,11 @@
             int statusMarital;
             int nbEnfants;
             int idEmployeur;    // -1 => sans emploi
+            void mortPossible(void);
+            void chercheConjoint(void);
+            void naissancePossible(void);
+            Humain *conjoint;
+            Humain *enfants[MAX_ENFANTS];
     };
 
 #endif

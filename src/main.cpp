@@ -24,8 +24,8 @@ int main(int argc, char **argv){
         exit (1);
     }
 
-    civilisation.creeElementHumain(HOMME, (char *)"adam");
-    civilisation.creeElementHumain(FEMME, (char *)"eve");
+    civilisation.creeElementHumain(HOMME, (char *)"adam", 1000);
+    civilisation.creeElementHumain(FEMME, (char *)"eve", 1000);
     civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
 
     while (1){
