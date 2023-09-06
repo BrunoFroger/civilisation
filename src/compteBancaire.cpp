@@ -66,3 +66,40 @@ bool CompteBancaire::debite(int valeur){
     solde -= valeur;
     return true;
 }
+
+//-----------------------------------------
+//
+//          sauveEpargne
+//
+//-----------------------------------------
+bool CompteBancaire::sauveEpargne(int valeur){
+    if ((solde - valeur) < 0) return false;
+    solde -= valeur;
+    epargne += valeur;
+    return true;
+}
+
+//-----------------------------------------
+//
+//          restitueEpargne
+//
+//-----------------------------------------
+bool CompteBancaire::restitueEpargne(int valeur){
+    if ((epargne - valeur) < 0) return false;
+    solde += valeur;
+    epargne -= valeur;
+    return true;
+}
+
+//-----------------------------------------
+//
+//          virement
+//
+//-----------------------------------------
+bool CompteBancaire::virement(CompteBancaire *destinataire, int valeur){
+    if (valeur < 0) return false;
+    if ((solde - valeur) < 0) return false;
+    debite(valeur);
+    destinataire->credite(valeur);
+    return true;
+}

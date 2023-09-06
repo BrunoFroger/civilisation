@@ -36,7 +36,7 @@ Civilisation::Civilisation(){
 //
 //-----------------------------------------
 Civilisation::~Civilisation(){
-    log(LOG_INFO, "Civilisation::~Civilisation");
+    //log(LOG_INFO, "Civilisation::~Civilisation");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         delete this->elements[i];
     }
@@ -289,6 +289,8 @@ void Civilisation::tableauDeBord(void){
                     _nbAutresEntreprises++;
                     break;
             }
+        } else {
+            _nbElementsIndefinis++;
         }
     }
 

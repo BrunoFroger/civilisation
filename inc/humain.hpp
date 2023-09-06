@@ -8,7 +8,6 @@
 #define __HUMAIN__
 
     #include "../inc/compteBancaire.hpp"
-    #include "../inc/entreprise.hpp"
 
     #define HOMME   0
     #define FEMME   1
@@ -17,6 +16,8 @@
     #define STATUS_MARITAL_MARIE    1
     #define STATUS_MARITAL_VEUF     2
     #define STATUS_MARITAL_DIVOR    3
+
+    class Entreprise;
 
     class Humain{
         public:

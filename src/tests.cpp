@@ -421,13 +421,17 @@ void executeTests(int mode){
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
         log(LOG_DEBUG, "-----------------------------------------------------");
+        Civilisation civilisation;
+
         log(LOG_DEBUG, "test creation humain");
         Humain humain(0,HOMME, (char *)"adam");
         resultatTest(humain.getAge() == 0);
         resultatTest(strcmp(humain.getNomHumain(), "adam") == 0);
+
         log(LOG_DEBUG, "test evolution age");
         humain.evolutionHumain();
         resultatTest(humain.getAge() == 1);
+
         log(LOG_DEBUG, "test fonction liste de commandes valide");
         resultatTest(humain.testSiCommandeValide((char *)"mort"));
         resultatTest(humain.testSiCommandeValide((char *)"ecole"));
@@ -508,6 +512,15 @@ void executeTests(int mode){
         //printf("ancien solde = %d ; salaire = %d ; nouveau solde = %d\n", ancienSoldeEntreprise, salaire, soldeAttendu);
         resultatTest(soldeAttendu == elementEntreprise->compteBancaireEntreprise->getSolde());
 
+
+        // test commande/livraison de produit
+        elementEntreprise->creeCommande(elementHumain, 1);
+        resultatTest(elementEntreprise->getNbCommandes() == 1);
+        elementEntreprise->creeCommande(elementHumain, 1);
+        resultatTest(elementEntreprise->getNbCommandes() == 2);
+        elementEntreprise->livraison(elementHumain);
+        resultatTest(elementEntreprise->getNbCommandes() == 1);
+
         bilanTestsRubrique(rubrique);
     }
 
@@ -522,114 +535,31 @@ void executeTests(int mode){
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
         log(LOG_DEBUG, "-----------------------------------------------------");
 
+        CompteBancaire cpt;
+        resultatTest(cpt.getSolde() == 0);
+        cpt.credite(100);
+        resultatTest(cpt.getSolde() == 100);
+        cpt.sauveEpargne(50);
+        resultatTest((cpt.getSolde() == 50) && (cpt.getEpargne() == 50));
+        cpt.restitueEpargne(25);
+        resultatTest((cpt.getSolde() == 75) && (cpt.getEpargne() == 25));
+        cpt.debite(50);
+        resultatTest(cpt.getSolde() == 25);
+
+        CompteBancaire cpt1(1000);
+        resultatTest(cpt1.getSolde() == 1000);
+
+        // test creation de compte initialisé
+        CompteBancaire cpt2(100);
+        cpt1.virement(&cpt2, 500);
+        resultatTest((cpt1.getSolde() == 500) && (cpt2.getSolde() == 600));
+
+        // test virement négatif impossible
+        resultatTest( ! cpt1.virement(&cpt2, -100));
+
         bilanTestsRubrique(rubrique);
     }
 
     bilanTests();
 
-/*
-    //=======================================
-    //
-    //         tests fonctions tools
-    //
-    //=======================================
-    // tests de l'analyse de scripts
-    if (0 || exec_all){
-        printf("-----------------------------\n");
-        printf("analyse de scripts\n");
-        printf("-----------------------------\n");
-        printf("execution du tests du script testIfOK1.scr\n");
-        resultatTest(elementHumain.execScript((char *)"scripts/testIfOK1.scr"));
-        printf("-----------------------------\n");
-        printf("execution du tests du script testIfOK2.scr\n");
-        resultatTest(elementHumain.execScript((char *)"scripts/testIfOK2.scr"));
-        printf("-----------------------------\n");
-        printf("execution du tests du script testIfOK3.scr\n");
-        resultatTest(elementHumain.execScript((char *)"scripts/testIfOK3.scr"));
-        printf("-----------------------------\n");
-    }
-    if (0 || exec_all){ // tests de si
-        printf("-----------------------------\n");
-        printf("test decompose si\n");
-        FILE *fic;
-        char *tmp;
-        fic = fopen("scripts/testIfKO.scr", "r");
-        while (!feof(fic)){
-            fgets(ligne, 200, fic);
-            //printf("ligne lue '%s'\n", ligne);
-            tmp = &ligne[0];
-            if ( tmp[strlen(tmp) - 1] == '\n'){ // suppr RC en fin de ligne
-                //printf("ligne avec retour chariot on le supprime\n");
-                tmp[strlen(tmp) - 1] = '\0';
-            }
-             while (*tmp == ' ') tmp++;  // suppression des blancs en debut de ligne
-            if (strlen(tmp) == 0) continue;
-            if (ligne[0] == '#') continue;
-
-            printf("decomposition de la ligne '%s'\n", tmp);
-            if (resultatTest(!elementHumain.decomposeSi(fic, tmp, &resultat))){
-                printf("expression1         : '%s'\n", resultat.expression);
-                printf("listeCommandeSiVrai : '%s'\n", resultat.ListeCommandeSiVrai);
-                printf("listeCommandeSiFaux : '%s'\n", resultat.ListeCommandeSiFaux);
-            }
-        }
-        
-        printf("-----------------------------\n");
-        strcpy(ligne, "si   age   ");
-        printf("analyse d'une ligne erronee '%s'\n", ligne);
-        resultatTest(!elementHumain.decomposeSi(fic, ligne, &resultat));
-    }
-
-    if (1 || exec_all){ // tests decompose expression
-        printf("-----------------------------\n");
-        printf("tests de decomposition d'expressions\n");
-        char expression[500];
-        bool res;
-        structExpression resultat;
-        strcpy(resultat.item1,"");
-        strcpy(resultat.opTest,"");
-        strcpy(resultat.item2,"");
-        
-        strcpy(expression, "  (age + 20)  =  (40 - 20)  ");
-        elementHumain.decomposeExpression(expression, &resultat);
-        res = (strcmp(resultat.item1, "20") == 0);
-        res &= (strcmp(resultat.opTest, "=") == 0);
-        res &= (strcmp(resultat.item2, "20") == 0);
-        resultatTest(res);
-        
-        
-        strcpy(expression, "  age  =  0  ");
-        elementHumain.decomposeExpression(expression, &resultat);
-        res = (strcmp(resultat.item1, "0") == 0);
-        res &= (strcmp(resultat.opTest, "=") == 0);
-        res &= (strcmp(resultat.item2, "0") == 0);
-        res &= elementHumain.evaluationExpressionInt(atoi(resultat.item1), resultat.opTest, atoi(resultat.item2));
-        resultatTest(res);
-        
-        strcpy(expression, "  (age - 20)  =  (age - 10)  ");
-        elementHumain.decomposeExpression(expression, &resultat);
-        res = (strcmp(resultat.item1, "age - 20") == 0);
-        res &= (strcmp(resultat.opTest, "=") == 0);
-        res &= (strcmp(resultat.item2, "age - 10") == 0);
-        resultatTest(res);
-    }
-
-    if (0 || exec_all){ // tests execScript Humain
-        printf("-----------------------------\n");
-        printf("tests script humain.scr\n");
-        Humain humain;
-        humain.initHumain(10, 0, "marcel");
-        resultatTest(elementHumain.execScript());
-    }
-    if (0 || exec_all){     // tests isVariable
-        printf("-----------------------------\n");
-        printf("tests isVariable\n");
-        Humain humain;
-        humain.initHumain(10, 0, "marcel");
-        printf("test si 'age' est une variable connue\n");
-        resultatTest(humain.isVariable((char *)"age"));
-        printf("test si 'toto' n'est pas une variable connue\n");
-        resultatTest(!humain.isVariable((char *)"toto"));
-    }
-    */
 }

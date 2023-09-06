@@ -36,7 +36,7 @@ Entreprise::~Entreprise(){
 //
 //-----------------------------------------
 void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInitial){
-    log(LOG_DEBUG, "Entreprise::initEntreprise : debut");
+    //log(LOG_DEBUG, "Entreprise::initEntreprise : debut");
     this->id = id;
     this->activite = activite;
     this->nbCommandes = 0;
@@ -107,11 +107,41 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
 
 //-----------------------------------------
 //
-//          Entreprise::commande
+//          Entreprise::getRefCommande
 //
 //-----------------------------------------
-void Entreprise::commande(Humain *humain){
-    log(LOG_DEBUG, "Civilisation::commande => TODO");
+int Entreprise::getRefCommande(void){
+    int newRef = 0;
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        if (listeCommandes[i].reference > newRef){
+            newRef = listeCommandes[i].reference;
+        }
+    }
+    newRef++;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::creeCommande
+//
+//-----------------------------------------
+structCommande *Entreprise::creeCommande(Humain *client, int quantite){
+    bool result = false;
+    log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
+    log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d\n", client->getNomHumain(), quantite);
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        structCommande *tmpCde = &listeCommandes[i];
+        if (tmpCde->status == COMMANDE_VIDE){
+            tmpCde->client = client;
+            tmpCde->reference = getRefCommande();
+            tmpCde->quantité = quantite;
+            tmpCde->prixUnitaire = this->prixProduit;
+            tmpCde->status = COMMANDE_INIT;
+        }
+        nbCommandes++;
+        break;
+    }
+    return NULL;
 }
 
 //-----------------------------------------
@@ -119,8 +149,22 @@ void Entreprise::commande(Humain *humain){
 //          Entreprise::livraison
 //
 //-----------------------------------------
-void Entreprise::livraison(Humain *humain){
-    log(LOG_DEBUG, "Civilisation::commande => TODO");
+void Entreprise::livraison(Humain *client){
+    bool result = false;
+    log(LOG_DEBUG, "Entreprise::livraison => TODO");
+    log(LOG_DEBUG, "Entreprise::livraison à %s \n", client->getNomHumain());
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        structCommande *tmpCde = &listeCommandes[i];
+        if (tmpCde->client == client){
+            tmpCde->client = NULL;
+            tmpCde->reference = -1;
+            tmpCde->quantité = -1;
+            tmpCde->prixUnitaire = -1;
+            tmpCde->status = COMMANDE_VIDE;
+        }
+        nbCommandes--;
+        break;
+    }
 }
 
 //-----------------------------------------
@@ -223,8 +267,10 @@ bool Entreprise::verseSalaire(int salaire, Humain *salarie){
         printf("errreur : l'entreprise n'a pas asssez de fond pour payer le salaire\n");
         return false;
     }
+    /*
     salarie->compteBancaireHumain->credite(salaire);
-    this->compteBancaireEntreprise->debite(salaire);
+    this->compteBancaireEntreprise->debite(salaire);*/
+    this->compteBancaireEntreprise->virement(salarie->compteBancaireHumain, salaire);
     return true;
 }
 
