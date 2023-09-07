@@ -25,6 +25,9 @@
     #define COMMANDE_REGLEE     5
     #define COMMANDE_FERMEE     6
 
+    #define NB_COMMANDES_ENTREPRISE 3
+    #define NB_VARIABLE_ENTREPRISE  3
+
     class Humain;
 
     typedef struct{
@@ -56,6 +59,9 @@
             bool verseSalaire(int salaire, Humain *salarie);
             structCommande *creeCommande(Humain *humain, int quantite);
             void livraison(Humain *humain);
+            bool testSiCommandeValideEntreprise(char *valeur);
+            bool testSiListeCommandeValideEntreprise(char *valeur);
+            bool execCommandeEntreprise(char *commande);
 
         private:
             int id;
@@ -68,9 +74,10 @@
             int stock;
             int nbCommandes;
             int maxEmployes;
-            int listeEmployes[MAX_EMPLOYES];
+            Humain  *listeEmployes[MAX_EMPLOYES];
             structCommande listeCommandes[MAX_COMMANDES];
             int getRefCommande(void);
+            bool produire();
     };
 
 #endif

@@ -20,8 +20,9 @@
     #define STATUS_MARITAL_DIVOR    3
     #define STATUS_MARITAL_DECES    4
 
-    #define NB_COMMANDES_HUMAIN     4
-    #define NB_VARIABLE_HUMAIN      4
+    #define NB_COMMANDES_HUMAIN     3
+    #define NB_VARIABLE_HUMAIN      5
+
     class Entreprise;
 
 
@@ -41,13 +42,14 @@
             static bool isVariable(char *nomVariable);
             int getIntValue(char *nomVariable);
             char *getCharValue(char *nomVariable);
-            bool testSiCommandeValide(char *valeur);
-            bool testSiListeCommandeValide(char *valeur);
+            bool testSiCommandeValideHumain(char *valeur);
+            bool testSiListeCommandeValideHumain(char *valeur);
             int calculExpression(char *data1, char op, char *data2);
-            bool execCommande(char *commande);
+            bool execCommandeHumain(char *commande);
             CompteBancaire *compteBancaireHumain;
             void listeHumain(void);
             void acheteProduit(Entreprise *entreprise);
+            static char *listeVariables(void);
 
         private:
             int id;

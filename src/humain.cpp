@@ -13,7 +13,7 @@
 
 
 char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible"};
-char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital"};
+char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital", "nbEnfants"};
 
 
 //-----------------------------------------
@@ -231,10 +231,10 @@ int Humain::calculExpression(char *data1, char op, char *data2){
 
 //-----------------------------------------
 //
-//          Humain::testSiCommandeValide
+//          Humain::testSiCommandeValideHumain
 //
 //-----------------------------------------
-bool Humain::testSiCommandeValide(char *valeur){
+bool Humain::testSiCommandeValideHumain(char *valeur){
     //printf("test si commande '%s' valide\n", valeur);
     for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
         //printf("comparaison avec %s : ", listeCommandesHumain[i]);
@@ -250,10 +250,10 @@ bool Humain::testSiCommandeValide(char *valeur){
 
 //-----------------------------------------
 //
-//          Humain::testSiListeCommandeValide
+//          Humain::testSiListeCommandeValideHumain
 //
 //-----------------------------------------
-bool Humain::testSiListeCommandeValide(char *valeur){
+bool Humain::testSiListeCommandeValideHumain(char *valeur){
     char *tmp;
     tmp = &valeur[0];
     char buffer[50];
@@ -268,7 +268,7 @@ bool Humain::testSiListeCommandeValide(char *valeur){
             buffer[i] = '\0';
         }
         if (strlen(buffer) != 0){
-            if (!testSiCommandeValide(buffer)){
+            if (!testSiCommandeValideHumain(buffer)){
                 log(LOG_ERROR, "commande %s inconnue", buffer);
                 return false;
             }
@@ -319,11 +319,11 @@ void Humain::naissancePossible(void){
 
 //-----------------------------------------
 //
-//          Humain::execCommande
+//          Humain::execCommandeHumain
 //
 //-----------------------------------------
-bool Humain::execCommande(char *valeur){
-    log(LOG_DEBUG,"Humain::execCommande <%s> : TODO", valeur);
+bool Humain::execCommandeHumain(char *valeur){
+    log(LOG_DEBUG,"Humain::execCommandeHumain <%s> : TODO", valeur);
     for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
         if (strcmp(listeCommandesHumain[i], valeur) == 0){
             switch(i){ 
@@ -385,4 +385,28 @@ void Humain::listeHumain(void){
     printf("| cpt bancaire  |               %15d   |\n", this->compteBancaireHumain->getSolde());
     printf("| epargne       |               %15d   |\n", this->compteBancaireHumain->getEpargne());
     printf("+---------------+---------------------------------+\n");
+}
+
+//-----------------------------------------
+//
+//          Humain::listeVariables
+//
+//-----------------------------------------
+char tmp[5000];
+char *Humain::listeVariables(void){
+    strcpy(tmp, "");
+    strcat(tmp,"liste des variables Humain : ");
+    for (int i = 0 ; i < NB_VARIABLE_HUMAIN ; i++){
+        strcat(tmp, listeVariablesHumain[i]);
+        strcat(tmp,", ");
+    }
+    strcat(tmp, "\n");
+
+    strcat(tmp,"liste des commandes Humain : ");
+    for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
+        strcat(tmp, listeCommandesHumain[i]);
+        strcat(tmp,", ");
+    }
+    strcat(tmp, "\n");
+    return tmp;
 }

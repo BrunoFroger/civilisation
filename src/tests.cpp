@@ -436,8 +436,8 @@ void executeTests(int mode){
         resultatTest(humain.getAge() == 1);
 
         log(LOG_DEBUG, "test fonction liste de commandes valide");
-        resultatTest(humain.testSiCommandeValide((char *)"mortPossible"));
-        resultatTest(!humain.testSiCommandeValide((char *)"sdfqsdfqdf"));
+        resultatTest(humain.testSiCommandeValideHumain((char *)"mortPossible"));
+        resultatTest(!humain.testSiCommandeValideHumain((char *)"sdfqsdfqdf"));
         resultatTest(humain.calculExpression((char *)"20", '+', (char *)"10") == 30);
         resultatTest(!(humain.calculExpression((char *)"20", '+', (char *)"20") == 30));
         resultatTest(humain.calculExpression((char *)"20", '*', (char *)"10") == 200);
@@ -446,11 +446,11 @@ void executeTests(int mode){
         resultatTest(humain.calculExpression((char *)"age", '+', (char *)"10") == 11);
 
         log(LOG_DEBUG, "test execution commandes");
-        resultatTest(humain.execCommande((char *)"mortPossible"));
-        resultatTest(!humain.execCommande((char *)"toto"));
+        resultatTest(humain.execCommandeHumain((char *)"mortPossible"));
+        resultatTest(!humain.execCommandeHumain((char *)"toto"));
         resultatTest(!(humain.getStatusMarital() == STATUS_MARITAL_DECES));
         for (int i = 0 ; i < 100 ; i++) humain.evolutionHumain();
-        humain.execCommande((char *)"mortPossible");
+        humain.execCommandeHumain((char *)"mortPossible");
         resultatTest(humain.getStatusMarital() == STATUS_MARITAL_DECES);
 
         bilanTestsRubrique(rubrique);
@@ -531,6 +531,15 @@ void executeTests(int mode){
         elementEntreprise->livraison(elementHumain);
         resultatTest(elementEntreprise->getNbCommandes() == 1);
 
+        log(LOG_DEBUG, "test fonction liste de commandes valide");
+        resultatTest(elementEntreprise->testSiCommandeValideEntreprise((char *)"produire"));
+        resultatTest(elementEntreprise->testSiCommandeValideEntreprise((char *)"embaucher"));
+        resultatTest(!elementEntreprise->testSiCommandeValideEntreprise((char *)"sdfqsdfqdf"));
+
+        log(LOG_DEBUG, "test execution commandes");
+        resultatTest(elementEntreprise->execCommandeEntreprise((char *)"produire"));
+        resultatTest(!elementEntreprise->execCommandeEntreprise((char *)"toto"));
+
         bilanTestsRubrique(rubrique);
     }
 
@@ -564,6 +573,9 @@ void executeTests(int mode){
 
         // test virement négatif impossible
         resultatTest( ! cpt1.virement(&cpt2, -100));
+
+        // test virement vers compte NULL
+        resultatTest(cpt1.virement(NULL, 100));
 
         bilanTestsRubrique(rubrique);
     }

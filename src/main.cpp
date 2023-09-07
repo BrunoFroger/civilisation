@@ -38,10 +38,15 @@ int main(int argc, char **argv){
             case 'H': 
             case '?': 
                 printf("commandes disponibles :\n");
+                printf("    c,C : affichage de la liste des commandes et variables disponibles\n");
                 printf("    h, H, ? : affichage de cette aide\n");
                 printf("    l, L [id] : affichage de la liste des éléments, ou un element specifique\n");
                 printf("    q, Q : quitte le programme\n");
                 printf("    t, T : affichage du tableau de bord\n");
+                break;
+            case 'c': // liste des commandes et des variables
+            case 'C': 
+                civilisation.listeCommandesEtVariables();
                 break;
             case 'l': // liste un element 
             case 'L': // 2eme caractere type element, puis id element

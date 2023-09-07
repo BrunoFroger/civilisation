@@ -315,3 +315,14 @@ void Civilisation::tableauDeBord(void){
     printf("| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb veuf", _nbVeufs, "", "", "", "");
     printf("+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
 }
+
+//-----------------------------------------
+//
+//          listeCommandesEtVariables
+//
+//-----------------------------------------
+void Civilisation::listeCommandesEtVariables(void){
+    char tmp[5000] = "";
+    strcat(tmp, Humain::listeVariables());
+    printf("%s\n", tmp);
+}

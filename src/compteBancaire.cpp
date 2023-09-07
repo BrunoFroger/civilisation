@@ -109,6 +109,8 @@ bool CompteBancaire::virement(CompteBancaire *destinataire, int valeur){
     if (valeur < 0) return false;
     if ((solde - valeur) < 0) return false;
     debite(valeur);
-    destinataire->credite(valeur);
+    if (destinataire != NULL){
+        destinataire->credite(valeur);
+    }
     return true;
 }

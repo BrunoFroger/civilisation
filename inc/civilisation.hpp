@@ -25,6 +25,7 @@
             void listeElement(int id);
             Element *getElement(int index);
             void tableauDeBord(void);
+            void listeCommandesEtVariables(void);
 
         private:
             void incElementId(void);

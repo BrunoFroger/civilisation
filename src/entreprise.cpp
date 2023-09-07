@@ -12,6 +12,9 @@
 #include "../inc/log.hpp"
 #include "../inc/tools.hpp"
 
+char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher"};
+char listeVariablesEntreprise[NB_VARIABLE_ENTREPRISE][20] = {"nom", "nbSalarie", "nbCommande"};
+
 //-----------------------------------------
 //
 //          Entreprise::Entreprise
@@ -19,6 +22,9 @@
 //-----------------------------------------
 Entreprise::Entreprise(){
     this->compteBancaireEntreprise = new CompteBancaire();
+    for (int i = 0 ; i < MAX_EMPLOYES ; i++){
+        listeEmployes[i] = NULL;
+    }
 }
 
 //-----------------------------------------
@@ -157,6 +163,7 @@ void Entreprise::livraison(Humain *client){
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         structCommande *tmpCde = &listeCommandes[i];
         if (tmpCde->client == client){
+            log(LOG_DEBUG, "livraison de %d produit a %s", tmpCde->quantité, client->getNomHumain());
             tmpCde->client = NULL;
             tmpCde->reference = -1;
             tmpCde->quantité = -1;
@@ -317,4 +324,102 @@ void Entreprise::listeEntreprise(void){
     printf("| cpt bancaire  |               %15d   |\n", this->compteBancaireEntreprise->getSolde());
     printf("| epargne       |               %15d   |\n", this->compteBancaireEntreprise->getEpargne());
     printf("+---------------+---------------------------------+\n");
+}
+
+//-----------------------------------------
+//
+//          Entreprise::testSiCommandeValideEntreprise
+//
+//-----------------------------------------
+bool Entreprise::testSiCommandeValideEntreprise(char *valeur){
+    printf("test si commande '%s' valide\n", valeur);
+    for (int i = 0 ; i < NB_COMMANDES_ENTREPRISE ; i++){
+        printf("comparaison avec %s : ", listeCommandesEntreprise[i]);
+        if (strcmp(valeur, listeCommandesEntreprise[i]) == 0) {
+            printf("OK\n");
+            return true;
+        } else {
+            printf("NOK\n");
+        }
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::testSiListeCommandeValideEntreprise
+//
+//-----------------------------------------
+bool Entreprise::testSiListeCommandeValideEntreprise(char *valeur){
+    char *tmp;
+    tmp = &valeur[0];
+    char buffer[50];
+    int i;
+    while (tmp[0] != '\0'){
+        i=0;
+        strcpy(buffer,"");
+        while (*tmp == ' ') tmp++;  // suppression des blancs au debut
+        if (strlen(tmp) == 0) return true;
+        while (*tmp != ' '){
+            buffer[i++] = *tmp++;
+            buffer[i] = '\0';
+        }
+        if (strlen(buffer) != 0){
+            if (!testSiCommandeValideEntreprise(buffer)){
+                log(LOG_ERROR, "commande %s inconnue", buffer);
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::produire
+//
+//-----------------------------------------
+bool Entreprise::produire(){
+    int nbProduitsFabriques = 0;
+    log(LOG_DEBUG,"Humain::produire : TODO");
+    for (int i = 0 ; i < MAX_EMPLOYES ; i++){
+        Humain *employe = listeEmployes[i];
+        if (employe != NULL){
+            compteBancaireEntreprise->virement(NULL, coutProduit);
+            compteBancaireEntreprise->virement(employe->compteBancaireHumain, coutSalarie);
+            nbProduitsFabriques++;
+        }
+    }
+    stock += nbProduitsFabriques;
+    log(LOG_DEBUG, "Humain::produire : %d produits fabriques", nbProduitsFabriques);
+    return true;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::execCommandeEntreprise
+//
+//-----------------------------------------
+bool Entreprise::execCommandeEntreprise(char *valeur){
+    log(LOG_DEBUG,"Humain::execCommandeEntreprise <%s> : TODO", valeur);
+    for (int i = 0 ; i < NB_COMMANDES_ENTREPRISE ; i++){
+        if (strcmp(listeCommandesEntreprise[i], valeur) == 0){
+            switch(i){ 
+                case 0: // produire
+                    produire();
+                    return true;
+                    break;
+                case 1: // embaucher
+                    return true;
+                    break;
+                case 2: // debaucher
+                    return true;
+                    break;
+            }
+            break;
+        } 
+    }
+    log(LOG_ERROR, "commande <%s> inconnue", valeur);
+
+    return false;
 }

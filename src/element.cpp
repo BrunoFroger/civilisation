@@ -353,11 +353,11 @@ bool Element::execScript(char *filename){
                         return false;
                     } else {
                         // traitement de la ligne si
-                        if (!testSiListeCommandeValide(resultat.ListeCommandeSiVrai)){
+                        if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiVrai)){
                             log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiVrai);
                             return false;
                         }
-                        if (!testSiListeCommandeValide(resultat.ListeCommandeSiFaux)){
+                        if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiFaux)){
                             log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiFaux);
                             return false;
                         }
