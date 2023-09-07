@@ -92,15 +92,15 @@ Element *Civilisation::getElement(int index){
 //          creeElementHumain
 //
 //-----------------------------------------
-int Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
+Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
     log(LOG_DEBUG, "Civilisation::creeElementHumain(int sexe, char *nom) => (id=%d) %d, %s", courantElementId, sexe, nom);
     Element *tmpElement = this->elements[courantElementId];
     tmpElement->initHumain(courantElementId, sexe, nom, capitalInitial);
-    tmpElement->typeElement=TYPE_HUMAIN;
+    tmpElement->setTypeElement(TYPE_HUMAIN);
     tmpElement->setElementId(courantElementId);
     incElementId();
     this->nbHumains++;
-    return tmpElement->getElementId();
+    return tmpElement;
 }
 
 //-----------------------------------------
@@ -108,15 +108,15 @@ int Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
 //          creeElementEntreprise
 //
 //-----------------------------------------
-int Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
+Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
     log(LOG_DEBUG, "Civilisation::creeElementEntreprise(int activite, char *nom) => (id=%d) %d, %s", courantElementId, activite, nom);
     Element *tmpElement = this->elements[courantElementId];
     tmpElement->initEntreprise(courantElementId, activite, nom, capital);
-    tmpElement->typeElement=TYPE_ENTREPRISE;
+    tmpElement->setTypeElement(TYPE_ENTREPRISE);
     tmpElement->setElementId(courantElementId);
     incElementId();
     this->nbEntreprises++;
-    return tmpElement->getElementId();
+    return tmpElement;
 }
 
 
@@ -127,7 +127,7 @@ int Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
 //-----------------------------------------
 void Civilisation::listeElement(int id){
     Element *ptr = elements[id];
-    switch(ptr->typeElement){
+    switch(ptr->getTypeElement()){
         case TYPE_HUMAIN:
             ptr->listeHumain();
             break;
@@ -152,7 +152,7 @@ void Civilisation::listeCivilisation(void){
     printf("+--------+---------------------------+-----+-------+------+------------+-----------------+\n");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
-        if (ptr->typeElement == TYPE_HUMAIN){
+        if (ptr->getTypeElement() == TYPE_HUMAIN){
             switch(ptr->getStatusMarital()){
                 case STATUS_MARITAL_CELIB: 
                     strcpy(tmp, "CELI");
@@ -189,7 +189,7 @@ void Civilisation::listeCivilisation(void){
     printf("+--------+---------------------------+----------+------------+-----------------+\n");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
-        if (ptr->typeElement == TYPE_ENTREPRISE){
+        if (ptr->getTypeElement() == TYPE_ENTREPRISE){
             printf("| %5d  | %25s |   %5d  | %10d | %15d |\n", 
                 ptr->getIdEntreprise(),
                 ptr->getNomEntreprise(), 
@@ -213,7 +213,7 @@ void Civilisation::evolutionCivilisation(void){
     log(LOG_DEBUG, "Civilisation::evolutionCivilisation");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
          ptr = elements[i];
-         switch(ptr->typeElement){
+         switch(ptr->getTypeElement()){
             case TYPE_HUMAIN:
                 ptr->evolutionHumain();
                 ptr->execScript();
@@ -263,7 +263,7 @@ void Civilisation::tableauDeBord(void){
     for (int i = 0 ; i < getCourantElementId() ; i++){
         printf("Civilisation::tableauDeBord => analyse de l'élément %d\n", i);
         element = getElement(i);
-        if (element->typeElement == TYPE_HUMAIN){
+        if (element->getTypeElement() == TYPE_HUMAIN){
             _nbHumains++;
             if (element->getSexe() == HOMME) _nbHommes++;
             if (element->getSexe() == FEMME) _nbFemmes++;
@@ -273,7 +273,7 @@ void Civilisation::tableauDeBord(void){
             if (element->getStatusMarital() == STATUS_MARITAL_DIVOR) _nbDivorces++;
             _totalActifs += element->compteBancaireHumain->getSolde();
             _totalEpargne += element->compteBancaireHumain->getEpargne();
-        } else if (element->typeElement == TYPE_ENTREPRISE) {
+        } else if (element->getTypeElement() == TYPE_ENTREPRISE) {
             _nbEntreprises++;
             _totalActifs += element->compteBancaireEntreprise->getSolde();
             _totalEpargne += element->compteBancaireEntreprise->getEpargne();

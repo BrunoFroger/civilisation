@@ -21,6 +21,6 @@
     extern bool evaluationExpressionInt(int data1, char *test, int data2);
     extern bool evaluationExpressionChar(char *data1, char *test, char *data2);
     extern bool decomposeSi(char *ligne, structIf *resultat);
-    extern bool decomposeListeInstructions(char *script, char *instruction, char *listeInstructions);
+    extern bool decomposeScript(char *script, char *instruction, char *listeInstructions);
 
 #endif

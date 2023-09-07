@@ -190,9 +190,9 @@ bool decomposeSi(char *ligne, structIf *resultat){
 //          decomposeScript
 //
 //-----------------------------------------
-bool decomposeListeInstructions(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
+bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
     printf( "tools decomposeScript => debut\n");
-    printf("Decomposition du script <%s>\n", ListeInstructionOrigine);
+    printf("tools decomposeScript => Decomposition du script <%s>\n", ListeInstructionOrigine);
     strcpy(instruction, (char *)"");
     strcpy(listeInstructionsRestante, (char *)"");
     if (strlen(ListeInstructionOrigine) > 0){
@@ -200,10 +200,10 @@ bool decomposeListeInstructions(char *ListeInstructionOrigine, char *instruction
         // analyse si la liste d'origine commence par un mot clé d'une instruction complexe
         // multiligne possible
         if (strncmp(ListeInstructionOrigine, "si", 2) == 0){ // traitement d'un si 
-            printf("traitement d'un si\n");
+            printf("tools decomposeScript => traitement d'un si\n");
             char *tmp = ListeInstructionOrigine;
             while (strncmp(tmp, "finsi ", 6) != 0){
-                if (tmp - ListeInstructionOrigine > strlen(ListeInstructionOrigine)){
+                if (tmp - ListeInstructionOrigine >= strlen(ListeInstructionOrigine)){
                     // on a pas trouvé le finsi
                     log(LOG_ERROR, "pas de finsi dans le script");
                     return false;
@@ -231,8 +231,8 @@ bool decomposeListeInstructions(char *ListeInstructionOrigine, char *instruction
         }
         //remove_extra_spaces(instruction);
         //remove_extra_spaces(listeInstructionsRestante);
-        printf("instruction = <%s>\n", instruction);
-        printf("listeInstr  = <%s>\n", listeInstructionsRestante);
+        printf("tools decomposeScript => instruction = <%s>\n", instruction);
+        printf("tools decomposeScript => listeInstr  = <%s>\n", listeInstructionsRestante);
         return true;
     }
     return false;

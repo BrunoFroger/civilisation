@@ -64,7 +64,25 @@ Element::Element(int id, int type){
 
 //-----------------------------------------
 //
-//          decomposeIf
+//          getTypeElement
+//
+//-----------------------------------------
+int Element::getTypeElement(void){
+    return this->typeElement;
+}
+
+//-----------------------------------------
+//
+//          setTypeElement
+//
+//-----------------------------------------
+void Element::setTypeElement(int type){
+    this->typeElement = type;
+}
+
+//-----------------------------------------
+//
+//          getElementId
 //
 //-----------------------------------------
 int Element::getElementId(void){
@@ -73,7 +91,7 @@ int Element::getElementId(void){
 
 //-----------------------------------------
 //
-//          decomposeIf
+//          setElementId
 //
 //-----------------------------------------
 void Element::setElementId(int id){
@@ -328,69 +346,95 @@ bool Element::execScript(char *filename){
     FILE *fic;
     int numLigne=0;
     char ligne[500];
+    char script[5000] = "";
+    char scriptRestant[5000] = "";
+    char *tmp;
 
     fic = fopen(filename, "r");
     if (fic == NULL){
         log(LOG_ERROR, "Element::execScript => impossible d'ouvrir le fichier script <%s>", filename);
         return false;
     }
-    //printf("lecture du fichier '%s'\n", filename);
+    log(LOG_DEBUG, "execution du script '%s'\n", filename);
     strcpy(ligne, "");
     fgets(ligne, 100, fic);
     while (!feof(fic)){
-        if (strlen(ligne) > 0) ligne[strlen(ligne) - 1] = '\0';
-        char *tmp = &ligne[0];
-        while (tmp[0] == ' ') tmp++;    // suppresssion des blancs au debut
-        //printf("ligne a analyser = '%s'\n", tmp);
-        if (tmp[0] != '#'){ // commentaire on passe
-            if (strlen(tmp) != 0){  // ligne vide on passe
-                //printf("ligne a analyser = '%s'\n", tmp);
-                if (strncmp(tmp, "si", 2) == 0){
-                    //printf("Analyse d'une ligne contenant un 'si'\n");
-                    structIf resultat;
-                    if (!decomposeSi(tmp, &resultat)){
-                        log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
-                        return false;
-                    } else {
-                        // traitement de la ligne si
-                        if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiVrai)){
-                            log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiVrai);
-                            return false;
-                        }
-                        if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiFaux)){
-                            log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiFaux);
-                            return false;
-                        }
-                        printf("decomposition de l'expression %s\n", resultat.expression);
-                        /*
-                        int val1, val2;
-                        if (isVariable(resultat.expression1)){
-                            val1 = getIntValue(resultat.expression1);
-                        } else {
-                            val1 = atoi(resultat.expression1);
-                        }
-                        if (isVariable(resultat.expression2)){
-                            val2 = getIntValue(resultat.expression2);
-                        } else {
-                            val2 = atoi(resultat.expression2);
-                        }
-                        Element::evaluationExpressionInt(val1, resultat.operateur, val2);
-                        */
-                    } 
-                } else {
-                    log(LOG_ERROR, "instruction inconnue dans la ligne '%s'\n", ligne);
+        tmp = &ligne[0];
+        printf("traitement de la ligne %s", tmp);
+        if (tmp[0] != '#') {
+            while (tmp[0] == ' ') tmp++; // suppresssion des blancs au debut
+            if (strlen(ligne) > 0){
+                if (tmp[strlen(tmp) - 1] == '\n'){
+                    tmp[strlen(tmp) - 1] = '\0';
+                }   
+            }
+            strcat(script, " ");
+            strcat(script, tmp);
+        }
+        strcpy(ligne, "");
+        fgets(ligne, 100, fic);
+    }
+    remove_extra_spaces(script);
+    printf("script a analyser = \n----------------------\n'%s'\n----------------------\n", script);
+    tmp = &script[0];
+    char expression[500];
+    do {
+        printf("---- decompose script -------\n");
+        decomposeScript(script, expression, scriptRestant);
+        strcpy(script, scriptRestant);
+    } while (strcmp(scriptRestant, "") != 0);
+    return false;
+
+
+
+    if (tmp[0] != '#'){ // commentaire on passe
+        if (strlen(tmp) != 0){  // ligne vide on passe
+            //printf("ligne a analyser = '%s'\n", tmp);
+            if (strncmp(tmp, "si", 2) == 0){
+                //printf("Analyse d'une ligne contenant un 'si'\n");
+                structIf resultat;
+                if (!decomposeSi(tmp, &resultat)){
+                    log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
                     return false;
-                }
+                } else {
+                    // traitement de la ligne si
+                    if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiVrai)){
+                        log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiVrai);
+                        return false;
+                    }
+                    if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiFaux)){
+                        log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiFaux);
+                        return false;
+                    }
+                    printf("decomposition de l'expression %s\n", resultat.expression);
+                    /*
+                    int val1, val2;
+                    if (isVariable(resultat.expression1)){
+                        val1 = getIntValue(resultat.expression1);
+                    } else {
+                        val1 = atoi(resultat.expression1);
+                    }
+                    if (isVariable(resultat.expression2)){
+                        val2 = getIntValue(resultat.expression2);
+                    } else {
+                        val2 = atoi(resultat.expression2);
+                    }
+                    Element::evaluationExpressionInt(val1, resultat.operateur, val2);
+                    */
+                } 
+            } else {
+                log(LOG_ERROR, "instruction inconnue dans la ligne '%s'\n", ligne);
+                return false;
             }
         }
-        //printf("fin traitement de ligne\n");
-        if (!feof(fic)){
-            strcpy(ligne, "");
-            //printf("Lecture nouvelle ligne\n");
-            fgets(ligne, 500, fic);
-            //printf("'%s'", ligne);
-            numLigne++;
-        }
+    }
+    //printf("fin traitement de ligne\n");
+    if (!feof(fic)){
+        strcpy(ligne, "");
+        //printf("Lecture nouvelle ligne\n");
+        fgets(ligne, 500, fic);
+        //printf("'%s'", ligne);
+        numLigne++;
     }
     //printf("\n");
     return true;

@@ -216,11 +216,8 @@ void executeTests(int mode){
         strcpy(rubrique, "tools");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "-----------------------------------------------------");
         
-        log(LOG_DEBUG, "-----------------------------------------------------");
-
-        if (0 || exec_all ) { // bloc suppression des blancs inutiles d'une chaine
+        if (0 || exec_all ) { 
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test de suppression des blancs inutiles d'une chaine");
             char expression[200];
@@ -231,7 +228,7 @@ void executeTests(int mode){
         }
 
 
-        if (0 || exec_all ) { // bloc evaluationExpressionInt
+        if (0 || exec_all ) { 
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test fonction evaluation expression Int");
             int val1, val2;
@@ -289,7 +286,7 @@ void executeTests(int mode){
             log(LOG_DEBUG, "Bloc evaluationExpressionInt non executé\n");
         }
 
-        if (0 || exec_all ){ // bloc decomposeSi
+        if (0 || exec_all ){ // 
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test decompose si ");
             char ligne[5000] = "";
@@ -309,60 +306,59 @@ void executeTests(int mode){
             resultatTest(res);
         }
 
-
-        if (0 || exec_all ){ // bloc decomposeListeInstructions
+        if (0 || exec_all ){ // bloc decomposeScript
             log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "test decomposeListeInstructions");
+            log(LOG_DEBUG, "test decomposeScript");
             char script[5000] = "";
             char instruction[100] = "";
             char listeInstructions[5000] = "";
             bool res = true;
             sprintf(script, "#commentaire\nchercheConjoint");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, "chercheConjoint") == 0);
             resultatTest(res);
             sprintf(script, "#commentaire\nchercheConjoint\ntoto");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, "chercheConjoint\ntoto") == 0);
             resultatTest(res);
 
             sprintf(script, "#commentaire\n chercheConjoint");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, " chercheConjoint") == 0);
             resultatTest(res);
 
             sprintf(script, "si toto alors titi finsi commande");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "commande") == 0);
             resultatTest(res);
 
             sprintf(script, "si toto alors titi finsi commande\n ");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "commande\n ") == 0);
             resultatTest(res);
 
             sprintf(script, "si toto alors titi finsi \n commande");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "\n commande") == 0);
             resultatTest(res);
 
             sprintf(script, "si toto \n tata alors titi \n tutu finsi commande1\n commande2\n ");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto \n tata alors titi \n tutu finsi") == 0);
             res &= (strcmp(listeInstructions, "commande1\n commande2\n ") == 0);
             resultatTest(res);
 
             sprintf(script, "si toto alors titi commande\n ");
-            res = decomposeListeInstructions(script, instruction, listeInstructions);
+            res = decomposeScript(script, instruction, listeInstructions);
             resultatTest(!res);
         } else {
-            log(LOG_DEBUG, "Bloc decomposeListeInstructions non executé\n");
+            log(LOG_DEBUG, "Bloc decomposeScript non executé\n");
         }
 
         bilanTestsRubrique(rubrique);
@@ -377,15 +373,22 @@ void executeTests(int mode){
         strcpy(rubrique, "civilisation");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
+
         log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de creation de la classe");
+        log(LOG_DEBUG, "test de creation de civilisation avec id element = 0");
         Civilisation civilisation;
         resultatTest((civilisation.getCourantElementId() == 0));
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'un element humain");
-        civilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
+        Element *element = civilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
         resultatTest(strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomHumain(), "Marcel") == 0);
+        resultatTest(element->getTypeElement() == TYPE_HUMAIN);
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'un element entreprise");
-        civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
+        element = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
+        resultatTest(element->getTypeElement() == TYPE_ENTREPRISE);
         resultatTest(strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomEntreprise(), "au bon pain") == 0);
         resultatTest(civilisation.getElement(civilisation.getCourantElementId()-1)->compteBancaireEntreprise->getSolde() == 25000);
 
@@ -401,16 +404,24 @@ void executeTests(int mode){
         strcpy(rubrique, "element");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "-----------------------------------------------------");
         Element element;
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test creation element");
         element.initHumain(10, FEMME, (char *)"eve", 1000);
+        element.setTypeElement(TYPE_HUMAIN);
         bool res = true;
         printf("res %d init \n", res);
-        res = (element.getIdHumain() == 10);
+        res &= (element.getIdHumain() == 10);
         printf("res %d get id = %d\n", res, element.getIdHumain());
-        res = (element.getAge() == 0);
+        res &= (element.getAge() == 0);
         printf("res %d get age = %d\n", res, element.getAge());
         resultatTest(res);
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test execution script");
+        resultatTest(element.execScript());
+
         bilanTestsRubrique(rubrique);
     }
 
@@ -423,18 +434,20 @@ void executeTests(int mode){
         strcpy(rubrique, "humain");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "-----------------------------------------------------");
         Civilisation civilisation;
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation humain");
         Humain humain(0,HOMME, (char *)"adam", 1000);
         resultatTest(humain.getAge() == 0);
         resultatTest(strcmp(humain.getNomHumain(), "adam") == 0);
 
-        log(LOG_DEBUG, "test evolution age");
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test evolution");
         humain.evolutionHumain();
         resultatTest(humain.getAge() == 1);
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test fonction liste de commandes valide");
         resultatTest(humain.testSiCommandeValideHumain((char *)"mortPossible"));
         resultatTest(!humain.testSiCommandeValideHumain((char *)"sdfqsdfqdf"));
@@ -445,6 +458,7 @@ void executeTests(int mode){
         resultatTest(humain.calculExpression((char *)"20", '-', (char *)"10") == 10);
         resultatTest(humain.calculExpression((char *)"age", '+', (char *)"10") == 11);
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test execution commandes");
         resultatTest(humain.execCommandeHumain((char *)"mortPossible"));
         resultatTest(!humain.execCommandeHumain((char *)"toto"));
@@ -465,16 +479,16 @@ void executeTests(int mode){
         strcpy(rubrique, "entreprise");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "-----------------------------------------------------");
         Civilisation civilisation;
         Element *elementEntreprise, *elementHumain;
         bool res;
         int idEntreprise, idSalarie;
 
-        // test creation entreprise avec fichier de configuration spécifique
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test creation entreprise avec fichier de configuration spécifique");
         res = true;
         idEntreprise = civilisation.getCourantElementId();
-        idEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
+        elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
         printf("creation entreprise id : %d\n", idEntreprise);
         elementEntreprise = civilisation.getElement(idEntreprise);
         res &= (strcmp(elementEntreprise->getNomEntreprise(), (char *)"au bon pain") == 0);
@@ -493,7 +507,8 @@ void executeTests(int mode){
         //printf("res = %d\n", res);
         resultatTest(res);
 
-        // test creation entreprise avec fichier de configuration par default
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test creation entreprise avec fichier de configuration par default");
         res = true;
         idEntreprise = civilisation.getCourantElementId();
         civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000);
@@ -507,9 +522,10 @@ void executeTests(int mode){
         res &= (elementEntreprise->getStockProduit() == 0);
         resultatTest(res);
 
-        // test versement de salaire
-        idSalarie = civilisation.creeElementHumain(HOMME, (char *)"Adam", 1000);
-        elementHumain = civilisation.getElement(idSalarie);
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test versement de salaire");
+        elementHumain = civilisation.creeElementHumain(HOMME, (char *)"Adam", 1000);
+        //elementHumain = civilisation.getElement(idSalarie);
         int ancienSoldeHumain, ancienSoldeEntreprise, soldeAttendu;
         int salaire = 100;
         ancienSoldeHumain = elementHumain->compteBancaireHumain->getSolde();
@@ -522,8 +538,8 @@ void executeTests(int mode){
         //printf("ancien solde = %d ; salaire = %d ; nouveau solde = %d\n", ancienSoldeEntreprise, salaire, soldeAttendu);
         resultatTest(soldeAttendu == elementEntreprise->compteBancaireEntreprise->getSolde());
 
-
-        // test commande/livraison de produit
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test commande/livraison de produit");
         elementEntreprise->creeCommande(elementHumain, 1);
         resultatTest(elementEntreprise->getNbCommandes() == 1);
         elementEntreprise->creeCommande(elementHumain, 1);
@@ -531,11 +547,13 @@ void executeTests(int mode){
         elementEntreprise->livraison(elementHumain);
         resultatTest(elementEntreprise->getNbCommandes() == 1);
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test fonction liste de commandes valide");
         resultatTest(elementEntreprise->testSiCommandeValideEntreprise((char *)"produire"));
         resultatTest(elementEntreprise->testSiCommandeValideEntreprise((char *)"embaucher"));
         resultatTest(!elementEntreprise->testSiCommandeValideEntreprise((char *)"sdfqsdfqdf"));
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test execution commandes");
         resultatTest(elementEntreprise->execCommandeEntreprise((char *)"produire"));
         resultatTest(!elementEntreprise->execCommandeEntreprise((char *)"toto"));
@@ -552,29 +570,38 @@ void executeTests(int mode){
         strcpy(rubrique, "banque");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "-----------------------------------------------------");
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test creation de compte");
         CompteBancaire cpt;
         resultatTest(cpt.getSolde() == 0);
         cpt.initCompteBancaire(100);
         resultatTest(cpt.getSolde() == 100);
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test creation de compte initialisé");
+        CompteBancaire cpt1(1000);
+        resultatTest(cpt1.getSolde() == 1000);
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test gestion epargne");
         cpt.sauveEpargne(50);
         resultatTest((cpt.getSolde() == 50) && (cpt.getEpargne() == 50));
         cpt.restitueEpargne(25);
         resultatTest((cpt.getSolde() == 75) && (cpt.getEpargne() == 25));
 
-        CompteBancaire cpt1(1000);
-        resultatTest(cpt1.getSolde() == 1000);
-
-        // test creation de compte initialisé
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test virement simple");
         CompteBancaire cpt2(100);
         cpt1.virement(&cpt2, 500);
         resultatTest((cpt1.getSolde() == 500) && (cpt2.getSolde() == 600));
 
-        // test virement négatif impossible
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test virement négatif impossible");
         resultatTest( ! cpt1.virement(&cpt2, -100));
 
-        // test virement vers compte NULL
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test virement vers compte NULL");
         resultatTest(cpt1.virement(NULL, 100));
 
         bilanTestsRubrique(rubrique);

@@ -33,23 +33,19 @@
             Element();
             ~Element();
             Element(int id, int type);
-            //void initPopulation(int id);
-            //void creeHumain(int id, int sexe, char *nom);
             bool execScript(void);
             bool execScript(char *filename);
-            //long getCourantId();
-            //void listePopulation(void);
-            //void killPopulation(void);
-            //void evolutionPopulation(void);
             bool decomposeExpression(char *chaine, structExpression *resultat);
             int getElementId(void);
             void setElementId(int id);
-            int typeElement;
+            int getTypeElement(void);
+            void setTypeElement(int type);
 
         protected:
 
         private:
             int idElement;
+            int typeElement;
 
     };
 
