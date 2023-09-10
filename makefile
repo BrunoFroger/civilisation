@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 07/09/2023 à 15:35:55
+#     généré automatiquement le 10/09/2023 à 15:50:25
 #         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
@@ -12,7 +12,7 @@
 #------------------------------------------------------------
 # de compilation
 CC=g++
-CCFLAGS=-Wall 
+CCFLAGS=-Werror -Wall 
 LDFLAGS=
 
 # de definition des répertoires

@@ -4,8 +4,8 @@
 //
 //-----------------------------------------
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include "../inc/civilisation.hpp"
 #include "../inc/log.hpp"

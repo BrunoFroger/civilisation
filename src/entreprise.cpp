@@ -4,9 +4,9 @@
 //
 //-----------------------------------------
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include <cstdlib>
 
 #include "../inc/entreprise.hpp"
 #include "../inc/log.hpp"
@@ -125,6 +125,7 @@ int Entreprise::getRefCommande(void){
         }
     }
     newRef++;
+    return newRef;
 }
 
 //-----------------------------------------
@@ -133,7 +134,7 @@ int Entreprise::getRefCommande(void){
 //
 //-----------------------------------------
 structCommande *Entreprise::creeCommande(Humain *client, int quantite){
-    bool result = false;
+    //bool result = false;
     log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
     log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d\n", client->getNomHumain(), quantite);
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
@@ -157,7 +158,7 @@ structCommande *Entreprise::creeCommande(Humain *client, int quantite){
 //
 //-----------------------------------------
 void Entreprise::livraison(Humain *client){
-    bool result = false;
+    //bool result = false;
     log(LOG_DEBUG, "Entreprise::livraison => TODO");
     log(LOG_DEBUG, "Entreprise::livraison à %s \n", client->getNomHumain());
     for (int i = 0 ; i < MAX_COMMANDES ; i++){

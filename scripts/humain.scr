@@ -4,11 +4,11 @@ si age > 80 alors
     mortPossible
 finsi
 
-si (age > 20) && !marie alors    
-    chercheConjoint
-finsi
+#si (age > 20) && !marie alors    
+#    chercheConjoint
+#finsi
 
-si (age > 20) && (age < 40) && marie && nbenfants <= 4 alors
-    enfantPossible
-finsi
+#si (age > 20) && (age < 40) && marie && nbenfants <= 4 alors
+#    enfantPossible
+#finsi
      

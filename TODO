@@ -1,0 +1,11 @@
+
+
+- fonction decomposition de script 
+  - mettre ensemble du script sous forme d'une seule chaine de caractere sans RC ni blanc execedentaires => chaine script
+  - repeter (dans chaine script, extraire 1ere instruction, sauvegarder le reste dans liste des instructions restantes)
+    - analyser (1ere instruction)
+    - mettre liste instruction restantes dans script
+  - jusqu'a script = chaine vide
+
+- fonction analyse instruction
+  - test si instruction est une commande connue

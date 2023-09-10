@@ -4,15 +4,13 @@
 //
 //-----------------------------------------
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <cstdlib>
 
 #include "../inc/element.hpp"
 #include "../inc/log.hpp"
 #include "../inc/tools.hpp"
-
-#define MAX_HUMAIN  3
 
 Humain *ptrHumain;
 

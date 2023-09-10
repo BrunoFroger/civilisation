@@ -4,8 +4,8 @@
 //
 //-----------------------------------------
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include "../inc/log.hpp"
 #include "../inc/tests.hpp"

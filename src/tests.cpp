@@ -3,9 +3,9 @@
 //          tests.cpp
 //
 //-----------------------------------------
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include <cstdlib>
 
 #include "../inc/civilisation.hpp"
@@ -95,11 +95,11 @@ bool resultatTest(bool status){
     nbTests++;
     nbTestsRubrique++;
     if (status){
-        printf("    Test OK \n");
+        printf("    Test n° %d OK \n", nbTestsRubrique + 1);
         nbOK++;
         nbOKRubrique++;
     } else {
-        printf("    Test KO \n");
+        printf("    Test n° %d KO \n", nbTestsRubrique + 1);
         nbKO++;
         nbKORubrique++;
         if (stopOnFail) exit(-1);
@@ -217,7 +217,7 @@ void executeTests(int mode){
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
         
-        if (0 || exec_all ) { 
+        if (1 || exec_all ) { 
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test de suppression des blancs inutiles d'une chaine");
             char expression[200];
@@ -228,7 +228,7 @@ void executeTests(int mode){
         }
 
 
-        if (0 || exec_all ) { 
+        if (1 || exec_all ) { 
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test fonction evaluation expression Int");
             int val1, val2;
@@ -248,10 +248,20 @@ void executeTests(int mode){
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(evaluationExpressionInt(val1,opeTest, val2));
 
+            val1=20; val2 =20;
+            strcpy(opeTest, "!=");
+            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
+
             val1=10; val2 =20;
             strcpy(opeTest, ">");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
+
+            val1=30; val2 =20;
+            strcpy(opeTest, ">");
+            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            resultatTest(evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, "<");
@@ -259,9 +269,9 @@ void executeTests(int mode){
             resultatTest(evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
-            strcpy(opeTest, ">");
+            strcpy(opeTest, "<");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, ">=");
@@ -286,7 +296,7 @@ void executeTests(int mode){
             log(LOG_DEBUG, "Bloc evaluationExpressionInt non executé\n");
         }
 
-        if (0 || exec_all ){ // 
+        if (1 || exec_all ){ // 
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test decompose si ");
             char ligne[5000] = "";
@@ -306,7 +316,7 @@ void executeTests(int mode){
             resultatTest(res);
         }
 
-        if (0 || exec_all ){ // bloc decomposeScript
+        if (1 || exec_all ){ // bloc decomposeScript
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test decomposeScript");
             char script[5000] = "";
@@ -482,7 +492,7 @@ void executeTests(int mode){
         Civilisation civilisation;
         Element *elementEntreprise, *elementHumain;
         bool res;
-        int idEntreprise, idSalarie;
+        int idEntreprise;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration spécifique");

@@ -4,8 +4,8 @@
 //
 //-----------------------------------------
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <string>
 #include <cstdlib>
 
 #include "../inc/element.hpp"
@@ -200,6 +200,17 @@ bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *lis
         // analyse si la liste d'origine commence par un mot clé d'une instruction complexe
         // multiligne possible
         if (strncmp(ListeInstructionOrigine, "si", 2) == 0){ // traitement d'un si 
+            // recherche du finsi
+            char *tmp = ListeInstructionOrigine;
+            while (strncmp(&tmp[j], "finsi", 5) != 0){
+                j++;
+                if (j > strlen(tmp)){
+                    log(LOG_ERROR, "finsi non trouvé dans %s", ListeInstructionOrigine);
+                    return false;
+                }
+                log(LOG_DEBUG, "TODO => Finir le dev");
+            } 
+            /*        
             printf("tools decomposeScript => traitement d'un si\n");
             char *tmp = ListeInstructionOrigine;
             while (strncmp(tmp, "finsi ", 6) != 0){
@@ -211,8 +222,8 @@ bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *lis
                 instruction[j++] = tmp[0];
                 tmp++;
                 instruction[j] = '\0';
-            }
-            strcat(instruction, "finsi");
+            }*/
+            strncat(instruction, tmp, j+5);
             strcpy(listeInstructionsRestante, tmp+6);
         } else { // traitement d'un instruction simple finissant par une fin de ligne
             for (int i = 0 ; i < strlen(ListeInstructionOrigine) ; i++){
