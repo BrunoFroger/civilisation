@@ -286,7 +286,7 @@ bool Entreprise::verseSalaire(int salaire, Humain *salarie){
 //
 //-----------------------------------------
 void Entreprise::evolutionEntreprise(void){
-    log(LOG_DEBUG, "Entreprise::evolution => evolution de %s", this->nom);
+    log(LOG_INFO, "Entreprise::evolution => evolution de %s", this->nom);
     log(LOG_DEBUG, "Entreprise::evolution => TODO");
     // TODO
 }
@@ -316,14 +316,14 @@ void Entreprise::listeEntreprise(void){
     }
     printf("| activité      |     %25s   |\n", tmp);
     printf("| nom           |     %25s   |\n", this->nom);
-    printf("| nb Salaries   |               %15d   |\n", this->nbSalaries);
-    printf("| cout/Salaries |               %15d   |\n", this->coutSalarie);
-    printf("| max Salaries  |               %15d   |\n", this->maxEmployes);
-    printf("| prix Produit  |               %15d   |\n", this->prixProduit);
-    printf("| stock Produit |               %15d   |\n", this->stock);
-    printf("| nb commandes  |               %15d   |\n", this->nbCommandes);
-    printf("| cpt bancaire  |               %15d   |\n", this->compteBancaireEntreprise->getSolde());
-    printf("| epargne       |               %15d   |\n", this->compteBancaireEntreprise->getEpargne());
+    printf("| nb Salaries   |     %25d   |\n", this->nbSalaries);
+    printf("| cout/Salaries |     %25d   |\n", this->coutSalarie);
+    printf("| max Salaries  |     %25d   |\n", this->maxEmployes);
+    printf("| prix Produit  |     %25d   |\n", this->prixProduit);
+    printf("| stock Produit |     %25d   |\n", this->stock);
+    printf("| nb commandes  |     %25d   |\n", this->nbCommandes);
+    printf("| cpt bancaire  |     %25d   |\n", this->compteBancaireEntreprise->getSolde());
+    printf("| epargne       |     %25d   |\n", this->compteBancaireEntreprise->getEpargne());
     printf("+---------------+---------------------------------+\n");
 }
 
@@ -398,6 +398,26 @@ bool Entreprise::produire(){
 
 //-----------------------------------------
 //
+//          Entreprise::embaucher
+//
+//-----------------------------------------
+bool Entreprise::embaucher(void){
+    log(LOG_DEBUG,"Humain::embaucher : TODO");
+    return true;
+}
+
+//-----------------------------------------
+//
+//          Entreprise:debaucher
+//
+//-----------------------------------------
+bool Entreprise::debaucher(void){
+    log(LOG_DEBUG,"Humain::debaucher : TODO");
+    return true;
+}
+
+//-----------------------------------------
+//
 //          Entreprise::execCommandeEntreprise
 //
 //-----------------------------------------
@@ -411,9 +431,11 @@ bool Entreprise::execCommandeEntreprise(char *valeur){
                     return true;
                     break;
                 case 1: // embaucher
+                    embaucher();
                     return true;
                     break;
                 case 2: // debaucher
+                    debaucher();
                     return true;
                     break;
             }

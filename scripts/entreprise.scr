@@ -1,6 +1,6 @@
 
-si nbCommande > stock alors produire
+si nbCommande > stock alors produire finsi
 
-si nbCommande = 0 alors debaucher
+si nbCommande = 0 alors debaucher finsi
 
-nb nbCommande > (stock * 2) alors embaucher
+nb nbCommande > (stock * 2) alors embaucher finsi

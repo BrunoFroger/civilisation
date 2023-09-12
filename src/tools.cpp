@@ -39,13 +39,25 @@ void remove_extra_spaces(char* str) {
 //-----------------------------------------
 bool evaluationExpressionInt(int data1, char *test, int data2){
     //printf("test '='\n");
-    if (strcmp(test, "=") == 0) return (data1==data2);
+    if (strcmp(test, "=") == 0){
+        return (data1==data2);
+    } 
     //printf("test '!='\n");
-    if (strcmp(test, "!=") == 0) return !(data1==data2);
-    if (strcmp(test, ">") == 0) return (data1>data2);
-    if (strcmp(test, "<") == 0) return (data1<data2);
-    if (strcmp(test, ">=") == 0) return (data1 >= data2);
-    if (strcmp(test, "<=") == 0) return (data1 <= data2);
+    if (strcmp(test, "!=") == 0){
+        return !(data1==data2);
+    }   
+    if (strcmp(test, ">") == 0){
+        return (data1>data2);
+    } 
+    if (strcmp(test, "<") == 0){
+        return (data1<data2);
+    } 
+    if (strcmp(test, ">=") == 0){
+        return (data1 >= data2);
+    } 
+    if (strcmp(test, "<=") == 0){
+        return (data1 <= data2);
+    } 
     //printf("aucun test valide\n");
     return false;
 }
@@ -57,13 +69,25 @@ bool evaluationExpressionInt(int data1, char *test, int data2){
 //-----------------------------------------
 bool evaluationExpressionChar(char *data1, char *test, char *data2){
     //printf("test '='\n");
-    if (strcmp(test, "=") == 0) return (strcmp((const char*)data1, (const char*)data2) == 0);
+    if (strcmp(test, "=") == 0){
+        return (strcmp((const char*)data1, (const char*)data2) == 0);
+    } 
     //printf("test '!='\n");
-    if (strcmp(test, "!=") == 0) return !(strcmp((const char*)data1, (const char*)data2) == 0);
-    if (strcmp(test, ">") == 0) return (strcmp((const char*)data1, (const char*)data2) > 0);
-    if (strcmp(test, "<") == 0) return (strcmp((const char*)data1, (const char*)data2) < 0);
-    if (strcmp(test, ">=") == 0) return (strcmp((const char*)data1, (const char*)data2) >= 0);
-    if (strcmp(test, "<=") == 0) return (strcmp((const char*)data1, (const char*)data2) <= 0);
+    if (strcmp(test, "!=") == 0){
+        return !(strcmp((const char*)data1, (const char*)data2) == 0);
+    } 
+    if (strcmp(test, ">") == 0){
+        return (strcmp((const char*)data1, (const char*)data2) > 0);
+    } 
+    if (strcmp(test, "<") == 0){
+        return (strcmp((const char*)data1, (const char*)data2) < 0);
+    } 
+    if (strcmp(test, ">=") == 0){
+        return (strcmp((const char*)data1, (const char*)data2) >= 0);
+    } 
+    if (strcmp(test, "<=") == 0){
+        return (strcmp((const char*)data1, (const char*)data2) <= 0);
+    } 
     //printf("aucun test valide\n");
     return false;
 }
@@ -73,12 +97,13 @@ bool evaluationExpressionChar(char *data1, char *test, char *data2){
 //          decomposeIf
 //
 //-----------------------------------------
-bool decomposeSi(char *ligne, structIf *resultat){
+bool decomposeSi(char *ligne, structSi *resultat){
 
     int i = 0;
     char *tmp;
     char buffer[200];
-    printf("Tools.cpp => decomposeSi => debut\n");
+    log(LOG_DEBUG, "Tools.cpp => -----------------------------");
+    log(LOG_DEBUG, "Tools.cpp => decomposeSi => debut");
 
     strcpy(resultat->expression,"");
     strcpy(resultat->ListeCommandeSiVrai,"");
@@ -151,6 +176,13 @@ bool decomposeSi(char *ligne, structIf *resultat){
         //printf("listeCommandeSiVrai = '%s'\n", resultat->ListeCommandeSiVrai);
         if (strncmp(tmp, "finsi", 5) == 0){
             // fin de traitement du si
+            remove_extra_spaces(resultat->expression);
+            remove_extra_spaces(resultat->ListeCommandeSiVrai);
+            remove_extra_spaces(resultat->ListeCommandeSiFaux);
+            log(LOG_DEBUG, "Tools.cpp => expression          = '%s'", resultat->expression);
+            log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiVrai = '%s'", resultat->ListeCommandeSiVrai);
+            log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiFaux = '%s'", resultat->ListeCommandeSiFaux);
+            log(LOG_DEBUG, "Tools.cpp => fin 181\n");
             return true;
         }
 
@@ -179,8 +211,13 @@ bool decomposeSi(char *ligne, structIf *resultat){
             resultat->ListeCommandeSiFaux[i++] = *tmp++;
             resultat->ListeCommandeSiFaux[i] = '\0';
         }
-        //printf("ListeCommandeSiFaux = '%s'\n", resultat->ListeCommandeSiFaux);
-        //printf("Element::decomposeSi => fin 220\n");
+        remove_extra_spaces(resultat->expression);
+        remove_extra_spaces(resultat->ListeCommandeSiVrai);
+        remove_extra_spaces(resultat->ListeCommandeSiFaux);
+        log(LOG_DEBUG, "Tools.cpp => expression          = '%s'", resultat->expression);
+        log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiVrai = '%s'", resultat->ListeCommandeSiVrai);
+        log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiFaux = '%s'", resultat->ListeCommandeSiFaux);
+        log(LOG_DEBUG, "Tools.cpp => fin 214\n");
         return true;
     }
 }
@@ -191,8 +228,8 @@ bool decomposeSi(char *ligne, structIf *resultat){
 //
 //-----------------------------------------
 bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
-    printf( "tools decomposeScript => debut\n");
-    printf("tools decomposeScript => Decomposition du script <%s>\n", ListeInstructionOrigine);
+    log(LOG_DEBUG, "tools decomposeScript => debut");
+    log(LOG_DEBUG, "tools decomposeScript => Decomposition du script <%s>", ListeInstructionOrigine);
     strcpy(instruction, (char *)"");
     strcpy(listeInstructionsRestante, (char *)"");
     if (strlen(ListeInstructionOrigine) > 0){
@@ -208,7 +245,7 @@ bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *lis
                     log(LOG_ERROR, "finsi non trouvé dans %s", ListeInstructionOrigine);
                     return false;
                 }
-                log(LOG_DEBUG, "TODO => Finir le dev");
+                //log(LOG_DEBUG, "TODO => Finir le dev");
             } 
             /*        
             printf("tools decomposeScript => traitement d'un si\n");
@@ -224,7 +261,11 @@ bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *lis
                 instruction[j] = '\0';
             }*/
             strncat(instruction, tmp, j+5);
-            strcpy(listeInstructionsRestante, tmp+6);
+            if (strlen(tmp) > j+6){
+                strcpy(listeInstructionsRestante, tmp+j+6);
+            } else {
+                strcpy(listeInstructionsRestante, "");
+            }
         } else { // traitement d'un instruction simple finissant par une fin de ligne
             for (int i = 0 ; i < strlen(ListeInstructionOrigine) ; i++){
                 // test si 
@@ -242,8 +283,8 @@ bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *lis
         }
         //remove_extra_spaces(instruction);
         //remove_extra_spaces(listeInstructionsRestante);
-        printf("tools decomposeScript => instruction = <%s>\n", instruction);
-        printf("tools decomposeScript => listeInstr  = <%s>\n", listeInstructionsRestante);
+        log(LOG_DEBUG, "tools decomposeScript => instruction à traiter = <%s>", instruction);
+        log(LOG_DEBUG, "tools decomposeScript => liste instr restante  = <%s>", listeInstructionsRestante);
         return true;
     }
     return false;

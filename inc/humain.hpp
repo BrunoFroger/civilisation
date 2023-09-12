@@ -36,6 +36,7 @@
             char *getNomHumain();
             void setNom(char *nom);
             int getSexe();
+            char getSexeChar();
             void setSexe(int sexe);
             int getAge();
             int getStatusMarital();
@@ -50,6 +51,8 @@
             void listeHumain(void);
             void acheteProduit(Entreprise *entreprise);
             static char *listeVariables(void);
+            bool evalueExpressionHumain(char *expression);
+            void setConjoint(Humain *pretendant);
 
         private:
             int id;
@@ -61,7 +64,7 @@
             int idEmployeur;    // -1 => sans emploi
             void mortPossible(void);
             void chercheConjoint(void);
-            void naissancePossible(void);
+            bool naissancePossible(void);
             Humain *conjoint;
             Humain *enfants[MAX_ENFANTS];
     };

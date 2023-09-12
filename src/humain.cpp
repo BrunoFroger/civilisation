@@ -6,6 +6,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <time.h> 
 
 #include "../inc/humain.hpp"
 #include "../inc/log.hpp"
@@ -63,8 +64,10 @@ void Humain::initHumain(int id, int sexe, char *nom, int capitalInitial){
 //
 //-----------------------------------------
 void Humain::evolutionHumain(void){
-    log(LOG_DEBUG, "Humain::evolution => evolution de %s", this->nom);
-    this->age++;
+    if (statusMarital != STATUS_MARITAL_DECES){
+        log(LOG_INFO, "Humain::evolution => evolution de %s", this->nom);
+        this->age++;
+    }
 }
 
 //-----------------------------------------
@@ -105,6 +108,17 @@ int Humain::getSexe(void){
 
 //-----------------------------------------
 //
+//          Humain::getSexe
+//
+//-----------------------------------------
+char Humain::getSexeChar(void){
+    if (sexe == HOMME) return 'H';
+    if (sexe == HOMME) return 'F';
+    return 'X';
+}
+
+//-----------------------------------------
+//
 //          Humain::setSexe
 //
 //-----------------------------------------
@@ -139,20 +153,15 @@ bool Humain::isVariable(char *valeur){
     //printf("isvariable : test de la variable %s\n", valeur);
     char *tmp;
 
-    log(LOG_DEBUG, "TODO : a finir de developper");
+    //log(LOG_DEBUG, "TODO : a finir de developper");
     for (int i = 0 ; i < NB_VARIABLE_HUMAIN ; i++){
         tmp = listeVariablesHumain[i];
         if (strcmp(tmp, valeur) == 0) {
             return true;
         } else {
-            log(LOG_ERROR, "commande <%s> inconnue", valeur);
+            //log(LOG_ERROR, "commande <%s> inconnue", valeur);
         }
     }
-    //if (strcmp(valeur, "sexe") == 0) return true;
-    //if (strcmp(valeur, "nom") == 0) return true;
-    //if (strcmp(valeur, "age") == 0) return true;
-    //if (strcmp(valeur, "celibataire") == 0) return true;
-    //printf("isVariable : return false \n");
     return false;
 }
 
@@ -190,6 +199,58 @@ char *Humain::getCharValue(char *valeur){
 
 //-----------------------------------------
 //
+//          evalueExpression
+//
+//-----------------------------------------
+bool Humain::evalueExpressionHumain(char *expression){
+    int val1;
+    int val2;
+    //bool res = false;
+    char data1[30], op[5], data2[30];
+    int i = 0, j = 0;
+    log(LOG_DEBUG, "Humain::evalueExpressionHumain => debut : calcul de '%s'", expression);
+
+    // decomposition de l'expression
+    while ((expression[i] != ' ') && (i < strlen(expression))){
+        data1[j++] = expression[i++];
+        data1[j] = '\0';
+    } 
+    j=0;
+    if (i >= strlen(expression)) return false;
+    while((expression[i] == ' ') && (i < strlen(expression))) i++;
+    while ((expression[i] != ' ') && (i < strlen(expression))){
+        putchar(expression[i]);
+        op[j++] = expression[i++];
+        op[j] = '\0';
+    } 
+    j=0;
+    if (i >= strlen(expression)) return false;
+    while((expression[i] == ' ') && (i < strlen(expression))) i++;
+    while ((expression[i] != ' ') && (i < strlen(expression))){
+        data2[j++] = expression[i++];
+        data2[j] = '\0';
+    } 
+    log(LOG_DEBUG, "Humain::evalueExpressionHumain => resultat decomposition : '%s' '%s' '%s'", data1, op, data2);
+
+    if (Humain::isVariable(data1)){
+        val1 = getIntValue(data1);
+        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data1 est une variable : '%s' => '%d'\n", data1, val1);
+    } else {
+        val1 = atoi(data1);
+    }
+    if (Humain::isVariable(data2)){
+        val2 = getIntValue(data2);
+        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data2 est une variable : '%s' => '%d'\n", data2, val2);
+    } else {
+        val2 = atoi(data2);
+    }
+    log(LOG_DEBUG, "Humain::evalueExpressionHumain => apres evaluation : calcul de '%d' '%s' '%d'\n", val1, op, val2);
+    return evaluationExpressionInt(val1, op, val2);
+    //return res;
+}
+
+//-----------------------------------------
+//
 //          calculExpression
 //
 //-----------------------------------------
@@ -197,7 +258,7 @@ int Humain::calculExpression(char *data1, char op, char *data2){
     int val1;
     int val2;
     int res = false;
-    printf("Humain::calculExpression => debut : calcul de <%s> <%c> <%s>\n", data1, op, data2);
+    log(LOG_DEBUG, "Humain::calculExpression => debut : calcul de <%s> <%c> <%s>\n", data1, op, data2);
     if (Humain::isVariable(data1)){
         val1 = getIntValue(data1);
         printf("data1 est une variable : <%s> => <%d>\n", data1, val1);
@@ -210,7 +271,7 @@ int Humain::calculExpression(char *data1, char op, char *data2){
     } else {
         val2 = atoi(data2);
     }
-    printf("Humain::calculExpression => apres evaluation : calcul de <%d> <%c> <%d>\n", val1, op, val2);
+    log(LOG_DEBUG, "Humain::calculExpression => apres evaluation : calcul de <%d> <%c> <%d>\n", val1, op, val2);
     switch(op){
         case '+' : 
             res = val1 + val2;
@@ -225,7 +286,7 @@ int Humain::calculExpression(char *data1, char op, char *data2){
             res = val1 / val2;
             break;
     }
-    printf("Humain::calculExpression => resultat : <%d> <%c> <%d> = <%d>\n", val1, op, val2, res);
+    log(LOG_DEBUG, "Humain::calculExpression => resultat : <%d> <%c> <%d> = <%d>\n", val1, op, val2, res);
     return res;
 }
 
@@ -283,15 +344,51 @@ bool Humain::testSiListeCommandeValideHumain(char *valeur){
 //
 //-----------------------------------------
 void Humain::mortPossible(void){
-    printf("Humain::mortPossible => TODO a finir\n");
-    double rnd = rand() % 100;
-    printf(" rnd = %3.0f\n", rnd);
-    rnd *= age;
-    printf(" rnd * age = %3.0f\n", rnd);
-    if (rnd > 70){
-        printf("mort de %s \n", nom);
-        statusMarital = STATUS_MARITAL_DECES;
+    log(LOG_DEBUG,"Humain::mortPossible => TODO a tester");
+    srand (time(NULL));
+    if (age > 15){
+        double rnd = rand() % age;
+        log(LOG_DEBUG,"Humain::mortPossible =>  rnd = %3.0f\n", rnd);
+        log(LOG_DEBUG,"Humain::mortPossible =>  age = %3d\n", age);
+        log(LOG_DEBUG,"Humain::mortPossible =>  0.7 * age = %3.0f\n", (age * 0.7));
+        if (rnd > (age * 0.7)){
+            printf("mort de %s \n", nom);
+            statusMarital = STATUS_MARITAL_DECES;
+        }
+        // transfert du capital aux heritiers
+        // conjoints en premier et enfants ensuite
+        // sinon perdu
+        if (compteBancaireHumain->getEpargne() > 0) compteBancaireHumain->restitueEpargne(compteBancaireHumain->getEpargne());
+        if (compteBancaireHumain->getSolde() > 0){
+            if (conjoint != NULL){
+                compteBancaireHumain->virement(conjoint->compteBancaireHumain, compteBancaireHumain->getSolde());
+                return;
+            }
+            if (nbEnfants > 0){
+                int nbHeritiers = 0;
+                for (int i = 0 ; i < MAX_ENFANTS ; i++){
+                    if (enfants[i] != NULL) nbHeritiers++;
+                }
+                int heritage = compteBancaireHumain->getSolde() / nbEnfants;
+                for (int i = 0 ; i < MAX_ENFANTS ; i++){
+                    if (enfants[i] != NULL){
+                        compteBancaireHumain->virement(enfants[i]->compteBancaireHumain, heritage);
+                    }
+                }
+            }
+        }
     }
+}
+
+//-----------------------------------------
+//
+//          Humain::setConjoint
+//
+//-----------------------------------------
+void Humain::setConjoint(Humain *pretendant){
+    printf("Humain::setConjoint => TODO\n");
+    conjoint = pretendant;
+    
 }
 
 //-----------------------------------------
@@ -300,7 +397,11 @@ void Humain::mortPossible(void){
 //
 //-----------------------------------------
 void Humain::chercheConjoint(void){
-    printf("Humain::ecole => TODO\n");
+    printf("Humain::chercheConjoint => TODO\n");
+    if ((statusMarital != STATUS_MARITAL_DECES) && (statusMarital != STATUS_MARITAL_DECES)){
+        log(LOG_DEBUG, "Humain::chercheConjoint => recherche conjoint possible => à developper");
+    }
+    
 }
 
 //-----------------------------------------
@@ -308,13 +409,19 @@ void Humain::chercheConjoint(void){
 //          Humain::naissancePossible
 //
 //-----------------------------------------
-void Humain::naissancePossible(void){
-    printf("Humain::naissancePossible => TODO a finir\n");
+bool Humain::naissancePossible(void){
+    printf("Humain::naissancePossible => TODO a tester\n");
+    srand (time(NULL));
     double rnd = rand();
+    if (statusMarital != STATUS_MARITAL_MARIE) return false;
     if ((age > 20) && (age < 50))
     if (rnd > 0.7){
-        printf("naissance pour %s\n", nom);
+        if (nbEnfants <= MAX_ENFANTS){
+            printf("naissance pour %s\n", nom);
+            return true;
+        }
     }
+    return false;
 }
 
 //-----------------------------------------

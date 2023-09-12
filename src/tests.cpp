@@ -44,7 +44,7 @@ structResultatTest tableauresultatsTests[NB_RUBRIQUES];
 
 //-----------------------------------------
 //
-//          resultatTest
+//          initTableauTests
 //
 //-----------------------------------------
 void initTableauTests(void){
@@ -91,7 +91,7 @@ void initTableauTests(void){
 //          resultatTest
 //
 //-----------------------------------------
-bool resultatTest(bool status){
+bool resultatTest(char *rubrique, bool status){
     nbTests++;
     nbTestsRubrique++;
     if (status){
@@ -99,7 +99,7 @@ bool resultatTest(bool status){
         nbOK++;
         nbOKRubrique++;
     } else {
-        printf("    Test n° %d KO \n", nbTestsRubrique + 1);
+        printf("    Test n° %d KO dans %s\n", nbTestsRubrique + 1, rubrique);
         nbKO++;
         nbKORubrique++;
         if (stopOnFail) exit(-1);
@@ -224,7 +224,7 @@ void executeTests(int mode){
             sprintf(expression, " 1234   12345     12345678     123   123456789   ");
             char resultat_attendu[200] = "1234 12345 12345678 123 123456789";
             remove_extra_spaces(expression);
-            resultatTest((strcmp(expression, resultat_attendu) == 0));
+            resultatTest(rubrique, (strcmp(expression, resultat_attendu) == 0));
         }
 
 
@@ -236,62 +236,62 @@ void executeTests(int mode){
             val1=10; val2 =10;
             strcpy(opeTest, "=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, "=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, "!=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=20; val2 =20;
             strcpy(opeTest, "!=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, ">");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, ">");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, "<");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, "<");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, ">=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=5; val2 =10;
             strcpy(opeTest, ">=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(!evaluationExpressionInt(val1, opeTest, val2));
+            resultatTest(rubrique, !evaluationExpressionInt(val1, opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, "<=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(!evaluationExpressionInt(val1,opeTest, val2));
+            resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=5; val2 =10;
             strcpy(opeTest, "<=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
-            resultatTest(evaluationExpressionInt(val1, opeTest, val2));
+            resultatTest(rubrique, evaluationExpressionInt(val1, opeTest, val2));
         } else {
             log(LOG_DEBUG, "Bloc evaluationExpressionInt non executé\n");
         }
@@ -300,20 +300,20 @@ void executeTests(int mode){
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test decompose si ");
             char ligne[5000] = "";
-            structIf resultat;
+            structSi resultat;
             bool res = false;
             
             sprintf(ligne, "si toto alors titi finsi commande");
             res = decomposeSi(ligne, &resultat);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "toto") == 0);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "titi") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
             
             sprintf(ligne, "si toto alors titi \n tata finsi commande1\ncommande2");
             res = decomposeSi(ligne, &resultat);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "titi \n tata ") == 0);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "commande1\ncommande2") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
         }
 
         if (1 || exec_all ){ // bloc decomposeScript
@@ -327,46 +327,46 @@ void executeTests(int mode){
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, "chercheConjoint") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
             sprintf(script, "#commentaire\nchercheConjoint\ntoto");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, "chercheConjoint\ntoto") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
 
             sprintf(script, "#commentaire\n chercheConjoint");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, " chercheConjoint") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
 
             sprintf(script, "si toto alors titi finsi commande");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "commande") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
 
             sprintf(script, "si toto alors titi finsi commande\n ");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "commande\n ") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
 
             sprintf(script, "si toto alors titi finsi \n commande");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "\n commande") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
 
             sprintf(script, "si toto \n tata alors titi \n tutu finsi commande1\n commande2\n ");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto \n tata alors titi \n tutu finsi") == 0);
             res &= (strcmp(listeInstructions, "commande1\n commande2\n ") == 0);
-            resultatTest(res);
+            resultatTest(rubrique, res);
 
             sprintf(script, "si toto alors titi commande\n ");
             res = decomposeScript(script, instruction, listeInstructions);
-            resultatTest(!res);
+            resultatTest(rubrique, !res);
         } else {
             log(LOG_DEBUG, "Bloc decomposeScript non executé\n");
         }
@@ -387,20 +387,20 @@ void executeTests(int mode){
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation de civilisation avec id element = 0");
         Civilisation civilisation;
-        resultatTest((civilisation.getCourantElementId() == 0));
+        resultatTest(rubrique, (civilisation.getCourantElementId() == 0));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'un element humain");
         Element *element = civilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
-        resultatTest(strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomHumain(), "Marcel") == 0);
-        resultatTest(element->getTypeElement() == TYPE_HUMAIN);
+        resultatTest(rubrique, strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomHumain(), "Marcel") == 0);
+        resultatTest(rubrique, element->getTypeElement() == TYPE_HUMAIN);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'un element entreprise");
         element = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
-        resultatTest(element->getTypeElement() == TYPE_ENTREPRISE);
-        resultatTest(strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomEntreprise(), "au bon pain") == 0);
-        resultatTest(civilisation.getElement(civilisation.getCourantElementId()-1)->compteBancaireEntreprise->getSolde() == 25000);
+        resultatTest(rubrique, element->getTypeElement() == TYPE_ENTREPRISE);
+        resultatTest(rubrique, strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomEntreprise(), "au bon pain") == 0);
+        resultatTest(rubrique, civilisation.getElement(civilisation.getCourantElementId()-1)->compteBancaireEntreprise->getSolde() == 25000);
 
         bilanTestsRubrique(rubrique);
     }
@@ -420,17 +420,12 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test creation element");
         element.initHumain(10, FEMME, (char *)"eve", 1000);
         element.setTypeElement(TYPE_HUMAIN);
-        bool res = true;
-        printf("res %d init \n", res);
-        res &= (element.getIdHumain() == 10);
-        printf("res %d get id = %d\n", res, element.getIdHumain());
-        res &= (element.getAge() == 0);
-        printf("res %d get age = %d\n", res, element.getAge());
-        resultatTest(res);
+        resultatTest(rubrique, element.getIdHumain() == 10);
+        resultatTest(rubrique, element.getAge() == 0);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test execution script");
-        resultatTest(element.execScript());
+        resultatTest(rubrique, element.execScript());
 
         bilanTestsRubrique(rubrique);
     }
@@ -449,33 +444,33 @@ void executeTests(int mode){
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation humain");
         Humain humain(0,HOMME, (char *)"adam", 1000);
-        resultatTest(humain.getAge() == 0);
-        resultatTest(strcmp(humain.getNomHumain(), "adam") == 0);
+        resultatTest(rubrique, humain.getAge() == 0);
+        resultatTest(rubrique, strcmp(humain.getNomHumain(), "adam") == 0);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test evolution");
         humain.evolutionHumain();
-        resultatTest(humain.getAge() == 1);
+        resultatTest(rubrique, humain.getAge() == 1);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test fonction liste de commandes valide");
-        resultatTest(humain.testSiCommandeValideHumain((char *)"mortPossible"));
-        resultatTest(!humain.testSiCommandeValideHumain((char *)"sdfqsdfqdf"));
-        resultatTest(humain.calculExpression((char *)"20", '+', (char *)"10") == 30);
-        resultatTest(!(humain.calculExpression((char *)"20", '+', (char *)"20") == 30));
-        resultatTest(humain.calculExpression((char *)"20", '*', (char *)"10") == 200);
-        resultatTest(humain.calculExpression((char *)"20", '/', (char *)"10") == 2);
-        resultatTest(humain.calculExpression((char *)"20", '-', (char *)"10") == 10);
-        resultatTest(humain.calculExpression((char *)"age", '+', (char *)"10") == 11);
+        resultatTest(rubrique, humain.testSiCommandeValideHumain((char *)"mortPossible"));
+        resultatTest(rubrique, !humain.testSiCommandeValideHumain((char *)"sdfqsdfqdf"));
+        resultatTest(rubrique, humain.calculExpression((char *)"20", '+', (char *)"10") == 30);
+        resultatTest(rubrique, !(humain.calculExpression((char *)"20", '+', (char *)"20") == 30));
+        resultatTest(rubrique, humain.calculExpression((char *)"20", '*', (char *)"10") == 200);
+        resultatTest(rubrique, humain.calculExpression((char *)"20", '/', (char *)"10") == 2);
+        resultatTest(rubrique, humain.calculExpression((char *)"20", '-', (char *)"10") == 10);
+        resultatTest(rubrique, humain.calculExpression((char *)"age", '+', (char *)"10") == 11);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test execution commandes");
-        resultatTest(humain.execCommandeHumain((char *)"mortPossible"));
-        resultatTest(!humain.execCommandeHumain((char *)"toto"));
-        resultatTest(!(humain.getStatusMarital() == STATUS_MARITAL_DECES));
-        for (int i = 0 ; i < 100 ; i++) humain.evolutionHumain();
+        resultatTest(rubrique, humain.execCommandeHumain((char *)"mortPossible"));
+        resultatTest(rubrique, !humain.execCommandeHumain((char *)"toto"));
+        resultatTest(rubrique, !(humain.getStatusMarital() == STATUS_MARITAL_DECES));
+        for (int i = 0 ; i < 20 ; i++) humain.evolutionHumain();
         humain.execCommandeHumain((char *)"mortPossible");
-        resultatTest(humain.getStatusMarital() == STATUS_MARITAL_DECES);
+        resultatTest(rubrique, humain.getStatusMarital() == STATUS_MARITAL_DECES);
 
         bilanTestsRubrique(rubrique);
     }
@@ -515,7 +510,7 @@ void executeTests(int mode){
         //printf("res = %d\n", res);
         res &= (elementEntreprise->getMaxEmployes() == 5);
         //printf("res = %d\n", res);
-        resultatTest(res);
+        resultatTest(rubrique, res);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration par default");
@@ -530,7 +525,7 @@ void executeTests(int mode){
         res &= (elementEntreprise->getCoutProduit() == 5);
         res &= (elementEntreprise->getPrixProduit() == 10);
         res &= (elementEntreprise->getStockProduit() == 0);
-        resultatTest(res);
+        resultatTest(rubrique, res);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test versement de salaire");
@@ -543,30 +538,30 @@ void executeTests(int mode){
         soldeAttendu = ancienSoldeHumain + salaire;
         elementEntreprise->verseSalaire(salaire, elementHumain);
         //printf("ancien solde = %d ; salaire = %d ; nouveau solde = %d\n", ancienSolde, salaire, nouveauSolde);
-        resultatTest(soldeAttendu == elementHumain->compteBancaireHumain->getSolde());
+        resultatTest(rubrique, soldeAttendu == elementHumain->compteBancaireHumain->getSolde());
         soldeAttendu = ancienSoldeEntreprise - salaire;
         //printf("ancien solde = %d ; salaire = %d ; nouveau solde = %d\n", ancienSoldeEntreprise, salaire, soldeAttendu);
-        resultatTest(soldeAttendu == elementEntreprise->compteBancaireEntreprise->getSolde());
+        resultatTest(rubrique, soldeAttendu == elementEntreprise->compteBancaireEntreprise->getSolde());
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test commande/livraison de produit");
         elementEntreprise->creeCommande(elementHumain, 1);
-        resultatTest(elementEntreprise->getNbCommandes() == 1);
+        resultatTest(rubrique, elementEntreprise->getNbCommandes() == 1);
         elementEntreprise->creeCommande(elementHumain, 1);
-        resultatTest(elementEntreprise->getNbCommandes() == 2);
+        resultatTest(rubrique, elementEntreprise->getNbCommandes() == 2);
         elementEntreprise->livraison(elementHumain);
-        resultatTest(elementEntreprise->getNbCommandes() == 1);
+        resultatTest(rubrique, elementEntreprise->getNbCommandes() == 1);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test fonction liste de commandes valide");
-        resultatTest(elementEntreprise->testSiCommandeValideEntreprise((char *)"produire"));
-        resultatTest(elementEntreprise->testSiCommandeValideEntreprise((char *)"embaucher"));
-        resultatTest(!elementEntreprise->testSiCommandeValideEntreprise((char *)"sdfqsdfqdf"));
+        resultatTest(rubrique, elementEntreprise->testSiCommandeValideEntreprise((char *)"produire"));
+        resultatTest(rubrique, elementEntreprise->testSiCommandeValideEntreprise((char *)"embaucher"));
+        resultatTest(rubrique, !elementEntreprise->testSiCommandeValideEntreprise((char *)"sdfqsdfqdf"));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test execution commandes");
-        resultatTest(elementEntreprise->execCommandeEntreprise((char *)"produire"));
-        resultatTest(!elementEntreprise->execCommandeEntreprise((char *)"toto"));
+        resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"produire"));
+        resultatTest(rubrique, !elementEntreprise->execCommandeEntreprise((char *)"toto"));
 
         bilanTestsRubrique(rubrique);
     }
@@ -584,35 +579,35 @@ void executeTests(int mode){
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation de compte");
         CompteBancaire cpt;
-        resultatTest(cpt.getSolde() == 0);
+        resultatTest(rubrique, cpt.getSolde() == 0);
         cpt.initCompteBancaire(100);
-        resultatTest(cpt.getSolde() == 100);
+        resultatTest(rubrique, cpt.getSolde() == 100);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation de compte initialisé");
         CompteBancaire cpt1(1000);
-        resultatTest(cpt1.getSolde() == 1000);
+        resultatTest(rubrique, cpt1.getSolde() == 1000);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test gestion epargne");
         cpt.sauveEpargne(50);
-        resultatTest((cpt.getSolde() == 50) && (cpt.getEpargne() == 50));
+        resultatTest(rubrique, (cpt.getSolde() == 50) && (cpt.getEpargne() == 50));
         cpt.restitueEpargne(25);
-        resultatTest((cpt.getSolde() == 75) && (cpt.getEpargne() == 25));
+        resultatTest(rubrique, (cpt.getSolde() == 75) && (cpt.getEpargne() == 25));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test virement simple");
         CompteBancaire cpt2(100);
         cpt1.virement(&cpt2, 500);
-        resultatTest((cpt1.getSolde() == 500) && (cpt2.getSolde() == 600));
+        resultatTest(rubrique, (cpt1.getSolde() == 500) && (cpt2.getSolde() == 600));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test virement négatif impossible");
-        resultatTest( ! cpt1.virement(&cpt2, -100));
+        resultatTest(rubrique, !cpt1.virement(&cpt2, -100));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test virement vers compte NULL");
-        resultatTest(cpt1.virement(NULL, 100));
+        resultatTest(rubrique, cpt1.virement(NULL, 100));
 
         bilanTestsRubrique(rubrique);
     }

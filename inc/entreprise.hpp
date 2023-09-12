@@ -78,6 +78,8 @@
             structCommande listeCommandes[MAX_COMMANDES];
             int getRefCommande(void);
             bool produire();
+            bool embaucher();
+            bool debaucher();
     };
 
 #endif

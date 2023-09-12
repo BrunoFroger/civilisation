@@ -24,10 +24,12 @@ Civilisation::Civilisation(){
     log(LOG_INFO, "     C I V I L I S A T I O N ");
     log(LOG_INFO, "===================================");
     log(LOG_INFO, "Creation d'une civilisation");
+    log(LOG_DEBUG, "Civilisation::Civilisation => debut");
     this->courantElementId = 0;
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         this->elements[i] = new Element(-1, TYPE_INDEFINI);
     }
+    log(LOG_DEBUG, "Civilisation::Civilisation => fin");
 }
 
 //-----------------------------------------
@@ -93,7 +95,7 @@ Element *Civilisation::getElement(int index){
 //
 //-----------------------------------------
 Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
-    log(LOG_DEBUG, "Civilisation::creeElementHumain(int sexe, char *nom) => (id=%d) %d, %s", courantElementId, sexe, nom);
+    log(LOG_INFO, "Civilisation::creeElementHumain(int sexe, char *nom) => (id=%d) %d, %s", courantElementId, sexe, nom);
     Element *tmpElement = this->elements[courantElementId];
     tmpElement->initHumain(courantElementId, sexe, nom, capitalInitial);
     tmpElement->setTypeElement(TYPE_HUMAIN);
@@ -109,7 +111,7 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
 //
 //-----------------------------------------
 Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
-    log(LOG_DEBUG, "Civilisation::creeElementEntreprise(int activite, char *nom) => (id=%d) %d, %s", courantElementId, activite, nom);
+    log(LOG_INFO, "Civilisation::creeElementEntreprise(int activite, char *nom) => (id=%d) %d, %s", courantElementId, activite, nom);
     Element *tmpElement = this->elements[courantElementId];
     tmpElement->initEntreprise(courantElementId, activite, nom, capital);
     tmpElement->setTypeElement(TYPE_ENTREPRISE);
@@ -166,18 +168,24 @@ void Civilisation::listeCivilisation(void){
                 case STATUS_MARITAL_DIVOR: 
                     strcpy(tmp, "DIVO");
                     break;
+                case STATUS_MARITAL_DECES: 
+                    strcpy(tmp, "DECE");
+                    break;
+                default: 
+                    strcpy(tmp, "-NC-");
+                    break;
             }
-            printf("| %5d  | %25s |  %d  | %5d | %4s | %10d | %15d |\n", 
+            printf("| %5d  | %25s |  %c  | %5d | %4s | %10d | %15d |\n", 
                 ptr->getIdHumain(),
                 ptr->getNomHumain(), 
-                ptr->getSexe(),
+                ptr->getSexeChar(),
                 ptr->getAge(),
                 tmp,
                 ptr->compteBancaireHumain->getSolde(),
                 ptr->compteBancaireHumain->getEpargne());
         }
     }
-    printf("+--------+---------------------------+-----+-------+-----+------------+-----------------+\n");
+    printf("+--------+---------------------------+-----+-------+------+------------+-----------------+\n");
 
     // affichage des entreprises 
     // TODO
@@ -210,15 +218,19 @@ void Civilisation::listeCivilisation(void){
 void Civilisation::evolutionCivilisation(void){
     Element *ptr;
     log(LOG_DEBUG, "===================================");
+    log(LOG_DEBUG, "");
     log(LOG_DEBUG, "Civilisation::evolutionCivilisation");
+    log(LOG_DEBUG, "");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
          ptr = elements[i];
          switch(ptr->getTypeElement()){
             case TYPE_HUMAIN:
+                log(LOG_DEBUG, "===================================");
                 ptr->evolutionHumain();
                 ptr->execScript();
                 break;
             case TYPE_ENTREPRISE:
+                log(LOG_DEBUG, "===================================");
                 ptr->evolutionEntreprise();
                 ptr->execScript();
                 break;

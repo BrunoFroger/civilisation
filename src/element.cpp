@@ -42,7 +42,8 @@ Element::Element(){
 //
 //-----------------------------------------
 Element::Element(int id, int type){
-    //log(LOG_DEBUG, "Element::Element(int id, int type)");
+    //printf("initialisation element %d, %d\n", id, type);
+    log(LOG_DEBUG, "Element::Element(int id, int type)");
     this->idElement = id;
     this->typeElement = type;
     switch (type){
@@ -101,7 +102,7 @@ void Element::setElementId(int id){
 //          decomposeIf
 //
 //-----------------------------------------
-bool Element::decomposeSi(FILE *fic, char *ligne, structIf *resultat){
+bool Element::decomposeSi(FILE *fic, char *ligne, structSi *resultat){
 
     int i = 0;
     char *tmp;
@@ -217,11 +218,11 @@ bool Element::decomposeSi(FILE *fic, char *ligne, structIf *resultat){
 //          decomposeExpression
 //
 //-----------------------------------------
-bool Element::decomposeExpression(char *expression, structExpression *resultat){
-    printf("decompose expression => debut\n");
-    printf("decompose expression => expression initiale : '%s'\n", expression);
+/*bool Element::decomposeExpression(char *expression, structExpression *resultat){
+    log(LOG_DEBUG, "decompose expression => debut\n");
+    log(LOG_DEBUG, "decompose expression => expression initiale : '%s'\n", expression);
     remove_extra_spaces(expression);
-    printf("decompose expression => expression apres suppression des blancs : '%s'\n", expression);
+    log(LOG_DEBUG, "decompose expression => expression apres suppression des blancs : '%s'\n", expression);
     int i = 0;
     int j = 0;
     // traitement des sous expressions entre parentheses si necessaire
@@ -251,11 +252,11 @@ bool Element::decomposeExpression(char *expression, structExpression *resultat){
         }
         // TODO
         // evaluation de l'item
-        printf("tentative d'evaluation d'item1 : '%s'\n", resultat->item1);
+        log(LOG_DEBUG, "tentative d'evaluation d'item1 : '%s'\n", resultat->item1);
         if (isVariable(resultat->item1)){
-            printf("item1 est bien une variable connue\n");
+            log(LOG_DEBUG, "item1 est bien une variable connue\n");
             char buff[10];
-            printf("valeur de item1 :'%d'\n", getIntValue(resultat->item1));
+            log(LOG_DEBUG, "valeur de item1 :'%d'\n", getIntValue(resultat->item1));
             sprintf(buff, "%d", getIntValue(resultat->item1));
             strcpy(resultat->item1, buff);
         } 
@@ -308,10 +309,10 @@ bool Element::decomposeExpression(char *expression, structExpression *resultat){
     }
     // TODO
     // evaluation de l'expression
-    printf("resultat de la decomposition : '%s' '%s' '%s'\n", resultat->item1, resultat->opTest, resultat->item2);
-    printf("decompose expression => fin\n");
+    log(LOG_DEBUG, "resultat de la decomposition : '%s' '%s' '%s'\n", resultat->item1, resultat->opTest, resultat->item2);
+    log(LOG_DEBUG, "decompose expression => fin\n");
     return true;
-}
+}*/
 
 //-----------------------------------------
 //
@@ -337,6 +338,53 @@ bool Element::execScript(void){
 
 //-----------------------------------------
 //
+//          Element::executeExpression
+//
+//-----------------------------------------
+bool Element::executeExpression(char *expression){
+    log(LOG_DEBUG, "Element::executeExpression => TODO");
+    log(LOG_DEBUG, "Element::executeExpression => traitement de '%s'", expression);
+    // tests si expression simple ou complexe
+    if (strncmp(expression, "si", 2) == 0){
+        structSi resultatSi;
+        log(LOG_DEBUG, "Element::executeExpression => traitement d'un 'si'");
+        if (!decomposeSi(expression, &resultatSi)){
+            log(LOG_ERROR, "instruction 'si' invalide <%s>", expression);
+        } else {
+            log(LOG_DEBUG, "Element::executeExpression => traitement de si <%s> alors <%s> sinon <%s> finsi", resultatSi.expression, resultatSi.ListeCommandeSiVrai, resultatSi.ListeCommandeSiFaux);
+            if (evalueExpressionHumain(resultatSi.expression)){
+                // execution des commandes si vrai
+                log(LOG_DEBUG, "Element::executeExpression => execution des commandes si vrai");
+                executeExpression(resultatSi.ListeCommandeSiVrai);
+            } else {
+                // execution des commandes si faux
+                log(LOG_DEBUG, "Element::executeExpression => execution des commandes si faux");
+                executeExpression(resultatSi.ListeCommandeSiFaux);
+            }
+        }
+    } else {
+        log(LOG_DEBUG, "Element::executeExpression => traitement d'une expression simple");
+        switch(this->typeElement){
+            case TYPE_HUMAIN:
+                if (testSiCommandeValideHumain(expression)){
+                    log(LOG_DEBUG, "Element::executeExpression => execute commande humain simple '%s'", expression);
+                    execCommandeHumain(expression);
+                }
+                break;
+            case TYPE_ENTREPRISE:
+                if (testSiCommandeValideEntreprise(expression)){
+                    log(LOG_DEBUG, "Element::executeExpression => execute commande entreprise simple '%s'", expression);
+                    execCommandeEntreprise(expression);
+                }
+                break;
+        }
+    }
+    log(LOG_DEBUG, "Element::executeExpression => fin '%s'", expression);
+    return true;
+}
+
+//-----------------------------------------
+//
 //          Element::execScript
 //
 //-----------------------------------------
@@ -353,12 +401,12 @@ bool Element::execScript(char *filename){
         log(LOG_ERROR, "Element::execScript => impossible d'ouvrir le fichier script <%s>", filename);
         return false;
     }
-    log(LOG_DEBUG, "execution du script '%s'\n", filename);
+    log(LOG_DEBUG, "Element::execScript => execution du script '%s'", filename);
     strcpy(ligne, "");
     fgets(ligne, 100, fic);
     while (!feof(fic)){
         tmp = &ligne[0];
-        printf("traitement de la ligne %s", tmp);
+        //printf("traitement de la ligne %s", tmp);
         if (tmp[0] != '#') {
             while (tmp[0] == ' ') tmp++; // suppresssion des blancs au debut
             if (strlen(ligne) > 0){
@@ -373,24 +421,27 @@ bool Element::execScript(char *filename){
         fgets(ligne, 100, fic);
     }
     remove_extra_spaces(script);
-    printf("script a analyser = \n----------------------\n'%s'\n----------------------\n", script);
+    log(LOG_DEBUG, "script a analyser : \n----------------------\n'%s'\n----------------------", script);
     tmp = &script[0];
     char expression[500];
+    //structExpression expressionResultat;
     do {
-        printf("---- decompose script -------\n");
+        log(LOG_DEBUG, "---- decompose script -------\n");
         decomposeScript(script, expression, scriptRestant);
+        executeExpression(expression);
         strcpy(script, scriptRestant);
     } while (strcmp(scriptRestant, "") != 0);
-    return false;
+    return true;
 
-
+    //      code inutilisé
+    // a voir si reutilisable
 
     if (tmp[0] != '#'){ // commentaire on passe
         if (strlen(tmp) != 0){  // ligne vide on passe
             //printf("ligne a analyser = '%s'\n", tmp);
             if (strncmp(tmp, "si", 2) == 0){
                 //printf("Analyse d'une ligne contenant un 'si'\n");
-                structIf resultat;
+                structSi resultat;
                 if (!decomposeSi(tmp, &resultat)){
                     log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
                     return false;
@@ -404,7 +455,7 @@ bool Element::execScript(char *filename){
                         log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiFaux);
                         return false;
                     }
-                    printf("decomposition de l'expression %s\n", resultat.expression);
+                    log(LOG_DEBUG, "decomposition de l'expression %s\n", resultat.expression);
                     /*
                     int val1, val2;
                     if (isVariable(resultat.expression1)){
