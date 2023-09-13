@@ -10,6 +10,10 @@
 #include "../inc/log.hpp"
 #include "../inc/tests.hpp"
 #include "../inc/aide.hpp"
+#include "../inc/civilisation.hpp"
+
+extern Civilisation civilisation;
+extern char configFilename[100];
 
 bool analyseParametres(int argc, char **argv){
     setLogLevel(LOG_INFO);
@@ -27,7 +31,16 @@ bool analyseParametres(int argc, char **argv){
                 int tmpExecTest = TEST_MODE_STD;
                 // analyse d'une option
                 switch(argv[i][1]){
-                    case 'e':
+                    case 'c':   // fichier de configuration civilisation
+                    case 'C':
+                        if ((i+1) < argc){
+                            log(LOG_DEBUG, "chargement du fichier de configuration %s", argv[i+1]);
+                            strcpy(configFilename, argv[i+1]);
+                            log(LOG_DEBUG, "chargement du fichier de configuration %s", configFilename);
+                            i++;
+                        }
+                        break;
+                    case 'e':   // set mode stop on fail pour les tests
                     case 'E':
                         stopOnFail = true;
                         log(LOG_INFO,"Mode Stop On Fail activé");
@@ -106,5 +119,6 @@ bool analyseParametres(int argc, char **argv){
             }
         }
     }
+    log(LOG_DEBUG, "fin analyse des parametres");
     return true;
 }

@@ -131,7 +131,6 @@ Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capita
     return tmpElement;
 }
 
-
 //-----------------------------------------
 //
 //          Civilisation::listeElements
@@ -407,4 +406,37 @@ int Civilisation::getNbHommes(void){
 //-----------------------------------------
 int Civilisation::getNbFemmes(void){
     return nbFemmes;
+}
+
+//-----------------------------------------
+//
+//          Civilisation::chargeConfiguration
+//
+//-----------------------------------------
+void Civilisation::chargeConfiguration(char *configFilename){
+    char ligne[200];
+    FILE *ficConfig = fopen(configFilename, "r");
+    if (ficConfig == NULL){
+        log(LOG_ERROR, "le fichier de configuration %s n'existe pas", configFilename);
+        log(LOG_ERROR, "chargement de la configuration par defaut");
+        creeElementHumain(HOMME, (char *)"adam", 1000);
+        creeElementHumain(FEMME, (char *)"eve", 1000);
+        creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
+    } else {
+        log(LOG_INFO, "Chargement du fichier de configuration de la civilisation (%s)", configFilename);
+        while (!feof(ficConfig)){
+            strcpy(ligne, "");
+            fgets(ligne, 200, ficConfig);
+            ligne[strlen(ligne) - 1] = '\0';
+            remove_extra_spaces(ligne);
+            if (strlen(ligne) == 0) continue;
+            if (ligne[0] == '#') continue;
+            //log(LOG_DEBUG, "Civilisation::chargeConfiguration => ligne lue = '%s'", ligne);
+            if (strncmp(ligne, "humain", 5) == 0){
+                log(LOG_INFO, "creation d'un humain (%s)", ligne);
+            } else if (strncmp(ligne, "entreprise", 10) == 0){
+                log(LOG_INFO, "creation d'une entreprise (%s)", ligne);
+            }
+        }
+    }
 }

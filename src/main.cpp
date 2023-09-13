@@ -18,6 +18,7 @@
 Civilisation civilisation;
 int nbEvolutions = 0;
 int nbRepetitions = 0;
+char configFilename[100] = "scripts/civilisation.scr";
 
 int main(int argc, char **argv){
     char ligneSaisie[100];
@@ -25,9 +26,7 @@ int main(int argc, char **argv){
         exit (1);
     }
 
-    civilisation.creeElementHumain(HOMME, (char *)"adam", 1000);
-    civilisation.creeElementHumain(FEMME, (char *)"eve", 1000);
-    civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
+    civilisation.chargeConfiguration(configFilename);
 
     while (1){
         printf ("main => evolution (%d) > ", nbEvolutions);

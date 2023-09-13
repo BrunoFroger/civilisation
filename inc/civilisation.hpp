@@ -16,6 +16,7 @@
         public:
             Civilisation();
             ~Civilisation();
+            void chargeConfiguration(char *configFilename);
             Element *creeElementHumain(int sexe, char *nom, int capitalInitial);
             Element *creeElementEntreprise(int activite, char *nom, int capitalInitial);
             void evolutionCivilisation(void);
