@@ -26,14 +26,18 @@
             Element *getElement(int index);
             void tableauDeBord(void);
             void listeCommandesEtVariables(void);
+            static Humain *getConjoint(int sexe);
+            static Humain *getSalarie(void);
+            int getNbHommes(void);
+            int getNbFemmes(void);
+            int getNbHumain(void);
 
         private:
             void incElementId(void);
-            int getNbHumain(void);
             int getNbEntreprise(void);
-            Element *elements[MAX_ELEMENTS];
             int courantElementId;
             int nbHumains;
+            int nbHommes, nbFemmes;
             int nbEntreprises;
             
     };

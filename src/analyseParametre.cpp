@@ -58,8 +58,6 @@ bool analyseParametres(int argc, char **argv){
                         break;
                     case 't':
                     case 'T':
-                        log(LOG_INFO, "     execution des tests ");
-                        log(LOG_INFO, "===================================");
                         if ((i+1) < argc){
                             if (strcmp(argv[i+1], "all") == 0){
                                 //printf("set test mode exec all\n");

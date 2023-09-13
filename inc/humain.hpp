@@ -12,7 +12,7 @@
     #define HOMME   0
     #define FEMME   1
 
-    #define MAX_ENFANTS 10
+    #define MAX_ENFANTS 5
 
     #define STATUS_MARITAL_CELIB    0
     #define STATUS_MARITAL_MARIE    1
@@ -53,6 +53,14 @@
             static char *listeVariables(void);
             bool evalueExpressionHumain(char *expression);
             void setConjoint(Humain *pretendant);
+            void ajouteEnfant(Humain *enfant);
+            Entreprise *getEmployeur(void);
+            void setEmployeur(Entreprise *entreprise);
+            void ajouteParents(Humain *pere, Humain *mere);
+            int getPere(void);
+            int getMere(void);
+            int getNbEnfants(void);
+            int getConjoint(void);
 
         private:
             int id;
@@ -61,10 +69,12 @@
             int age;
             int statusMarital;
             int nbEnfants;
-            int idEmployeur;    // -1 => sans emploi
+            Entreprise *employeur;    // -1 => sans emploi
             void mortPossible(void);
-            void chercheConjoint(void);
+            bool chercheConjoint(void);
             bool naissancePossible(void);
+            Humain *pere;
+            Humain *mere;
             Humain *conjoint;
             Humain *enfants[MAX_ENFANTS];
     };

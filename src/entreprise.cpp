@@ -11,6 +11,7 @@
 #include "../inc/entreprise.hpp"
 #include "../inc/log.hpp"
 #include "../inc/tools.hpp"
+#include "../inc/civilisation.hpp"
 
 char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher"};
 char listeVariablesEntreprise[NB_VARIABLE_ENTREPRISE][20] = {"nom", "nbSalarie", "nbCommande"};
@@ -333,14 +334,14 @@ void Entreprise::listeEntreprise(void){
 //
 //-----------------------------------------
 bool Entreprise::testSiCommandeValideEntreprise(char *valeur){
-    printf("test si commande '%s' valide\n", valeur);
+    //printf("test si commande '%s' valide\n", valeur);
     for (int i = 0 ; i < NB_COMMANDES_ENTREPRISE ; i++){
-        printf("comparaison avec %s : ", listeCommandesEntreprise[i]);
+        //printf("comparaison avec %s : ", listeCommandesEntreprise[i]);
         if (strcmp(valeur, listeCommandesEntreprise[i]) == 0) {
-            printf("OK\n");
+            //printf("OK\n");
             return true;
         } else {
-            printf("NOK\n");
+            //printf("NOK\n");
         }
     }
     return false;
@@ -402,8 +403,43 @@ bool Entreprise::produire(){
 //
 //-----------------------------------------
 bool Entreprise::embaucher(void){
-    log(LOG_DEBUG,"Humain::embaucher : TODO");
-    return true;
+    log(LOG_DEBUG,"Humain::embaucher : TODO modifier pour trouver aleatoirement un salarie");
+    Humain *tmpSalarie = Civilisation::getSalarie();
+    if (tmpSalarie != NULL){
+        for (int i = 0 ; i < MAX_EMPLOYES ; i++){
+            if (listeEmployes[i] == NULL){
+                listeEmployes[i] = tmpSalarie;
+                tmpSalarie->setEmployeur(this);
+                nbSalaries++;
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::listeVariables
+//
+//-----------------------------------------
+char tmpDataEntreprise[5000];
+char *Entreprise::listeVariables(void){
+    strcpy(tmpDataEntreprise, "");
+    strcat(tmpDataEntreprise,"liste des variables Entreprise : ");
+    for (int i = 0 ; i < NB_VARIABLE_HUMAIN ; i++){
+        strcat(tmpDataEntreprise, listeVariablesEntreprise[i]);
+        strcat(tmpDataEntreprise,", ");
+    }
+    strcat(tmpDataEntreprise, "\n");
+
+    strcat(tmpDataEntreprise,"liste des commandes Entreprise : ");
+    for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
+        strcat(tmpDataEntreprise, listeCommandesEntreprise[i]);
+        strcat(tmpDataEntreprise,", ");
+    }
+    strcat(tmpDataEntreprise, "\n");
+    return tmpDataEntreprise;
 }
 
 //-----------------------------------------
@@ -412,8 +448,36 @@ bool Entreprise::embaucher(void){
 //
 //-----------------------------------------
 bool Entreprise::debaucher(void){
-    log(LOG_DEBUG,"Humain::debaucher : TODO");
-    return true;
+    log(LOG_DEBUG,"Humain::debaucher : TODO modifier pour trouver aleatoirement un salarie");
+    for (int i = 0 ; i < MAX_EMPLOYES ; i++){
+        Humain *employe = listeEmployes[i];
+        if (employe != NULL){
+            employe->setEmployeur(NULL);
+            employe = NULL;
+            nbSalaries--;
+            return true;
+        }
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
+//          Entreprise:demission
+//
+//-----------------------------------------
+bool Entreprise::demission(Humain *salarie){
+    log(LOG_DEBUG,"Humain::demission : TODO");
+    for (int i = 0 ; i < MAX_EMPLOYES ; i++){
+        Humain *employe = listeEmployes[i];
+        if (employe == salarie){
+            employe->setEmployeur(NULL);
+            employe = NULL;
+            nbSalaries--;
+            return true;
+        }
+    }
+    return false;
 }
 
 //-----------------------------------------

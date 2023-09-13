@@ -11,6 +11,7 @@
 #include "../inc/humain.hpp"
 #include "../inc/log.hpp"
 #include "../inc/element.hpp"
+#include "../inc/civilisation.hpp"
 
 
 char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible"};
@@ -55,7 +56,9 @@ void Humain::initHumain(int id, int sexe, char *nom, int capitalInitial){
     this->age = 0;
     this->statusMarital = STATUS_MARITAL_CELIB;
     this->compteBancaireHumain = new CompteBancaire(capitalInitial);
-    this->idEmployeur = -1;
+    this->employeur = NULL;
+    this->pere = NULL;
+    this->mere = NULL;
 }
 
 //-----------------------------------------
@@ -65,7 +68,7 @@ void Humain::initHumain(int id, int sexe, char *nom, int capitalInitial){
 //-----------------------------------------
 void Humain::evolutionHumain(void){
     if (statusMarital != STATUS_MARITAL_DECES){
-        log(LOG_INFO, "Humain::evolution => evolution de %s", this->nom);
+        log(LOG_INFO, "Humain::evolution => evolution de '%s'", this->nom);
         this->age++;
     }
 }
@@ -113,7 +116,7 @@ int Humain::getSexe(void){
 //-----------------------------------------
 char Humain::getSexeChar(void){
     if (sexe == HOMME) return 'H';
-    if (sexe == HOMME) return 'F';
+    if (sexe == FEMME) return 'F';
     return 'X';
 }
 
@@ -172,15 +175,15 @@ bool Humain::isVariable(char *valeur){
 //-----------------------------------------
 int Humain::getIntValue(char *valeur){
     if (strcmp(valeur, "sexe") == 0){
-        printf("Humain::getIntValue : variable %s = %d\n", valeur, sexe);
+        //printf("Humain::getIntValue : variable %s = %d\n", valeur, sexe);
         return sexe;
     }
     if (strcmp(valeur, "age") == 0){
-        printf("Humain::getIntValue : variable %s = %d\n", valeur, age);
+        //printf("Humain::getIntValue : variable %s = %d\n", valeur, age);
         return age;
     }
     if (strcmp(valeur, "statusMarital") == 0){
-        printf("Humain::getIntValue : variable %s = %d\n", valeur, statusMarital);
+        //printf("Humain::getIntValue : variable %s = %d\n", valeur, statusMarital);
         return statusMarital;
     }
     printf("Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
@@ -352,27 +355,31 @@ void Humain::mortPossible(void){
         log(LOG_DEBUG,"Humain::mortPossible =>  age = %3d\n", age);
         log(LOG_DEBUG,"Humain::mortPossible =>  0.7 * age = %3.0f\n", (age * 0.7));
         if (rnd > (age * 0.7)){
-            printf("mort de %s \n", nom);
+            log(LOG_INFO, "===========================");
+            log(LOG_INFO, "     deces de %s ", nom);
+            log(LOG_INFO, "===========================");
             statusMarital = STATUS_MARITAL_DECES;
-        }
-        // transfert du capital aux heritiers
-        // conjoints en premier et enfants ensuite
-        // sinon perdu
-        if (compteBancaireHumain->getEpargne() > 0) compteBancaireHumain->restitueEpargne(compteBancaireHumain->getEpargne());
-        if (compteBancaireHumain->getSolde() > 0){
-            if (conjoint != NULL){
-                compteBancaireHumain->virement(conjoint->compteBancaireHumain, compteBancaireHumain->getSolde());
-                return;
-            }
-            if (nbEnfants > 0){
-                int nbHeritiers = 0;
-                for (int i = 0 ; i < MAX_ENFANTS ; i++){
-                    if (enfants[i] != NULL) nbHeritiers++;
+            // transfert du capital aux heritiers
+            // conjoints en premier et enfants ensuite
+            // sinon perdu
+            if (compteBancaireHumain->getEpargne() > 0) compteBancaireHumain->restitueEpargne(compteBancaireHumain->getEpargne());
+            log(LOG_INFO, "trandfert du capital %d aux heritiers", compteBancaireHumain->getSolde());
+            if (compteBancaireHumain->getSolde() > 0){
+                if (conjoint != NULL){
+                    compteBancaireHumain->virement(conjoint->compteBancaireHumain, compteBancaireHumain->getSolde());
+                    return;
                 }
-                int heritage = compteBancaireHumain->getSolde() / nbEnfants;
-                for (int i = 0 ; i < MAX_ENFANTS ; i++){
-                    if (enfants[i] != NULL){
-                        compteBancaireHumain->virement(enfants[i]->compteBancaireHumain, heritage);
+                if (nbEnfants > 0){
+                    int nbHeritiers = 0;
+                    for (int i = 0 ; i < MAX_ENFANTS ; i++){
+                        if (enfants[i] != NULL) nbHeritiers++;
+                    }
+                    int heritage = compteBancaireHumain->getSolde() / nbEnfants;
+                    for (int i = 0 ; i < MAX_ENFANTS ; i++){
+                        if (enfants[i] != NULL){
+                            log(LOG_INFO, "transfert de %d du capital a %s", heritage, enfants[i]->getNomHumain());
+                            compteBancaireHumain->virement(enfants[i]->compteBancaireHumain, heritage);
+                        }
                     }
                 }
             }
@@ -386,9 +393,9 @@ void Humain::mortPossible(void){
 //
 //-----------------------------------------
 void Humain::setConjoint(Humain *pretendant){
-    printf("Humain::setConjoint => TODO\n");
+    log(LOG_INFO, "Humain::setConjoint => TODO");
     conjoint = pretendant;
-    
+    statusMarital = STATUS_MARITAL_MARIE;
 }
 
 //-----------------------------------------
@@ -396,12 +403,29 @@ void Humain::setConjoint(Humain *pretendant){
 //          Humain::chercheConjoint
 //
 //-----------------------------------------
-void Humain::chercheConjoint(void){
-    printf("Humain::chercheConjoint => TODO\n");
-    if ((statusMarital != STATUS_MARITAL_DECES) && (statusMarital != STATUS_MARITAL_DECES)){
-        log(LOG_DEBUG, "Humain::chercheConjoint => recherche conjoint possible => à developper");
+bool Humain::chercheConjoint(void){
+    //log(LOG_INFO,"Humain::chercheConjoint => TODO");
+    if ((statusMarital != STATUS_MARITAL_DECES) && 
+        (statusMarital != STATUS_MARITAL_MARIE)){
+        //log(LOG_INFO, "Humain::chercheConjoint => recherche conjoint possible => à developper");
+        Humain *conjoint, *homme, *femme;
+        if (sexe == HOMME){
+            homme = this;
+            conjoint = Civilisation::getConjoint(FEMME);
+            femme = conjoint;
+        } 
+        else{
+            conjoint = Civilisation::getConjoint(HOMME);
+            homme = conjoint;
+            femme = this;
+        } 
+        if (conjoint != NULL){
+            log(LOG_INFO,"Humain::chercheConjoint => %s trouve %s comme conjoint ", this->nom, conjoint->getNomHumain());
+            mariage(homme, femme);
+            return true;
+        } 
     }
-    
+    return false;
 }
 
 //-----------------------------------------
@@ -410,15 +434,22 @@ void Humain::chercheConjoint(void){
 //
 //-----------------------------------------
 bool Humain::naissancePossible(void){
-    printf("Humain::naissancePossible => TODO a tester\n");
+    log(LOG_INFO, "Humain::naissancePossible => TODO a tester");
     srand (time(NULL));
-    double rnd = rand();
+    double rnd = rand() * 1;
     if (statusMarital != STATUS_MARITAL_MARIE) return false;
     if ((age > 20) && (age < 50))
     if (rnd > 0.7){
-        if (nbEnfants <= MAX_ENFANTS){
-            printf("naissance pour %s\n", nom);
-            return true;
+        if (nbEnfants < MAX_ENFANTS){
+            if (conjoint != NULL){
+                log(LOG_INFO, "Humain::naissancePossible => naissance pour %s et %s", nom, conjoint->getNomHumain());
+                if (sexe == HOMME){
+                    naissance(this, conjoint);
+                } else {
+                    naissance(conjoint, this);
+                }
+                return true;
+            }
         }
     }
     return false;
@@ -430,7 +461,7 @@ bool Humain::naissancePossible(void){
 //
 //-----------------------------------------
 bool Humain::execCommandeHumain(char *valeur){
-    log(LOG_DEBUG,"Humain::execCommandeHumain <%s> : TODO", valeur);
+    log(LOG_INFO,"Humain::execCommandeHumain <%s> : TODO", valeur);
     for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
         if (strcmp(listeCommandesHumain[i], valeur) == 0){
             switch(i){ 
@@ -499,21 +530,104 @@ void Humain::listeHumain(void){
 //          Humain::listeVariables
 //
 //-----------------------------------------
-char tmp[5000];
+char tmpDataHumain[5000];
 char *Humain::listeVariables(void){
-    strcpy(tmp, "");
-    strcat(tmp,"liste des variables Humain : ");
+    strcpy(tmpDataHumain, "");
+    strcat(tmpDataHumain,"liste des variables Humain : ");
     for (int i = 0 ; i < NB_VARIABLE_HUMAIN ; i++){
-        strcat(tmp, listeVariablesHumain[i]);
-        strcat(tmp,", ");
+        strcat(tmpDataHumain, listeVariablesHumain[i]);
+        strcat(tmpDataHumain,", ");
     }
-    strcat(tmp, "\n");
+    strcat(tmpDataHumain, "\n");
 
-    strcat(tmp,"liste des commandes Humain : ");
+    strcat(tmpDataHumain,"liste des commandes Humain : ");
     for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
-        strcat(tmp, listeCommandesHumain[i]);
-        strcat(tmp,", ");
+        strcat(tmpDataHumain, listeCommandesHumain[i]);
+        strcat(tmpDataHumain,", ");
     }
-    strcat(tmp, "\n");
-    return tmp;
+    strcat(tmpDataHumain, "\n");
+    return tmpDataHumain;
+}
+
+//-----------------------------------------
+//
+//          Humain::setEmployeur
+//
+//-----------------------------------------
+void Humain::setEmployeur(Entreprise *entreprise){
+    employeur = entreprise;
+}
+
+//-----------------------------------------
+//
+//          Humain::getEmployeur
+//
+//-----------------------------------------
+Entreprise *Humain::getEmployeur(void){
+    return employeur;
+}
+
+//-----------------------------------------
+//
+//          Humain::ajouteParents
+//
+//-----------------------------------------
+void Humain::ajouteParents(Humain *pere, Humain *mere){
+    this->pere = pere;
+    this->mere = mere;
+}
+
+//-----------------------------------------
+//
+//          Humain::ajouteEnfant
+//
+//-----------------------------------------
+void Humain::ajouteEnfant(Humain *enfant){
+    for (int i = 0 ; i < MAX_ENFANTS ; i++){
+        if (enfants[i] == NULL){
+            enfants[i] = enfant;
+            nbEnfants++;
+            return;
+        }
+    }
+}
+
+//-----------------------------------------
+//
+//          Humain::getPere
+//
+//-----------------------------------------
+int Humain::getPere(void){
+    //log(LOG_DEBUG,"Humain::getPere : TODO");
+    if (pere == NULL) return -1;
+    return pere->getIdHumain();
+}
+
+//-----------------------------------------
+//
+//          Humain::getMere
+//
+//-----------------------------------------
+int Humain::getMere(void){
+    if (mere == NULL) return -1;
+    return mere->getIdHumain();
+}
+
+//-----------------------------------------
+//
+//          Humain::getConjoint
+//
+//-----------------------------------------
+int Humain::getConjoint(void){
+    if (conjoint == NULL) return -1;
+    return conjoint->getIdHumain();
+}
+
+//-----------------------------------------
+//
+//          Humain::getNbEnfants
+//
+//-----------------------------------------
+int Humain::getNbEnfants(void){
+    return nbEnfants;
 }

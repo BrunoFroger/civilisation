@@ -17,6 +17,8 @@
 
 #define NB_RUBRIQUES    6
 
+extern Civilisation civilisation;
+
 typedef struct {
     char nomRubrique[30];
     int nbtests;
@@ -41,6 +43,32 @@ bool exec_banque=false;
 bool stopOnFail = false;
 
 structResultatTest tableauresultatsTests[NB_RUBRIQUES];
+
+//-----------------------------------------
+//
+//          baniereDebutTests
+//
+//-----------------------------------------
+void baniereDebutTests(void){
+    log(LOG_INFO, "===================================");
+    log(LOG_INFO, "                                   ");
+    log(LOG_INFO, "       execution des tests         ");
+    log(LOG_INFO, "                                   ");
+    log(LOG_INFO, "===================================");
+}
+
+//-----------------------------------------
+//
+//          baniereFinTests
+//
+//-----------------------------------------
+void baniereFinTests(void){
+    log(LOG_INFO, "===================================");
+    log(LOG_INFO, "                                   ");
+    log(LOG_INFO, "           fin des tests           ");
+    log(LOG_INFO, "                                   ");
+    log(LOG_INFO, "===================================");
+}
 
 //-----------------------------------------
 //
@@ -102,7 +130,10 @@ bool resultatTest(char *rubrique, bool status){
         printf("    Test n° %d KO dans %s\n", nbTestsRubrique + 1, rubrique);
         nbKO++;
         nbKORubrique++;
-        if (stopOnFail) exit(-1);
+        if (stopOnFail){
+            baniereFinTests();
+            exit(-1);
+        } 
     }
     return status;
 }
@@ -179,6 +210,7 @@ void executeTests(int mode){
     //printf("Executions des tests du programme civilisation mode = %d\n", mode);
     initTableauTests();
     setLogLevel(LOG_DEBUG);
+    baniereDebutTests();
     switch (mode){
         case TEST_MODE_ALL:
             exec_all = true;
@@ -386,21 +418,48 @@ void executeTests(int mode){
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation de civilisation avec id element = 0");
-        Civilisation civilisation;
         resultatTest(rubrique, (civilisation.getCourantElementId() == 0));
+        resultatTest(rubrique, (civilisation.getNbHumain() == 0));
+        resultatTest(rubrique, (civilisation.getNbHommes() == 0));
+        resultatTest(rubrique, (civilisation.getNbFemmes() == 0));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de creation d'un element humain");
-        Element *element = civilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
-        resultatTest(rubrique, strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomHumain(), "Marcel") == 0);
-        resultatTest(rubrique, element->getTypeElement() == TYPE_HUMAIN);
+        log(LOG_DEBUG, "test de creation d'un homme");
+        Element *pere = civilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
+        resultatTest(rubrique, strcmp(pere->getNomHumain(), "Marcel") == 0);
+        resultatTest(rubrique, pere->getTypeElement() == TYPE_HUMAIN);
+        resultatTest(rubrique, pere->getSexe() == HOMME);
+        resultatTest(rubrique, (civilisation.getNbHommes() == 1));
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test de creation d'une femme");
+        Element *mere = civilisation.creeElementHumain(FEMME, (char *)"Simone", 1000);
+        resultatTest(rubrique, strcmp(mere->getNomHumain(), "Simone") == 0);
+        resultatTest(rubrique, mere->getTypeElement() == TYPE_HUMAIN);
+        resultatTest(rubrique, mere->getSexe() == FEMME);
+        resultatTest(rubrique, (civilisation.getNbFemmes() == 1));
+        resultatTest(rubrique, (civilisation.getNbHumain() == 2));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'un element entreprise");
-        element = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
-        resultatTest(rubrique, element->getTypeElement() == TYPE_ENTREPRISE);
-        resultatTest(rubrique, strcmp(civilisation.getElement(civilisation.getCourantElementId()-1)->getNomEntreprise(), "au bon pain") == 0);
-        resultatTest(rubrique, civilisation.getElement(civilisation.getCourantElementId()-1)->compteBancaireEntreprise->getSolde() == 25000);
+        Element *entreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
+        resultatTest(rubrique, entreprise->getTypeElement() == TYPE_ENTREPRISE);
+        resultatTest(rubrique, strcmp(entreprise->getNomEntreprise(), "au bon pain") == 0);
+        resultatTest(rubrique, entreprise->compteBancaireEntreprise->getSolde() == 25000);
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test de mariage");
+        resultatTest(rubrique, mariage(pere, mere));
+
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test de creation d'enfants");
+        resultatTest(rubrique, (naissance(pere, mere) != -1));
+        resultatTest(rubrique, (naissance(pere, mere) != -1));
+        resultatTest(rubrique, (naissance(pere, mere) != -1));
+        resultatTest(rubrique, (naissance(pere, mere) != -1));
+        resultatTest(rubrique, (naissance(pere, mere) != -1));
+        resultatTest(rubrique, (naissance(pere, mere) != -1));
 
         bilanTestsRubrique(rubrique);
     }
@@ -562,6 +621,11 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test execution commandes");
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"produire"));
         resultatTest(rubrique, !elementEntreprise->execCommandeEntreprise((char *)"toto"));
+        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
+        resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"embaucher"));
+        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 1));
+        resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"debaucher"));
+        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
 
         bilanTestsRubrique(rubrique);
     }
@@ -613,5 +677,10 @@ void executeTests(int mode){
     }
 
     bilanTests();
+
+    baniereFinTests();
+
+    civilisation.listeCivilisation();
+    civilisation.tableauDeBord();
 
 }

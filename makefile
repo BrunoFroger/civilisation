@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 12/09/2023 à 17:22:30
+#     généré automatiquement le 13/09/2023 à 17:09:49
 #         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
@@ -79,14 +79,16 @@ $(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
 $(OBJDIR)/entreprise.o: $(SRCDIR)/entreprise.cpp \
 	$(INCDIR)/entreprise.hpp \
 	$(INCDIR)/log.hpp \
-	$(INCDIR)/tools.hpp
+	$(INCDIR)/tools.hpp \
+	$(INCDIR)/civilisation.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
 $(OBJDIR)/humain.o: $(SRCDIR)/humain.cpp \
 	$(INCDIR)/humain.hpp \
 	$(INCDIR)/log.hpp \
-	$(INCDIR)/element.hpp
+	$(INCDIR)/element.hpp \
+	$(INCDIR)/civilisation.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -117,7 +119,9 @@ $(OBJDIR)/tests.o: $(SRCDIR)/tests.cpp \
 
 $(OBJDIR)/tools.o: $(SRCDIR)/tools.cpp \
 	$(INCDIR)/element.hpp \
-	$(INCDIR)/log.hpp
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/civilisation.hpp \
+	$(INCDIR)/humain.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

@@ -431,6 +431,7 @@ bool Element::execScript(char *filename){
         executeExpression(expression);
         strcpy(script, scriptRestant);
     } while (strcmp(scriptRestant, "") != 0);
+    fclose(fic);
     return true;
 
     //      code inutilisé

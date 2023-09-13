@@ -7,9 +7,88 @@
 #include <cstdio>
 #include <string>
 #include <cstdlib>
+#include <ctime>
 
 #include "../inc/element.hpp"
 #include "../inc/log.hpp"
+#include "../inc/civilisation.hpp"
+#include "../inc/humain.hpp"
+
+extern Civilisation civilisation;
+
+//-----------------------------------------
+//
+//          getSexeAleatoire
+//
+//-----------------------------------------
+int getSexeAleatoire(void){
+    log(LOG_DEBUG, "Tools.cpp getSexeAleatoire => debut (a affiner)");
+    if (civilisation.getNbHommes() > civilisation.getNbFemmes())
+        return FEMME;
+    else
+        return HOMME;
+}
+
+//-----------------------------------------
+//
+//          getPrenomAleatoire
+//
+//-----------------------------------------
+char tmpPrenom[20];
+int idxPrenom;
+char *getPrenomAleatoire(int sexe){
+    log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => debut (a affiner)");
+    if (sexe == HOMME)
+        sprintf(tmpPrenom, "albert_%d", idxPrenom);
+    else
+        sprintf(tmpPrenom, "alice_%d", idxPrenom);
+    idxPrenom++;
+    return tmpPrenom;
+}
+
+//-----------------------------------------
+//
+//           naissance
+//
+//-----------------------------------------
+int naissance(Humain *pere, Humain *mere){
+    log(LOG_INFO, "tools naissance => TODO");
+    //Humain *enfant = NULL;
+    Element *tmpElement;
+    for (int i = 0 ; i < MAX_HUMAIN ; i++){
+        tmpElement = civilisation.getElement(i);
+        if (tmpElement->getElementId() == -1){
+            if (tmpElement->getNbEnfants() < MAX_ENFANTS){
+                int sexe = getSexeAleatoire();           // TODO genere aleatoirement HOMME ou FEMME
+                char *prenom = getPrenomAleatoire(sexe);   // Generer prenom depuis liste a definir
+                tmpElement = civilisation.creeElementHumain(sexe, prenom, 1000);
+                log(LOG_INFO, "tools naissance => %s et %s ont %s comme enfant", pere->getNomHumain(), mere->getNomHumain(), tmpElement->getNomHumain());
+                pere->ajouteEnfant(tmpElement);
+                mere->ajouteEnfant(tmpElement);
+                tmpElement->ajouteParents(pere, mere);
+                return tmpElement->getElementId();
+            }
+        }
+    }
+    log(LOG_DEBUG, "tools naissance => le tableau des humains est plein");
+    return -1;
+}
+
+//-----------------------------------------
+//
+//           mariage
+//
+//-----------------------------------------
+bool mariage(Humain *homme, Humain *femme){
+    log(LOG_DEBUG, "tools mariage => TODO");
+    if ((homme != NULL && (femme != NULL))){
+        homme->setConjoint(femme);
+        femme->setConjoint(homme);
+        return true;
+    }
+    return false;
+}
+
 
 //-----------------------------------------
 //

@@ -22,5 +22,7 @@
     extern bool evaluationExpressionChar(char *data1, char *test, char *data2);
     extern bool decomposeSi(char *ligne, structSi *resultat);
     extern bool decomposeScript(char *script, char *instruction, char *listeInstructions);
+    extern int naissance(Humain *pere, Humain *mere);
+    extern bool mariage(Humain *homme, Humain *femme);
 
 #endif

@@ -62,6 +62,8 @@
             bool testSiCommandeValideEntreprise(char *valeur);
             bool testSiListeCommandeValideEntreprise(char *valeur);
             bool execCommandeEntreprise(char *commande);
+            bool demission(Humain *salarie);
+            static char *listeVariables(void);
 
         private:
             int id;
@@ -80,6 +82,7 @@
             bool produire();
             bool embaucher();
             bool debaucher();
+            Humain *getSalarie(void);
     };
 
 #endif

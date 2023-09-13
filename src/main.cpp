@@ -17,6 +17,7 @@
 
 Civilisation civilisation;
 int nbEvolutions = 0;
+int nbRepetitions = 0;
 
 int main(int argc, char **argv){
     char ligneSaisie[100];
@@ -25,8 +26,8 @@ int main(int argc, char **argv){
     }
 
     civilisation.creeElementHumain(HOMME, (char *)"adam", 1000);
-    //civilisation.creeElementHumain(FEMME, (char *)"eve", 1000);
-    //civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
+    civilisation.creeElementHumain(FEMME, (char *)"eve", 1000);
+    civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
 
     while (1){
         printf ("main => evolution (%d) > ", nbEvolutions);
@@ -63,6 +64,22 @@ int main(int argc, char **argv){
             case 't':
             case 'T':
                 civilisation.tableauDeBord();
+                break; 
+            case '0':
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+            case '8':
+            case '9':
+                nbRepetitions = atoi(ligneSaisie);
+                while (nbRepetitions-- > 0){
+                    civilisation.evolutionCivilisation();
+                    nbEvolutions++;
+                }
                 break; 
             default:
                 if (strlen(ligneSaisie) > 0){

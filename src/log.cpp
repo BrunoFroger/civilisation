@@ -39,13 +39,13 @@ void log(int logLevel, const char *format, ...){
 
     switch (logLevel){
         case 0:
-            strcpy(logLevelString, "INFO");
+            strcpy(logLevelString, "ERROR");
             break;
         case 1:
             strcpy(logLevelString, "WARNING");
             break;
         case 2:
-            strcpy(logLevelString, "ERROR");
+            strcpy(logLevelString, "INFO");
             break;
         case 3:
             strcpy(logLevelString, "DEBUG");

@@ -1,14 +1,14 @@
 # comportement générique d'un humain
 
-si age > 10 alors
+si age > 50 alors
     mortPossible
 finsi
 
-si age > 10  alors    
+si age > 20  alors    
     chercheConjoint
 finsi
 
-
- enfantPossible
-
+si age > 25 alors
+    naissancePossible
+finsi
      

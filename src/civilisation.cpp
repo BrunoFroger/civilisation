@@ -13,10 +13,11 @@
 
 
 const Element elementVide = Element(-1, TYPE_INDEFINI);
+Element *elements[MAX_ELEMENTS];
 
 //-----------------------------------------
 //
-//          civilisation
+//          Civilisation::civilisation
 //
 //-----------------------------------------
 Civilisation::Civilisation(){
@@ -27,26 +28,30 @@ Civilisation::Civilisation(){
     log(LOG_DEBUG, "Civilisation::Civilisation => debut");
     this->courantElementId = 0;
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
-        this->elements[i] = new Element(-1, TYPE_INDEFINI);
+        elements[i] = new Element(-1, TYPE_INDEFINI);
     }
     log(LOG_DEBUG, "Civilisation::Civilisation => fin");
+    nbHommes = 0;
+    nbFemmes = 0;
+    nbHumains = 0;
+    nbEntreprises = 0;
 }
 
 //-----------------------------------------
 //
-//          ~civilisation
+//          Civilisation::~civilisation
 //
 //-----------------------------------------
 Civilisation::~Civilisation(){
     //log(LOG_INFO, "Civilisation::~Civilisation");
-    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
-        delete this->elements[i];
-    }
+    /*for (int i = 0 ; i < MAX_ELEMENTS ; i++){
+        delete elements[i];
+    }*/
 }
 
 //-----------------------------------------
 //
-//          getNbHumain
+//          Civilisation::Civilisation::getNbHumain
 //
 //-----------------------------------------
 int Civilisation::getNbHumain(void){
@@ -55,7 +60,7 @@ int Civilisation::getNbHumain(void){
 
 //-----------------------------------------
 //
-//          getNbEntreprise
+//          Civilisation::getNbEntreprise
 //
 //-----------------------------------------
 int Civilisation::getNbEntreprise(void){
@@ -64,7 +69,7 @@ int Civilisation::getNbEntreprise(void){
 
 //-----------------------------------------
 //
-//          newElementId
+//          Civilisation::newElementId
 //
 //-----------------------------------------
 void Civilisation::incElementId(void){
@@ -73,7 +78,7 @@ void Civilisation::incElementId(void){
 
 //-----------------------------------------
 //
-//          getCourantElementId
+//          Civilisation::getCourantElementId
 //
 //-----------------------------------------
 int Civilisation::getCourantElementId(void){
@@ -82,37 +87,42 @@ int Civilisation::getCourantElementId(void){
 
 //-----------------------------------------
 //
-//          getElement
+//          Civilisation::getElement
 //
 //-----------------------------------------
 Element *Civilisation::getElement(int index){
-    return this->elements[index];
+    return elements[index];
 }
 
 //-----------------------------------------
 //
-//          creeElementHumain
+//          Civilisation::creeElementHumain
 //
 //-----------------------------------------
 Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
     log(LOG_INFO, "Civilisation::creeElementHumain(int sexe, char *nom) => (id=%d) %d, %s", courantElementId, sexe, nom);
-    Element *tmpElement = this->elements[courantElementId];
+    Element *tmpElement = elements[courantElementId];
     tmpElement->initHumain(courantElementId, sexe, nom, capitalInitial);
     tmpElement->setTypeElement(TYPE_HUMAIN);
     tmpElement->setElementId(courantElementId);
     incElementId();
     this->nbHumains++;
+    if (sexe == HOMME){
+        nbHommes++;
+    } else {
+        nbFemmes++;
+    }
     return tmpElement;
 }
 
 //-----------------------------------------
 //
-//          creeElementEntreprise
+//          Civilisation::creeElementEntreprise
 //
 //-----------------------------------------
 Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
     log(LOG_INFO, "Civilisation::creeElementEntreprise(int activite, char *nom) => (id=%d) %d, %s", courantElementId, activite, nom);
-    Element *tmpElement = this->elements[courantElementId];
+    Element *tmpElement = elements[courantElementId];
     tmpElement->initEntreprise(courantElementId, activite, nom, capital);
     tmpElement->setTypeElement(TYPE_ENTREPRISE);
     tmpElement->setElementId(courantElementId);
@@ -124,7 +134,7 @@ Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capita
 
 //-----------------------------------------
 //
-//          listeElements
+//          Civilisation::listeElements
 //
 //-----------------------------------------
 void Civilisation::listeElement(int id){
@@ -141,17 +151,17 @@ void Civilisation::listeElement(int id){
 
 //-----------------------------------------
 //
-//          listeCivilisation
+//          Civilisation::listeCivilisation
 //
 //-----------------------------------------
 void Civilisation::listeCivilisation(void){
     // afichage des individus
     char tmp[50];
-    printf("+----------------------------------------------------------------------------------------+\n");
-    printf("|             population  %4d individus                                                 |\n", getNbHumain());
-    printf("+--------+---------------------------+-----+-------+------+------------+-----------------+\n");
-    printf("|   id   |                       nom | sexe|  age  |status|    capital |         epargne |\n");
-    printf("+--------+---------------------------+-----+-------+------+------------+-----------------+\n");
+    printf("+---------------------------------------------------------------------------------------------------------------+\n");
+    printf("|                                      population  %4d individus                                                |\n", getNbHumain());
+    printf("+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
+    printf("|   id   |                       nom | sexe| conj| enf | pere| mere|  age  |status|    capital |         epargne |\n");
+    printf("+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
         if (ptr->getTypeElement() == TYPE_HUMAIN){
@@ -175,17 +185,21 @@ void Civilisation::listeCivilisation(void){
                     strcpy(tmp, "-NC-");
                     break;
             }
-            printf("| %5d  | %25s |  %c  | %5d | %4s | %10d | %15d |\n", 
+            printf("| %5d  | %25s |  %c  | %3d | %3d | %3d | %3d | %5d | %4s | %10d | %15d |\n", 
                 ptr->getIdHumain(),
                 ptr->getNomHumain(), 
                 ptr->getSexeChar(),
+                ptr->getConjoint(),
+                ptr->getNbEnfants(),
+                ptr->getPere(),
+                ptr->getMere(),
                 ptr->getAge(),
                 tmp,
                 ptr->compteBancaireHumain->getSolde(),
                 ptr->compteBancaireHumain->getEpargne());
         }
     }
-    printf("+--------+---------------------------+-----+-------+------+------------+-----------------+\n");
+    printf("+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
 
     // affichage des entreprises 
     // TODO
@@ -212,25 +226,25 @@ void Civilisation::listeCivilisation(void){
 
 //-----------------------------------------
 //
-//          evolutionCivilisation
+//          Civilisation::evolutionCivilisation
 //
 //-----------------------------------------
 void Civilisation::evolutionCivilisation(void){
     Element *ptr;
-    log(LOG_DEBUG, "===================================");
-    log(LOG_DEBUG, "");
-    log(LOG_DEBUG, "Civilisation::evolutionCivilisation");
-    log(LOG_DEBUG, "");
+    log(LOG_INFO, "===================================");
+    log(LOG_INFO, "");
+    log(LOG_INFO, "Civilisation::evolutionCivilisation");
+    log(LOG_INFO, "");
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
          ptr = elements[i];
          switch(ptr->getTypeElement()){
             case TYPE_HUMAIN:
-                log(LOG_DEBUG, "===================================");
+                log(LOG_INFO, "===================================");
                 ptr->evolutionHumain();
                 ptr->execScript();
                 break;
             case TYPE_ENTREPRISE:
-                log(LOG_DEBUG, "===================================");
+                log(LOG_INFO, "===================================");
                 ptr->evolutionEntreprise();
                 ptr->execScript();
                 break;
@@ -238,11 +252,12 @@ void Civilisation::evolutionCivilisation(void){
                 break;
          }
     }
+    log(LOG_INFO, "===================================");
 }
 
 //-----------------------------------------
 //
-//          killCivilisation
+//          Civilisation::killCivilisation
 //
 //-----------------------------------------
 void Civilisation::killCivilisation(void){
@@ -251,11 +266,11 @@ void Civilisation::killCivilisation(void){
 
 //-----------------------------------------
 //
-//          tableauDeBord
+//          Civilisation::tableauDeBord
 //
 //-----------------------------------------
 void Civilisation::tableauDeBord(void){
-    log(LOG_DEBUG, "Civilisation::tableauDeBord => TODO");
+    //log(LOG_DEBUG, "Civilisation::tableauDeBord => TODO");
     Element *element;
     int _nbHumains = 0;
     int _nbElements =  this->nbEntreprises + this->nbHumains;
@@ -273,7 +288,7 @@ void Civilisation::tableauDeBord(void){
     int _totalActifs = 0;
     int _totalEpargne = 0;
     for (int i = 0 ; i < getCourantElementId() ; i++){
-        printf("Civilisation::tableauDeBord => analyse de l'élément %d\n", i);
+        //printf("Civilisation::tableauDeBord => analyse de l'élément %d\n", i);
         element = getElement(i);
         if (element->getTypeElement() == TYPE_HUMAIN){
             _nbHumains++;
@@ -330,11 +345,66 @@ void Civilisation::tableauDeBord(void){
 
 //-----------------------------------------
 //
-//          listeCommandesEtVariables
+//          Civilisation::listeCommandesEtVariables
 //
 //-----------------------------------------
 void Civilisation::listeCommandesEtVariables(void){
     char tmp[5000] = "";
     strcat(tmp, Humain::listeVariables());
+    strcat(tmp, Entreprise::listeVariables());
     printf("%s\n", tmp);
+}
+
+//-----------------------------------------
+//
+//          Civilisation::getConjoint
+//
+//-----------------------------------------
+Humain *Civilisation::getConjoint(int sexeDemande){
+    for (int i = 0 ; i < MAX_HUMAIN ; i++){
+        Element *tmpElement = elements[i];
+        if (tmpElement->getTypeElement() == TYPE_HUMAIN){
+            if ((tmpElement->getStatusMarital() == STATUS_MARITAL_CELIB) ||
+                (tmpElement->getStatusMarital() == STATUS_MARITAL_VEUF) ||
+                (tmpElement->getStatusMarital() == STATUS_MARITAL_DIVOR)){
+                if (tmpElement->getSexe() == sexeDemande) return tmpElement;
+            }
+        }
+    }
+    return NULL;
+}
+
+//-----------------------------------------
+//
+//          Civilisation::getSalarie
+//
+//-----------------------------------------
+Humain *Civilisation::getSalarie(void){
+    for (int i = 0 ; i < MAX_HUMAIN ; i++){
+        Element *tmpElement = elements[i];
+        if (tmpElement->getTypeElement() == TYPE_HUMAIN){
+            if (tmpElement->getEmployeur() == NULL){
+                    return tmpElement;
+            }
+        }
+    }
+    return NULL;
+}
+
+//-----------------------------------------
+//
+//          Civilisation::getNbHommes
+//
+//-----------------------------------------
+int Civilisation::getNbHommes(void){
+    return nbHommes;
+}
+
+//-----------------------------------------
+//
+//          Civilisation::getNbFemmes
+//
+//-----------------------------------------
+int Civilisation::getNbFemmes(void){
+    return nbFemmes;
 }
