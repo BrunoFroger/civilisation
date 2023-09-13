@@ -3,9 +3,9 @@
 #   liste de valeurs séparées par des virgules
 #   commence par le type d'element (humain ou entreprise)
 # pour chaque type la liste des valeurs suivnates sont les suivantes :
-#   humain, sexe(H, f), nom (chaune de caracteres), capital initial (nombre)
-#   entreprise, type activite (commerce, industrie), nom (chaine de caracteres), capital initial (nombre)
+#   humain, sexe(0/h, 1/f), nom (chaune de caracteres), capital initial (nombre)
+#   entreprise, type activite (1/commerce, 2/industrie), nom (chaine de caracteres), capital initial (nombre)
 
-humain, h, adam, 1000
-humain, f, eve, 1000
-entreprise, commerce, auBonPain, 10000
+humain, 0, adam, 1000
+humain, 1, eve, 1000
+entreprise, 1, auBonPain, 10000

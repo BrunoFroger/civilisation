@@ -6,6 +6,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <cstdlib>
 
 #include "../inc/civilisation.hpp"
 #include "../inc/log.hpp"
@@ -432,10 +433,43 @@ void Civilisation::chargeConfiguration(char *configFilename){
             if (strlen(ligne) == 0) continue;
             if (ligne[0] == '#') continue;
             //log(LOG_DEBUG, "Civilisation::chargeConfiguration => ligne lue = '%s'", ligne);
+            int type, capital, i = 0, j = 0;
+            char nom[40] = "";
+            char tmp[40] = "";
+            while((ligne[i] != ',' ) && (i < strlen(ligne))) i++;   // suppression 1er mot de la ligne
+            i++;
+            while((ligne[i] != ',' ) && (i < strlen(ligne))) tmp[j++] = ligne[i++]; // recuperation du type
+            tmp[j] = '\0';
+            j=0;
+            type = atoi(tmp);
+            log(LOG_DEBUG, "type = '%s' -> '%d'", tmp, type);
+
+            while((ligne[i] != ',' )  && (i < strlen(ligne))){
+                printf("%d : %c\n", i, ligne[i]);
+                i++;
+            } 
+            i++;
+                printf("%d : %c\n", i, ligne[i]);
+            while((ligne[i] != ',' ) && (i < strlen(ligne))) nom[j++] = ligne[i++];
+            nom[j] = '\0';
+            j=0;
+            i++;
+            remove_extra_spaces(nom);
+            log(LOG_DEBUG, "nom = '%s'", nom);
+
+            strcmp(tmp, "");
+            while((ligne[i] != ',' ) && (i < strlen(ligne))) tmp[j++] = ligne[i++];
+            tmp[j] = '\0';
+            j=0;
+            capital = atoi(tmp);
+            log(LOG_DEBUG, "capital = '%s' -> '%d'", tmp, capital);
+
             if (strncmp(ligne, "humain", 5) == 0){
-                log(LOG_INFO, "creation d'un humain (%s)", ligne);
+                log(LOG_INFO, "creation d'un humain sexe = %d, nom = %s, capital = %d", type, nom, capital);
+                creeElementHumain(type, nom, capital);
             } else if (strncmp(ligne, "entreprise", 10) == 0){
-                log(LOG_INFO, "creation d'une entreprise (%s)", ligne);
+                log(LOG_INFO, "creation d'une entreprise sexe = %d, nom = %s, capital = %d", type, nom, capital);
+                creeElementEntreprise(type, nom, capital);
             }
         }
     }
