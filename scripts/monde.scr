@@ -6,9 +6,6 @@
 #   humain, sexe(0/h, 1/f), nom (chaune de caracteres), capital initial (nombre)
 #   entreprise, type activite (1/commerce, 2/industrie), nom (chaine de caracteres), capital initial (nombre)
 
-humain, 0, Adam, 1000
-humain, 1, Eve, 1000
-humain, 0, Louis, 1000
-humain, 1, Jeanne, 1000
-
+humain, 0, adam, 1000
+humain, 1, eve, 1000
 entreprise, 1, auBonPain, 10000

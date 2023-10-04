@@ -1,8 +1,8 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 02/09/2023 à 23:41:03
-#         avec buildMakefile (version du  2 Sep 2023)
+#     généré automatiquement le 14/09/2023 à 16:54:28
+#         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
 #############################################################
@@ -12,7 +12,7 @@
 #------------------------------------------------------------
 # de compilation
 CC=g++
-CCFLAGS=-Wall 
+CCFLAGS=-Werror -Wall 
 LDFLAGS=
 
 # de definition des répertoires
@@ -53,7 +53,8 @@ $(OBJDIR)/aide.o: $(SRCDIR)/aide.cpp
 $(OBJDIR)/analyseParametre.o: $(SRCDIR)/analyseParametre.cpp \
 	$(INCDIR)/log.hpp \
 	$(INCDIR)/tests.hpp \
-	$(INCDIR)/aide.hpp
+	$(INCDIR)/aide.hpp \
+	$(INCDIR)/civilisation.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -79,14 +80,16 @@ $(OBJDIR)/element.o: $(SRCDIR)/element.cpp \
 $(OBJDIR)/entreprise.o: $(SRCDIR)/entreprise.cpp \
 	$(INCDIR)/entreprise.hpp \
 	$(INCDIR)/log.hpp \
-	$(INCDIR)/tools.hpp
+	$(INCDIR)/tools.hpp \
+	$(INCDIR)/civilisation.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
 $(OBJDIR)/humain.o: $(SRCDIR)/humain.cpp \
 	$(INCDIR)/humain.hpp \
 	$(INCDIR)/log.hpp \
-	$(INCDIR)/element.hpp
+	$(INCDIR)/element.hpp \
+	$(INCDIR)/civilisation.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -117,7 +120,9 @@ $(OBJDIR)/tests.o: $(SRCDIR)/tests.cpp \
 
 $(OBJDIR)/tools.o: $(SRCDIR)/tools.cpp \
 	$(INCDIR)/element.hpp \
-	$(INCDIR)/log.hpp
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/civilisation.hpp \
+	$(INCDIR)/humain.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

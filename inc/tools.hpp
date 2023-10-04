@@ -11,6 +11,8 @@
 
     #include "element.hpp"
 
+    class Element;
+
     typedef struct {
         char expression[500];
         char ListeCommandeSiVrai[1000];
@@ -22,7 +24,8 @@
     extern bool evaluationExpressionChar(char *data1, char *test, char *data2);
     extern bool decomposeSi(char *ligne, structSi *resultat);
     extern bool decomposeScript(char *script, char *instruction, char *listeInstructions);
-    extern int naissance(Humain *pere, Humain *mere);
+    extern Element *naissance(Humain *pere, Humain *mere);
     extern bool mariage(Humain *homme, Humain *femme);
+    extern int getSexeAleatoire(void);
 
 #endif

@@ -20,47 +20,49 @@
     #define STATUS_MARITAL_DIVOR    3
     #define STATUS_MARITAL_DECES    4
 
-    #define NB_COMMANDES_HUMAIN     3
+    #define NB_COMMANDES_HUMAIN     4
     #define NB_VARIABLE_HUMAIN      5
 
     class Entreprise;
-
 
     class Humain{
         public:
             Humain();
             Humain(int id, int sexe, char *nom, int capitalInitial);
-            void initHumain(int id, int sexe, char *nom, int capitalInitial);
+            void acheteProduit(Entreprise *entreprise, int quantite);
+            void ajouteEnfant(Humain *enfant);
+            void ajouteParents(Humain *pere, Humain *mere);
+            int calculExpression(char *data1, char op, char *data2);
+            bool evalueExpressionHumain(char *expression);
             void evolutionHumain(void);
+            bool execCommandeHumain(char *commande);
+            int getAge();
+            char *getCharValue(char *nomVariable);
+            int getConjoint(void);
+            Entreprise *getEmployeur(void);
             int getIdHumain();
+            int getIntValue(char *nomVariable);
+            int getMere(void);
             char *getNomHumain();
-            void setNom(char *nom);
+            int getNbEnfants(void);
+            int getPere(void);
             int getSexe();
             char getSexeChar();
-            void setSexe(int sexe);
-            int getAge();
             int getStatusMarital();
+            void initHumain(int id, int sexe, char *nom, int capitalInitial);
             static bool isVariable(char *nomVariable);
-            int getIntValue(char *nomVariable);
-            char *getCharValue(char *nomVariable);
+            void listeHumain(void);
+            static char *listeVariables(void);
+            void setConjoint(Humain *pretendant);
+            void setEmployeur(Entreprise *entreprise);
+            void setNom(char *nom);
+            void setSexe(int sexe);
+            void setStatusMarital(int status);
             bool testSiCommandeValideHumain(char *valeur);
             bool testSiListeCommandeValideHumain(char *valeur);
-            int calculExpression(char *data1, char op, char *data2);
-            bool execCommandeHumain(char *commande);
+            void valideAchatProduit(Entreprise *entreprise, int montant);
+            
             CompteBancaire *compteBancaireHumain;
-            void listeHumain(void);
-            void acheteProduit(Entreprise *entreprise);
-            static char *listeVariables(void);
-            bool evalueExpressionHumain(char *expression);
-            void setConjoint(Humain *pretendant);
-            void ajouteEnfant(Humain *enfant);
-            Entreprise *getEmployeur(void);
-            void setEmployeur(Entreprise *entreprise);
-            void ajouteParents(Humain *pere, Humain *mere);
-            int getPere(void);
-            int getMere(void);
-            int getNbEnfants(void);
-            int getConjoint(void);
 
         private:
             int id;

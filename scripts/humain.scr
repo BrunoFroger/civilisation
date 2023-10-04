@@ -1,5 +1,7 @@
 # comportement générique d'un humain
 
+#ageMortPossible = 75
+
 si age > 50 alors
     mortPossible
 finsi

@@ -15,6 +15,8 @@
 #include "../inc/humain.hpp"
 
 extern Civilisation civilisation;
+char fichierPrenomsMasculin[50] = "datas/liste_des_prenoms_masculin.txt";
+char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
 
 //-----------------------------------------
 //
@@ -22,8 +24,15 @@ extern Civilisation civilisation;
 //
 //-----------------------------------------
 int getSexeAleatoire(void){
-    log(LOG_DEBUG, "Tools.cpp getSexeAleatoire => debut (a affiner)");
-    if (civilisation.getNbHommes() > civilisation.getNbFemmes())
+    //log(LOG_DEBUG, "Tools.cpp getSexeAleatoire => debut (a affiner)");
+    //srand (time(NULL));
+    int rnd = rand() % 100;
+    
+    bool res = civilisation.getNbHommes() > civilisation.getNbFemmes();
+
+    res = (rnd > 50);
+    //log(LOG_DEBUG, "valeur rnd = %d => res = %d", rnd, res);
+    if (res)
         return FEMME;
     else
         return HOMME;
@@ -34,15 +43,26 @@ int getSexeAleatoire(void){
 //          getPrenomAleatoire
 //
 //-----------------------------------------
-char tmpPrenom[20];
+char tmpPrenom[50];
 int idxPrenom;
 char *getPrenomAleatoire(int sexe){
+    FILE *ficPrenoms;
+    char filenamePrenoms[50];
     log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => debut (a affiner)");
-    if (sexe == HOMME)
-        sprintf(tmpPrenom, "albert_%d", idxPrenom);
-    else
-        sprintf(tmpPrenom, "alice_%d", idxPrenom);
+    if (sexe == HOMME){
+        snprintf(tmpPrenom, sizeof(tmpPrenom), "albert_%d", idxPrenom);
+        strcpy(filenamePrenoms, fichierPrenomsMasculin);
+    }
+    else{
+        snprintf(tmpPrenom, sizeof(tmpPrenom), "alice_%d", idxPrenom);
+        strcpy(filenamePrenoms, fichierPrenomsFeminin);
+    }
+    ficPrenoms = fopen(filenamePrenoms, "r");
+    if (ficPrenoms == NULL){
+        log(LOG_ERROR, "Impossible d'ouvrir le fichier de prenom %s", filenamePrenoms);
+    } else {}
     idxPrenom++;
+    log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => prenom = %s", tmpPrenom);
     return tmpPrenom;
 }
 
@@ -51,14 +71,15 @@ char *getPrenomAleatoire(int sexe){
 //           naissance
 //
 //-----------------------------------------
-int naissance(Humain *pere, Humain *mere){
-    log(LOG_INFO, "tools naissance => TODO");
-    //Humain *enfant = NULL;
+Element *naissance(Humain *pere, Humain *mere){
+    log(LOG_INFO, "tools naissance essai entre %s et %s => TODO", pere->getNomHumain(), mere->getNomHumain());
     Element *tmpElement;
     for (int i = 0 ; i < MAX_HUMAIN ; i++){
+        //log(LOG_INFO, "tools naissance verification si l'élément %d est libre", i);
         tmpElement = civilisation.getElement(i);
         if (tmpElement->getElementId() == -1){
-            if (tmpElement->getNbEnfants() < MAX_ENFANTS){
+            //log(LOG_INFO, "tools naissance l'élément %d est libre", i);
+            if ((pere->getNbEnfants() < MAX_ENFANTS) && (mere->getNbEnfants() < MAX_ENFANTS)){
                 int sexe = getSexeAleatoire();           // TODO genere aleatoirement HOMME ou FEMME
                 char *prenom = getPrenomAleatoire(sexe);   // Generer prenom depuis liste a definir
                 tmpElement = civilisation.creeElementHumain(sexe, prenom, 1000);
@@ -66,12 +87,17 @@ int naissance(Humain *pere, Humain *mere){
                 pere->ajouteEnfant(tmpElement);
                 mere->ajouteEnfant(tmpElement);
                 tmpElement->ajouteParents(pere, mere);
-                return tmpElement->getElementId();
+                tmpElement->setElementId(i);
+                log(LOG_DEBUG, "tools naissance => creation d'un enfant en position %d", tmpElement->getElementId());
+                return tmpElement;
+            } else {
+                log(LOG_DEBUG, "tools naissance => les parents ont atteint le nombre maximal d'enfants (%d)", MAX_ENFANTS);
+                return NULL;
             }
         }
     }
     log(LOG_DEBUG, "tools naissance => le tableau des humains est plein");
-    return -1;
+    return NULL;
 }
 
 //-----------------------------------------

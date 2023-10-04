@@ -48,6 +48,7 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
     this->activite = activite;
     this->nbCommandes = 0;
     this->maxEmployes = 0;
+    this->nbSalaries = 0;
     strcpy(this->nom ,nom);
     // lecture du fichier de définition de l'entreprise
     char filename[100];
@@ -55,12 +56,12 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
     char ligne[100];
     char *tmp;
     compteBancaireEntreprise = new CompteBancaire(capitalInitial);
-    sprintf(filename, "%s/%s", repertoire, nom);
+    snprintf(filename, sizeof(filename), "%s/%s", repertoire, nom);
     FILE *fic;
     fic = fopen(filename, "r");
     if (fic == NULL){
         log(LOG_ERROR, "Impossible d'ouvrir le fichier de définition d'entreprise %s\n", filename );
-        sprintf(filename, "%s/default", repertoire);
+        snprintf(filename, sizeof(filename),"%s/default", repertoire);
         log(LOG_ERROR, "        ouverture du fichier par defaut %s\n", filename );
         fic = fopen(filename, "r");
         if (fic == NULL){
@@ -148,7 +149,7 @@ structCommande *Entreprise::creeCommande(Humain *client, int quantite){
             tmpCde->status = COMMANDE_INIT;
         }
         nbCommandes++;
-        break;
+        return tmpCde;
     }
     return NULL;
 }
@@ -166,11 +167,13 @@ void Entreprise::livraison(Humain *client){
         structCommande *tmpCde = &listeCommandes[i];
         if (tmpCde->client == client){
             log(LOG_DEBUG, "livraison de %d produit a %s", tmpCde->quantité, client->getNomHumain());
+            client->valideAchatProduit(this, prixProduit);
             tmpCde->client = NULL;
             tmpCde->reference = -1;
             tmpCde->quantité = -1;
             tmpCde->prixUnitaire = -1;
             tmpCde->status = COMMANDE_VIDE;
+            return;
         }
         nbCommandes--;
         break;

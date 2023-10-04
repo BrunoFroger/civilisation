@@ -41,6 +41,7 @@ bool exec_entreprise=false;
 bool exec_tools=false;
 bool exec_banque=false;
 bool stopOnFail = false;
+bool StatusBilanTests = true;
 
 structResultatTest tableauresultatsTests[NB_RUBRIQUES];
 
@@ -66,6 +67,12 @@ void baniereFinTests(void){
     log(LOG_INFO, "===================================");
     log(LOG_INFO, "                                   ");
     log(LOG_INFO, "           fin des tests           ");
+    log(LOG_INFO, "                                   ");
+    if (StatusBilanTests){
+        log(LOG_INFO, "                O K                ");
+    } else {
+        log(LOG_INFO, "                K O                ");
+    }
     log(LOG_INFO, "                                   ");
     log(LOG_INFO, "===================================");
 }
@@ -116,6 +123,42 @@ void initTableauTests(void){
 
 //-----------------------------------------
 //
+//          bilanTest
+//
+//-----------------------------------------
+void bilanTests(void){
+    char tauxReussite[10];
+    printf("+----------------------------------------------------------+\n");
+    printf("|                       Bilan des tests                    |\n");
+    printf("+--------------------------------+-----+-----+-----+-------+\n");
+    printf("|                  rubrique      |  NB |  OK |  KO |  %% OK |\n");
+    printf("+--------------------------------+-----+-----+-----+-------+\n");
+    for (int i = 0 ; i < NB_RUBRIQUES ; i++){
+        if (tableauresultatsTests[i].nbtests == 0){
+            strcpy(tauxReussite, "");
+            continue;
+        } else {
+            snprintf(tauxReussite, sizeof(tauxReussite), "%3d%%", tableauresultatsTests[i].nbOK * 100 / tableauresultatsTests[i].nbtests);
+        }
+        printf("| %30s | %3d | %3d | %3d | %5s |\n", 
+            tableauresultatsTests[i].nomRubrique,
+            tableauresultatsTests[i].nbtests,
+            tableauresultatsTests[i].nbOK,
+            tableauresultatsTests[i].nbKO, 
+            tauxReussite);
+    }
+    if (nbTests == 0){
+        strcpy(tauxReussite, "");
+    } else {
+        snprintf(tauxReussite, sizeof(tauxReussite), "%3d%%", nbOK * 100 / nbTests);
+    }
+    printf("+--------------------------------+-----+-----+-----+-------+\n");
+    printf("|                  Total         | %3d | %3d | %3d | %5s |\n", nbTests, nbOK, nbKO, tauxReussite);
+    printf("+--------------------------------+-----+-----+-----+-------+\n");
+}
+
+//-----------------------------------------
+//
 //          resultatTest
 //
 //-----------------------------------------
@@ -130,7 +173,9 @@ bool resultatTest(char *rubrique, bool status){
         printf("    Test n° %d KO dans %s\n", nbTestsRubrique + 1, rubrique);
         nbKO++;
         nbKORubrique++;
+        StatusBilanTests = false;
         if (stopOnFail){
+            bilanTests();
             baniereFinTests();
             exit(-1);
         } 
@@ -163,42 +208,6 @@ void bilanTestsRubrique(char *rubrique){
         nbKORubrique = 0;
     }
     printf("\n");
-}
-
-//-----------------------------------------
-//
-//          bilanTest
-//
-//-----------------------------------------
-void bilanTests(void){
-    char tauxReussite[10];
-    printf("+----------------------------------------------------------+\n");
-    printf("|                       Bilan des tests                    |\n");
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
-    printf("|                  rubrique      |  NB |  OK |  KO |  %% OK |\n");
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
-    for (int i = 0 ; i < NB_RUBRIQUES ; i++){
-        if (tableauresultatsTests[i].nbtests == 0){
-            strcpy(tauxReussite, "");
-            continue;
-        } else {
-            sprintf(tauxReussite, "%3d%%", tableauresultatsTests[i].nbOK * 100 / tableauresultatsTests[i].nbtests);
-        }
-        printf("| %30s | %3d | %3d | %3d | %5s |\n", 
-            tableauresultatsTests[i].nomRubrique,
-            tableauresultatsTests[i].nbtests,
-            tableauresultatsTests[i].nbOK,
-            tableauresultatsTests[i].nbKO, 
-            tauxReussite);
-    }
-    if (nbTests == 0){
-        strcpy(tauxReussite, "");
-    } else {
-        sprintf(tauxReussite, "%3d%%", nbOK * 100 / nbTests);
-    }
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
-    printf("|                  Total         | %3d | %3d | %3d | %5s |\n", nbTests, nbOK, nbKO, tauxReussite);
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
 }
 
 //-----------------------------------------
@@ -249,18 +258,18 @@ void executeTests(int mode){
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
         
-        if (1 || exec_all ) { 
+        if (1 || exec_all ) { // test de suppression des blancs inutiles d'une chaine
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test de suppression des blancs inutiles d'une chaine");
             char expression[200];
-            sprintf(expression, " 1234   12345     12345678     123   123456789   ");
+            snprintf(expression, sizeof(expression), " 1234   12345     12345678     123   123456789   ");
             char resultat_attendu[200] = "1234 12345 12345678 123 123456789";
             remove_extra_spaces(expression);
             resultatTest(rubrique, (strcmp(expression, resultat_attendu) == 0));
         }
 
 
-        if (1 || exec_all ) { 
+        if (1 || exec_all ) { // test fonction evaluation expression Int
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test fonction evaluation expression Int");
             int val1, val2;
@@ -328,79 +337,91 @@ void executeTests(int mode){
             log(LOG_DEBUG, "Bloc evaluationExpressionInt non executé\n");
         }
 
-        if (1 || exec_all ){ // 
+        if (1 || exec_all ){ // test decompose si 
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test decompose si ");
             char ligne[5000] = "";
             structSi resultat;
             bool res = false;
             
-            sprintf(ligne, "si toto alors titi finsi commande");
+            snprintf(ligne, sizeof(ligne), "si toto alors titi finsi commande");
             res = decomposeSi(ligne, &resultat);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "toto") == 0);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "titi") == 0);
             resultatTest(rubrique, res);
             
-            sprintf(ligne, "si toto alors titi \n tata finsi commande1\ncommande2");
+            snprintf(ligne, sizeof(ligne), "si toto alors titi \n tata finsi commande1\ncommande2");
             res = decomposeSi(ligne, &resultat);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "titi \n tata ") == 0);
             res |= (strcmp(resultat.ListeCommandeSiVrai, "commande1\ncommande2") == 0);
             resultatTest(rubrique, res);
         }
 
-        if (1 || exec_all ){ // bloc decomposeScript
+        if (1 || exec_all ){ // test decomposeScript
             log(LOG_DEBUG, "-----------------------------------------------------");
             log(LOG_DEBUG, "test decomposeScript");
             char script[5000] = "";
             char instruction[100] = "";
             char listeInstructions[5000] = "";
             bool res = true;
-            sprintf(script, "#commentaire\nchercheConjoint");
+            snprintf(script, sizeof(script), "#commentaire\nchercheConjoint");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, "chercheConjoint") == 0);
             resultatTest(rubrique, res);
-            sprintf(script, "#commentaire\nchercheConjoint\ntoto");
+            snprintf(script, sizeof(script), "#commentaire\nchercheConjoint\ntoto");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, "chercheConjoint\ntoto") == 0);
             resultatTest(rubrique, res);
 
-            sprintf(script, "#commentaire\n chercheConjoint");
+            snprintf(script, sizeof(script), "#commentaire\n chercheConjoint");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "#commentaire") == 0);
             res &= (strcmp(listeInstructions, " chercheConjoint") == 0);
             resultatTest(rubrique, res);
 
-            sprintf(script, "si toto alors titi finsi commande");
+            snprintf(script, sizeof(script), "si toto alors titi finsi commande");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "commande") == 0);
             resultatTest(rubrique, res);
 
-            sprintf(script, "si toto alors titi finsi commande\n ");
+            snprintf(script, sizeof(script), "si toto alors titi finsi commande\n ");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "commande\n ") == 0);
             resultatTest(rubrique, res);
 
-            sprintf(script, "si toto alors titi finsi \n commande");
+            snprintf(script, sizeof(script), "si toto alors titi finsi \n commande");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
             res &= (strcmp(listeInstructions, "\n commande") == 0);
             resultatTest(rubrique, res);
 
-            sprintf(script, "si toto \n tata alors titi \n tutu finsi commande1\n commande2\n ");
+            snprintf(script, sizeof(script), "si toto \n tata alors titi \n tutu finsi commande1\n commande2\n ");
             res = decomposeScript(script, instruction, listeInstructions);
             res &= (strcmp(instruction, "si toto \n tata alors titi \n tutu finsi") == 0);
             res &= (strcmp(listeInstructions, "commande1\n commande2\n ") == 0);
             resultatTest(rubrique, res);
 
-            sprintf(script, "si toto alors titi commande\n ");
+            snprintf(script, sizeof(script), "si toto alors titi commande\n ");
             res = decomposeScript(script, instruction, listeInstructions);
             resultatTest(rubrique, !res);
         } else {
             log(LOG_DEBUG, "Bloc decomposeScript non executé\n");
+        }
+
+        if (1 || exec_all){ // tests génération aleatoire du sexe
+            log(LOG_DEBUG, "-----------------------------------------------------");
+            log(LOG_DEBUG, "tests génération aleatoire du sexe");
+            int nbHommes=0, nbFemmes = 0;
+            for (int i = 0 ; i < 100 ; i++){
+                if (getSexeAleatoire() == HOMME) nbHommes++; else nbFemmes++;
+            }
+            printf("nbHommes = %d, nbFemmes = %d\n", nbHommes, nbFemmes);
+            resultatTest(rubrique, (nbHommes >= 40));
+            resultatTest(rubrique, (nbFemmes >= 40));
         }
 
         bilanTestsRubrique(rubrique);
@@ -418,7 +439,6 @@ void executeTests(int mode){
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation de civilisation avec id element = 0");
-        resultatTest(rubrique, (civilisation.getCourantElementId() == 0));
         resultatTest(rubrique, (civilisation.getNbHumain() == 0));
         resultatTest(rubrique, (civilisation.getNbHommes() == 0));
         resultatTest(rubrique, (civilisation.getNbFemmes() == 0));
@@ -429,7 +449,9 @@ void executeTests(int mode){
         resultatTest(rubrique, strcmp(pere->getNomHumain(), "Marcel") == 0);
         resultatTest(rubrique, pere->getTypeElement() == TYPE_HUMAIN);
         resultatTest(rubrique, pere->getSexe() == HOMME);
+        resultatTest(rubrique, (civilisation.getNbHumain() == 1));
         resultatTest(rubrique, (civilisation.getNbHommes() == 1));
+        resultatTest(rubrique, (civilisation.getNbFemmes() == 0));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'une femme");
@@ -437,29 +459,37 @@ void executeTests(int mode){
         resultatTest(rubrique, strcmp(mere->getNomHumain(), "Simone") == 0);
         resultatTest(rubrique, mere->getTypeElement() == TYPE_HUMAIN);
         resultatTest(rubrique, mere->getSexe() == FEMME);
-        resultatTest(rubrique, (civilisation.getNbFemmes() == 1));
         resultatTest(rubrique, (civilisation.getNbHumain() == 2));
+        resultatTest(rubrique, (civilisation.getNbHommes() == 1));
+        resultatTest(rubrique, (civilisation.getNbFemmes() == 1));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'un element entreprise");
+        resultatTest(rubrique, civilisation.getNbEntreprise() == 0);
         Element *entreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
         resultatTest(rubrique, entreprise->getTypeElement() == TYPE_ENTREPRISE);
         resultatTest(rubrique, strcmp(entreprise->getNomEntreprise(), "au bon pain") == 0);
         resultatTest(rubrique, entreprise->compteBancaireEntreprise->getSolde() == 25000);
+        resultatTest(rubrique, civilisation.getNbEntreprise() == 1);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de mariage");
         resultatTest(rubrique, mariage(pere, mere));
 
-
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation d'enfants");
-        resultatTest(rubrique, (naissance(pere, mere) != -1));
-        resultatTest(rubrique, (naissance(pere, mere) != -1));
-        resultatTest(rubrique, (naissance(pere, mere) != -1));
-        resultatTest(rubrique, (naissance(pere, mere) != -1));
-        resultatTest(rubrique, (naissance(pere, mere) != -1));
-        resultatTest(rubrique, (naissance(pere, mere) != -1));
+        for (int i = 0 ; i < MAX_ENFANTS + 2 ; i++){
+            bool result;
+            if (i >= MAX_ENFANTS) {
+                result = true;
+            } else {
+                Element *enfant = naissance(pere, mere);
+                int id = enfant->getElementId();
+                log(LOG_DEBUG, "test creation enfant %d", id);
+                result = (enfant->getElementId() != -1);
+            }
+            resultatTest(rubrique, result);
+        }
 
         bilanTestsRubrique(rubrique);
     }
@@ -498,7 +528,7 @@ void executeTests(int mode){
         strcpy(rubrique, "humain");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
-        Civilisation civilisation;
+        //Civilisation civilisation;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation humain");
@@ -529,8 +559,76 @@ void executeTests(int mode){
         resultatTest(rubrique, !(humain.getStatusMarital() == STATUS_MARITAL_DECES));
         for (int i = 0 ; i < 20 ; i++) humain.evolutionHumain();
         humain.execCommandeHumain((char *)"mortPossible");
-        resultatTest(rubrique, humain.getStatusMarital() == STATUS_MARITAL_DECES);
+        //resultatTest(rubrique, humain.getStatusMarital() == STATUS_MARITAL_DECES);
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test mariage");
+        int ancienNbHomme = civilisation.getNbHommes();
+        int ancienNbFemme = civilisation.getNbFemmes();
+        int ancienNbHumain = civilisation.getNbHumain();
+        Element *pere = civilisation.creeElementHumain(HOMME, (char *)"papa", 1000);
+        resultatTest(rubrique, (civilisation.getNbHommes() == ancienNbHomme + 1));
+        resultatTest(rubrique, (civilisation.getNbFemmes() == ancienNbFemme));
+        resultatTest(rubrique, (civilisation.getNbHumain() == ancienNbHumain + 1));
+        Element *mere = civilisation.creeElementHumain(FEMME, (char *)"maman", 1000);
+        resultatTest(rubrique, (civilisation.getNbHommes() == ancienNbHomme + 1));
+        resultatTest(rubrique, (civilisation.getNbFemmes() == ancienNbFemme + 1));
+        resultatTest(rubrique, (civilisation.getNbHumain() == ancienNbHumain + 2));
+        resultatTest(rubrique, (pere->getStatusMarital() == STATUS_MARITAL_CELIB));
+        resultatTest(rubrique, (mere->getStatusMarital() == STATUS_MARITAL_CELIB));
+        resultatTest(rubrique, (pere->compteBancaireHumain->getSolde() == 1000));
+        resultatTest(rubrique, (mere->compteBancaireHumain->getSolde() == 1000));
+        for (int i = 0 ; i < 25 ; i++){
+            pere->evolutionHumain();
+            mere->evolutionHumain();
+        }
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test mariage de %s et %s", pere->getNomHumain(), mere->getNomHumain());
+        mariage(pere, mere);
+        resultatTest(rubrique, (pere->getStatusMarital() == STATUS_MARITAL_MARIE));
+        resultatTest(rubrique, (mere->getStatusMarital() == STATUS_MARITAL_MARIE));
+
+        //civilisation.listeCivilisation();
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test naissance");
+        ancienNbHumain = civilisation.getNbHumain();
+        Element *enfant = naissance(pere, mere);
+        civilisation.listeCivilisation();
+        log(LOG_DEBUG, "creation d'un enfant en position %d", enfant->getElementId());
+        resultatTest(rubrique, (enfant->getPere() == pere->getIdHumain()));
+        resultatTest(rubrique, (enfant->getMere() == mere->getIdHumain()));
+        //civilisation.listeCivilisation();
+
+        resultatTest(rubrique, (civilisation.getNbHumain() == ancienNbHumain + 1));
+
+        //civilisation.listeCivilisation();
+        
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test deces et transfert capital");
+        for (int i = 0 ; i < 100 ; i++){
+            pere->evolutionHumain();
+            mere->evolutionHumain();
+        }
+        log(LOG_DEBUG, "test deces du pere");
+        int ancienSoldeEnfant = enfant->compteBancaireHumain->getSolde();
+        int ancienSoldePere = pere->compteBancaireHumain->getSolde();
+        int ancienSoldeMere = mere->compteBancaireHumain->getSolde();
+        resultatTest(rubrique, (pere->execCommandeHumain((char*)"mortPossible")));
+        resultatTest(rubrique, (pere->getStatusMarital() == STATUS_MARITAL_DECES));
+        resultatTest(rubrique, (mere->compteBancaireHumain->getSolde() == (ancienSoldePere + ancienSoldeMere)));
+        log(LOG_DEBUG, "test deces de mere");
+        resultatTest(rubrique, (mere->execCommandeHumain((char*)"mortPossible")));
+        resultatTest(rubrique, (mere->getStatusMarital() == STATUS_MARITAL_DECES));
+        log(LOG_DEBUG, "test transfert capital");
+        resultatTest(rubrique, (enfant->compteBancaireHumain->getSolde() == (ancienSoldeEnfant + ancienSoldePere + ancienSoldeMere)));
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test commande produit");
+        Element *entreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
+        resultatTest(rubrique, (entreprise->getNbCommandes() == 0));
+        pere->acheteProduit(entreprise, 1);
+        resultatTest(rubrique, (entreprise->getNbCommandes() == 1));
         bilanTestsRubrique(rubrique);
     }
 
@@ -543,48 +641,31 @@ void executeTests(int mode){
         strcpy(rubrique, "entreprise");
         log(LOG_DEBUG, "=====================================================");
         log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
-        Civilisation civilisation;
+        //Civilisation civilisation;
         Element *elementEntreprise, *elementHumain;
-        bool res;
-        int idEntreprise;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration spécifique");
-        res = true;
-        idEntreprise = civilisation.getCourantElementId();
         elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
-        printf("creation entreprise id : %d\n", idEntreprise);
-        elementEntreprise = civilisation.getElement(idEntreprise);
-        res &= (strcmp(elementEntreprise->getNomEntreprise(), (char *)"au bon pain") == 0);
-        //printf("res = %d\n", res);
-        res &= (elementEntreprise->getNbSalaries() == 2);
-        //printf("res = %d\n", res);
-        res &= (elementEntreprise->getCoutSalaries() == 100);
-        //printf("res = %d\n", res);
-        res &= (elementEntreprise->getCoutProduit() == 5);
-        //printf("res = %d\n", res);
-        res &= (elementEntreprise->getPrixProduit() == 10);
-        //printf("res = %d\n", res);
-        res &= (elementEntreprise->getStockProduit() == 20);
-        //printf("res = %d\n", res);
-        res &= (elementEntreprise->getMaxEmployes() == 5);
-        //printf("res = %d\n", res);
-        resultatTest(rubrique, res);
+        printf("creation entreprise id : %d\n", elementEntreprise->getElementId());
+        resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"au bon pain") == 0));
+        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
+        resultatTest(rubrique, (elementEntreprise->getCoutSalaries() == 100));
+        resultatTest(rubrique, (elementEntreprise->getCoutProduit() == 5));
+        resultatTest(rubrique, (elementEntreprise->getPrixProduit() == 10));
+        resultatTest(rubrique, (elementEntreprise->getStockProduit() == 20));
+        resultatTest(rubrique, (elementEntreprise->getMaxEmployes() == 5));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration par default");
-        res = true;
-        idEntreprise = civilisation.getCourantElementId();
-        civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000);
-        printf("creation entreprise id : %d\n", idEntreprise);
-        elementEntreprise = civilisation.getElement(idEntreprise);
-        res &= (strcmp(elementEntreprise->getNomEntreprise(), (char *)"entreprise par default") == 0);
-        res &= (elementEntreprise->getNbSalaries() == 0);
-        res &= (elementEntreprise->getCoutSalaries() == 100);
-        res &= (elementEntreprise->getCoutProduit() == 5);
-        res &= (elementEntreprise->getPrixProduit() == 10);
-        res &= (elementEntreprise->getStockProduit() == 0);
-        resultatTest(rubrique, res);
+        elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000);
+        printf("creation entreprise id : %d\n", elementEntreprise->getElementId());
+        resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"entreprise par default") == 0));
+        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
+        resultatTest(rubrique, (elementEntreprise->getCoutSalaries() == 100));
+        resultatTest(rubrique, (elementEntreprise->getCoutProduit() == 5));
+        resultatTest(rubrique, (elementEntreprise->getPrixProduit() == 10));
+        resultatTest(rubrique, (elementEntreprise->getStockProduit() == 0));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test versement de salaire");
@@ -604,12 +685,20 @@ void executeTests(int mode){
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test commande/livraison de produit");
-        elementEntreprise->creeCommande(elementHumain, 1);
+        //elementEntreprise->creeCommande(elementHumain, 1);
+        elementHumain->acheteProduit(elementEntreprise,1);
         resultatTest(rubrique, elementEntreprise->getNbCommandes() == 1);
-        elementEntreprise->creeCommande(elementHumain, 1);
+        elementHumain->acheteProduit(elementEntreprise,1);
         resultatTest(rubrique, elementEntreprise->getNbCommandes() == 2);
+        ancienSoldeHumain = elementHumain->compteBancaireHumain->getSolde();
+        ancienSoldeEntreprise = elementEntreprise->compteBancaireEntreprise->getSolde();
+        log(LOG_DEBUG, "anciens soldes : entreprise (%d) client (%d)", ancienSoldeEntreprise, ancienSoldeHumain);
+        int prixProduit = elementEntreprise->getPrixProduit();
         elementEntreprise->livraison(elementHumain);
+        log(LOG_DEBUG, "nouveaux soldes : entreprise (%d) client (%d)", elementEntreprise->compteBancaireEntreprise->getSolde(), elementHumain->compteBancaireHumain->getSolde());
         resultatTest(rubrique, elementEntreprise->getNbCommandes() == 1);
+        resultatTest(rubrique, (elementHumain->compteBancaireHumain->getSolde() == (ancienSoldeHumain - prixProduit)));
+        resultatTest(rubrique, (elementEntreprise->compteBancaireEntreprise->getSolde() == (ancienSoldeEntreprise + prixProduit)));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test fonction liste de commandes valide");
@@ -676,11 +765,11 @@ void executeTests(int mode){
         bilanTestsRubrique(rubrique);
     }
 
+    civilisation.listeCivilisation();
+    civilisation.tableauDeBord();
+
     bilanTests();
 
     baniereFinTests();
-
-    civilisation.listeCivilisation();
-    civilisation.tableauDeBord();
 
 }

@@ -35,7 +35,7 @@ bool analyseParametres(int argc, char **argv){
                     case 'C':
                         if ((i+1) < argc){
                             log(LOG_DEBUG, "chargement du fichier de configuration %s", argv[i+1]);
-                            strcpy(configFilename, argv[i+1]);
+                            snprintf(configFilename, 100, "scripts/%s", argv[i+1]);
                             log(LOG_DEBUG, "chargement du fichier de configuration %s", configFilename);
                             i++;
                         }

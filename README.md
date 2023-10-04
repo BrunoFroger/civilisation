@@ -26,7 +26,7 @@ ce fichier doit contenir le comportement qui régit chaque évolution de l'objet
 	<opTest> = "=" | "!=" | "<" | ">" | "<=" | ">="
 	<Variable> = texte du nom de la variable dépend de l'objet
 	<valeur> = nombre
-	<affectation> = <variable> "=" <expression>
+	<affectation> = <variable> "=" <valeur>
 	
 	<listeCommandes> = <commande> | <listeCommandes>
 	<commande> = texte du nom de la fonction a réaliser dépend de l'objet

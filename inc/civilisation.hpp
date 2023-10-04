@@ -10,7 +10,6 @@
 
     #include "element.hpp"
 
-    #define MAX_ELEMENTS    500
 
     class Civilisation{
         public:
@@ -22,7 +21,7 @@
             void evolutionCivilisation(void);
             void listeCivilisation(void);
             void killCivilisation(void);
-            int getCourantElementId(void);
+            //int getCourantElementId(void);
             void listeElement(int id);
             Element *getElement(int index);
             void tableauDeBord(void);
@@ -32,11 +31,11 @@
             int getNbHommes(void);
             int getNbFemmes(void);
             int getNbHumain(void);
+            int getNbEntreprise(void);
 
         private:
-            void incElementId(void);
-            int getNbEntreprise(void);
-            int courantElementId;
+            //void incElementId(void);
+            //int courantElementId;
             int nbHumains;
             int nbHommes, nbFemmes;
             int nbEntreprises;

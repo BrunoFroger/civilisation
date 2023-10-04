@@ -13,7 +13,9 @@
     #include "entreprise.hpp"
     #include "tools.hpp"
 
-    #define MAX_HUMAIN  300
+    #define MAX_HUMAIN          300
+    #define MAX_ENTREPRISES     50
+    #define MAX_ELEMENTS        MAX_HUMAIN + MAX_ENTREPRISES
 
     #define TYPE_INDEFINI   0
     #define TYPE_HUMAIN     1

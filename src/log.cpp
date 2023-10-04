@@ -35,7 +35,7 @@ void log(int logLevel, const char *format, ...){
     day = local->tm_mday;
     mois = local->tm_mon + 1;
     an = local->tm_year + 1900;
-    sprintf(logDate, "%02d-%02d-%04d %02d:%02d", day, mois, an, h, min);
+    snprintf(logDate, sizeof(logDate), "%02d-%02d-%04d %02d:%02d:%02d", day, mois, an, h, min, s);
 
     switch (logLevel){
         case 0:
@@ -58,9 +58,9 @@ void log(int logLevel, const char *format, ...){
     va_start(args, format);
     if (logLevel <= logLevelLimit){
         if (sizeof(args) > 1) {
-            vsprintf(message, format, args);
+            vsnprintf(message, sizeof(message), format, args);
         }
-        sprintf(ligne, "civilisation (%s) %s => %s", logLevelString, logDate, message);
+        snprintf(ligne, sizeof(ligne), "civilisation (%s) %s => %s", logLevelString, logDate, message);
         printf("%s\n",ligne);
     }
     va_end(args);

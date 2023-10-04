@@ -7,6 +7,7 @@
 #include <cstdio>
 #include <cstring>
 #include <cstdlib>
+#include <ctime>
 
 #include "../inc/log.hpp"
 #include "../inc/humain.hpp"

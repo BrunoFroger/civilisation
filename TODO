@@ -1,4 +1,8 @@
-
+Bugs a corriger
+  - ....
+Fonctions a completer ou ecrire
+  - tools : génération aléatoire de prenoms
+  - Humain : achat de produits
 
 - fonction decomposition de script 
   - mettre ensemble du script sous forme d'une seule chaine de caractere sans RC ni blanc execedentaires => chaine script

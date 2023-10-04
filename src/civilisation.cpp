@@ -27,7 +27,7 @@ Civilisation::Civilisation(){
     log(LOG_INFO, "===================================");
     log(LOG_INFO, "Creation d'une civilisation");
     log(LOG_DEBUG, "Civilisation::Civilisation => debut");
-    this->courantElementId = 0;
+    //this->courantElementId = 0;
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         elements[i] = new Element(-1, TYPE_INDEFINI);
     }
@@ -73,18 +73,18 @@ int Civilisation::getNbEntreprise(void){
 //          Civilisation::newElementId
 //
 //-----------------------------------------
-void Civilisation::incElementId(void){
-    this->courantElementId++;
-}
+//void Civilisation::incElementId(void){
+//    this->courantElementId++;
+//}
 
 //-----------------------------------------
 //
 //          Civilisation::getCourantElementId
 //
 //-----------------------------------------
-int Civilisation::getCourantElementId(void){
-    return this->courantElementId;
-}
+//int Civilisation::getCourantElementId(void){
+//    return this->courantElementId;
+//}
 
 //-----------------------------------------
 //
@@ -101,7 +101,30 @@ Element *Civilisation::getElement(int index){
 //
 //-----------------------------------------
 Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
-    log(LOG_INFO, "Civilisation::creeElementHumain(int sexe, char *nom) => (id=%d) %d, %s", courantElementId, sexe, nom);
+    log(LOG_INFO, "Civilisation::creeElementHumain(int sexe, char *nom) => %d, %s", sexe, nom);
+    for (int i = 0 ; i < MAX_HUMAIN ; i++){
+        Element *tmpElement = elements[i];
+        if (tmpElement->getElementId() == -1){
+            if (nbHumains >= MAX_HUMAIN){
+                log(LOG_ERROR, "Impossible de creer un nouvel Humain limite atteinte (%d)", MAX_HUMAIN);
+                return NULL;
+            }
+            tmpElement->initHumain(i, sexe, nom, capitalInitial);
+            tmpElement->setTypeElement(TYPE_HUMAIN);
+            tmpElement->setElementId(i);
+            //incElementId();
+            this->nbHumains++;
+            if (sexe == HOMME){
+                nbHommes++;
+            } else {
+                nbFemmes++;
+            }
+            log(LOG_INFO, "Civilisation::creeElementHumain => %s cree en position %d", nom, tmpElement->getElementId());
+            return tmpElement;
+        }
+    }
+    return NULL;
+    /*
     Element *tmpElement = elements[courantElementId];
     tmpElement->initHumain(courantElementId, sexe, nom, capitalInitial);
     tmpElement->setTypeElement(TYPE_HUMAIN);
@@ -114,6 +137,7 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
         nbFemmes++;
     }
     return tmpElement;
+    */
 }
 
 //-----------------------------------------
@@ -122,14 +146,23 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
 //
 //-----------------------------------------
 Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
-    log(LOG_INFO, "Civilisation::creeElementEntreprise(int activite, char *nom) => (id=%d) %d, %s", courantElementId, activite, nom);
-    Element *tmpElement = elements[courantElementId];
-    tmpElement->initEntreprise(courantElementId, activite, nom, capital);
-    tmpElement->setTypeElement(TYPE_ENTREPRISE);
-    tmpElement->setElementId(courantElementId);
-    incElementId();
-    this->nbEntreprises++;
-    return tmpElement;
+    log(LOG_INFO, "Civilisation::creeElementEntreprise(int activite, char *nom) => %d, %s", activite, nom);
+    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
+        Element *tmpElement = elements[i];
+        if (tmpElement->getElementId() == -1){
+            if (nbEntreprises >= MAX_ENTREPRISES){
+                log(LOG_ERROR, "Impossible de creer une nouvelle entreprise limite atteinte (%d)", MAX_ENTREPRISES);
+                return NULL;
+            }
+            tmpElement->initEntreprise(i, activite, nom, capital);
+            tmpElement->setTypeElement(TYPE_ENTREPRISE);
+            tmpElement->setElementId(i);
+            //incElementId();
+            this->nbEntreprises++;
+            return tmpElement;
+        }
+    }
+    return NULL;
 }
 
 //-----------------------------------------
@@ -157,11 +190,18 @@ void Civilisation::listeElement(int id){
 void Civilisation::listeCivilisation(void){
     // afichage des individus
     char tmp[50];
-    printf("+---------------------------------------------------------------------------------------------------------------+\n");
-    printf("|                                      population  %4d individus                                                |\n", getNbHumain());
-    printf("+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
-    printf("|   id   |                       nom | sexe| conj| enf | pere| mere|  age  |status|    capital |         epargne |\n");
-    printf("+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
+    char ligne[200];
+    FILE *fic = fopen("listeCivilisation.txt", "w");
+    snprintf(ligne, 200, "+----------------------------------------------------------------------------------------------------------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|                                      population  %4d individus                                                |\n", getNbHumain());
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
+    printf("%s", ligne);
+    snprintf(ligne, 200, "|   id   |                       nom | sexe| conj| enf | pere| mere|  age  |status|    capital |         epargne |\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
         if (ptr->getTypeElement() == TYPE_HUMAIN){
@@ -185,7 +225,7 @@ void Civilisation::listeCivilisation(void){
                     strcpy(tmp, "-NC-");
                     break;
             }
-            printf("| %5d  | %25s |  %c  | %3d | %3d | %3d | %3d | %5d | %4s | %10d | %15d |\n", 
+            snprintf(ligne, 200, "| %5d  | %25s |  %c  | %3d | %3d | %3d | %3d | %5d | %4s | %10d | %15d |\n", 
                 ptr->getIdHumain(),
                 ptr->getNomHumain(), 
                 ptr->getSexeChar(),
@@ -197,31 +237,42 @@ void Civilisation::listeCivilisation(void){
                 tmp,
                 ptr->compteBancaireHumain->getSolde(),
                 ptr->compteBancaireHumain->getEpargne());
+            printf("%s", ligne); fputs(ligne, fic);
         }
     }
-    printf("+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
+    snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
 
     // affichage des entreprises 
     // TODO
     // afichage des individus
-    printf("+------------------------------------------------------------------------------+\n");
-    printf("|             population  %4d entreprises                                     |\n", getNbEntreprise());
-    printf("+--------+---------------------------+----------+------------+-----------------+\n");
-    printf("|   id   |                       nom | activité |    capital |         epargne |\n");
-    printf("+--------+---------------------------+----------+------------+-----------------+\n");
+    snprintf(ligne, 200, "+----------------------------------------------------------------------------------------------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|                                population  %4d entreprises                                        |\n", getNbEntreprise());
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+--------+---------------------------+----------+----------+----------+------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|   id   |                       nom | activité | nb cde   | nb sal   |    capital |         epargne |\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+--------+---------------------------+----------+----------+----------+------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
         if (ptr->getTypeElement() == TYPE_ENTREPRISE){
-            printf("| %5d  | %25s |   %5d  | %10d | %15d |\n", 
+            snprintf(ligne, 200, "| %5d  | %25s |   %5d  |   %5d  |   %5d  | %10d | %15d |\n", 
                 ptr->getIdEntreprise(),
                 ptr->getNomEntreprise(), 
                 ptr->getActivite(),
+                ptr->getNbCommandes(),
+                ptr->getNbSalaries(),
                 ptr->compteBancaireEntreprise->getSolde(),
                 ptr->compteBancaireEntreprise->getEpargne());
+            printf("%s", ligne); fputs(ligne, fic);
         }
     }
-    printf("+--------+---------------------------+----------+------------+-----------------+\n");
-
+    snprintf(ligne, 200, "+--------+---------------------------+----------+----------+----------+------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    fclose(fic);
 }
 
 //-----------------------------------------
@@ -287,9 +338,12 @@ void Civilisation::tableauDeBord(void){
     int _nbAutresEntreprises = 0;
     int _totalActifs = 0;
     int _totalEpargne = 0;
-    for (int i = 0 ; i < getCourantElementId() ; i++){
+    char ligne[200];
+    FILE *fic = fopen("tableauDeBord.txt", "w");
+    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         //printf("Civilisation::tableauDeBord => analyse de l'élément %d\n", i);
         element = getElement(i);
+        if (element->getElementId() == -1) continue;
         if (element->getTypeElement() == TYPE_HUMAIN){
             _nbHumains++;
             if (element->getSexe() == HOMME) _nbHommes++;
@@ -320,27 +374,49 @@ void Civilisation::tableauDeBord(void){
         }
     }
 
-    printf("+-------------------------------------------------------------------------------------------------------------+\n");
-    printf("|                                       T A B L E A U   D E   B O R D                                         |\n");
-    printf("+-------------------------------------------------------------------------------------------------------------+\n");
-    printf("|  constantes   MAX Elements = %5d   MAX Humains = %5d                                                    |\n", MAX_ELEMENTS, MAX_HUMAIN);
-    printf("|               nombres d'éléménts = %5d                                                                    |\n", _nbElements);
-    printf("|               types Elements = INDEFINI/HUMAIN/ENTREPRISE                                                   |\n");
-    printf("|               types Humain = HOMME/FEMME/INDUSTRIE                                                          |\n");
-    printf("|               types status marital = CELIBATAIRE/MARIE/VEUF/DIVORCE                                         |\n");
-    printf("|               types Entreprises = INCONNUE/COMMERCE/INDUSTRIE                                               |\n");
-    printf("+-----------------------------------++-----------------------------------++-----------------------------------+\n");
-    printf("|               humains             ||            entreprises            ||          comptes banquaires       |\n");
+    snprintf(ligne, 200, "+-------------------------------------------------------------------------------------------------------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|                                       T A B L E A U   D E   B O R D                                         |\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+-------------------------------------------------------------------------------------------------------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|  constantes   MAX Elements = %5d / MAX Humains = %5d / MAX Entreprises = %5d                          |\n", MAX_ELEMENTS, MAX_HUMAIN, MAX_ENTREPRISES);
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|               types Elements = INDEFINI/HUMAIN/ENTREPRISE                                                   |\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|               types Humain = HOMME/FEMME                                                                    |\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|               types status marital = CELIBATAIRE/MARIE/VEUF/DIVORCE                                         |\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|               types Entreprises = INCONNUE/COMMERCE/INDUSTRIE                                               |\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|  variables    NB Elements  = %5d / NB Humains  = %5d / NB Entreprises  = %5d                          |\n", _nbElements, getNbHumain(), getNbEntreprise());
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+-----------------------------------++-----------------------------------++-----------------------------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "|               humains             ||            entreprises            ||          comptes banquaires       |\n");
     //printf("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\n"); 
-    printf("+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
-    printf("| %15s | %15d || %15s | %15d || %15s | %15d |\n","nombre", _nbHumains, "nombre", _nbEntreprises, "nombre", _nbElements);
-    printf("| %15s | %15d || %15s | %15d || %15s | %15d |\n","nb hommes", _nbHommes, "nb commerces", _nbCommerces, "total actifs", _totalActifs);
-    printf("| %15s | %15d || %15s | %15d || %15s | %15d |\n","nb femmes", _nbFemmes, "nb industries", _nbIndustries, "total epargne", _totalEpargne);
-    printf("| %15s | %15d || %15s | %15d || %15s | %15s |\n","nb celib", _nbCelibs, "nb autres", _nbAutresEntreprises, "", "");
-    printf("| %15s | %15d || %15s | %15d || %15s | %15s |\n","nb marie", _nbMaries, "max employes", MAX_EMPLOYES, "", "");
-    printf("| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb divorce", _nbDivorces, "", "", "", "");
-    printf("| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb veuf", _nbVeufs, "", "", "", "");
-    printf("+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "| %15s | %15d || %15s | %15d || %15s | %15d |\n","nombre", _nbHumains, "nombre", _nbEntreprises, "nombre", _nbElements);
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "| %15s | %15d || %15s | %15d || %15s | %15d |\n","nb hommes", _nbHommes, "nb commerces", _nbCommerces, "total actifs", _totalActifs);
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "| %15s | %15d || %15s | %15d || %15s | %15d |\n","nb femmes", _nbFemmes, "nb industries", _nbIndustries, "total epargne", _totalEpargne);
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "| %15s | %15d || %15s | %15d || %15s | %15s |\n","nb celib", _nbCelibs, "nb autres", _nbAutresEntreprises, "", "");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "| %15s | %15d || %15s | %15d || %15s | %15s |\n","nb marie", _nbMaries, "max employes", MAX_EMPLOYES, "", "");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb divorce", _nbDivorces, "", "", "", "");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb veuf", _nbVeufs, "", "", "", "");
+    printf("%s", ligne); fputs(ligne, fic);
+    snprintf(ligne, 200, "+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
+    printf("%s", ligne); fputs(ligne, fic);
+    fclose(fic);
+    
 }
 
 //-----------------------------------------
@@ -442,33 +518,29 @@ void Civilisation::chargeConfiguration(char *configFilename){
             tmp[j] = '\0';
             j=0;
             type = atoi(tmp);
-            log(LOG_DEBUG, "type = '%s' -> '%d'", tmp, type);
 
             while((ligne[i] != ',' )  && (i < strlen(ligne))){
                 printf("%d : %c\n", i, ligne[i]);
                 i++;
             } 
             i++;
-                printf("%d : %c\n", i, ligne[i]);
             while((ligne[i] != ',' ) && (i < strlen(ligne))) nom[j++] = ligne[i++];
             nom[j] = '\0';
             j=0;
             i++;
             remove_extra_spaces(nom);
-            log(LOG_DEBUG, "nom = '%s'", nom);
 
             strcmp(tmp, "");
             while((ligne[i] != ',' ) && (i < strlen(ligne))) tmp[j++] = ligne[i++];
             tmp[j] = '\0';
             j=0;
             capital = atoi(tmp);
-            log(LOG_DEBUG, "capital = '%s' -> '%d'", tmp, capital);
 
             if (strncmp(ligne, "humain", 5) == 0){
-                log(LOG_INFO, "creation d'un humain sexe = %d, nom = %s, capital = %d", type, nom, capital);
+                //log(LOG_INFO, "creation d'un humain sexe = %d, nom = %s, capital = %d", type, nom, capital);
                 creeElementHumain(type, nom, capital);
             } else if (strncmp(ligne, "entreprise", 10) == 0){
-                log(LOG_INFO, "creation d'une entreprise sexe = %d, nom = %s, capital = %d", type, nom, capital);
+                //log(LOG_INFO, "creation d'une entreprise sexe = %d, nom = %s, capital = %d", type, nom, capital);
                 creeElementEntreprise(type, nom, capital);
             }
         }
