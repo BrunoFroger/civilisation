@@ -26,6 +26,9 @@ Entreprise::Entreprise(){
     for (int i = 0 ; i < MAX_EMPLOYES ; i++){
         listeEmployes[i] = NULL;
     }
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        listeCommandes[i].status = COMMANDE_VIDE;
+    }
 }
 
 //-----------------------------------------
@@ -147,10 +150,12 @@ structCommande *Entreprise::creeCommande(Humain *client, int quantite){
             tmpCde->quantité = quantite;
             tmpCde->prixUnitaire = this->prixProduit;
             tmpCde->status = COMMANDE_INIT;
+            log(LOG_DEBUG, "Entreprise::creeCommande enregistree avec succes (id = %d)", i);
+            nbCommandes++;
+            return tmpCde;
         }
-        nbCommandes++;
-        return tmpCde;
     }
+    log(LOG_DEBUG, "Entreprise::creeCommande le tableau des commandes est plein\n");
     return NULL;
 }
 
@@ -173,9 +178,9 @@ void Entreprise::livraison(Humain *client){
             tmpCde->quantité = -1;
             tmpCde->prixUnitaire = -1;
             tmpCde->status = COMMANDE_VIDE;
+            nbCommandes--;
             return;
         }
-        nbCommandes--;
         break;
     }
 }

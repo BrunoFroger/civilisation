@@ -692,10 +692,13 @@ void executeTests(int mode){
         resultatTest(rubrique, elementEntreprise->getNbCommandes() == 2);
         ancienSoldeHumain = elementHumain->compteBancaireHumain->getSolde();
         ancienSoldeEntreprise = elementEntreprise->compteBancaireEntreprise->getSolde();
+        log(LOG_DEBUG, "anciens soldes : nb commandes en cours pour entreprise (%s) : (%d)", elementEntreprise->getNomEntreprise(), elementEntreprise->getNbCommandes());
         log(LOG_DEBUG, "anciens soldes : entreprise (%d) client (%d)", ancienSoldeEntreprise, ancienSoldeHumain);
         int prixProduit = elementEntreprise->getPrixProduit();
         elementEntreprise->livraison(elementHumain);
-        log(LOG_DEBUG, "nouveaux soldes : entreprise (%d) client (%d)", elementEntreprise->compteBancaireEntreprise->getSolde(), elementHumain->compteBancaireHumain->getSolde());
+        log(LOG_DEBUG, "anciens soldes : nb commandes en cours pour entreprise (%s) : (%d)", elementEntreprise->getNomEntreprise(), elementEntreprise->getNbCommandes());
+        log(LOG_DEBUG, "nouveaux soldes : entreprise (%d) client (%d) prix produit (%d)", elementEntreprise->compteBancaireEntreprise->getSolde(), 
+                    elementHumain->compteBancaireHumain->getSolde(), prixProduit);
         resultatTest(rubrique, elementEntreprise->getNbCommandes() == 1);
         resultatTest(rubrique, (elementHumain->compteBancaireHumain->getSolde() == (ancienSoldeHumain - prixProduit)));
         resultatTest(rubrique, (elementEntreprise->compteBancaireEntreprise->getSolde() == (ancienSoldeEntreprise + prixProduit)));
