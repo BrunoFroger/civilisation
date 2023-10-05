@@ -268,6 +268,62 @@ void executeTests(int mode){
             resultatTest(rubrique, (strcmp(expression, resultat_attendu) == 0));
         }
 
+        if (1 || exec_all){ // tests génération aleatoire du sexe
+            log(LOG_DEBUG, "-----------------------------------------------------");
+            log(LOG_DEBUG, "tests génération aleatoire du sexe");
+            int nbHommes=0, nbFemmes = 0;
+            for (int i = 0 ; i < 100 ; i++){
+                if (getSexeAleatoire() == HOMME) nbHommes++; else nbFemmes++;
+            }
+            printf("nbHommes = %d, nbFemmes = %d\n", nbHommes, nbFemmes);
+            resultatTest(rubrique, (nbHommes >= 40));
+            resultatTest(rubrique, (nbFemmes >= 40));
+        }
+
+        if (1 || exec_all){ // tests génération aleatoire du prenom
+            log(LOG_DEBUG, "-----------------------------------------------------");
+            log(LOG_DEBUG, "tests génération aleatoire du prenom");
+            char tabPrenoms[200][20];
+            // tests sur prenoms masculin
+            //log(LOG_DEBUG, "tests prenoms masculin");
+            int nbPrenomGeneres = 100;
+            int nbDoublons = 0;
+            for (int i = 0 ; i < nbPrenomGeneres ; i++){
+                //log(LOG_DEBUG,"--------------------------------");
+                strcpy(tabPrenoms[i], getPrenomAleatoire(HOMME));
+                //log(LOG_DEBUG, "prenoms masculin genere : %s", tabPrenoms[i]);
+                for (int j = 0 ; j < i ; j++){
+                    //log(LOG_DEBUG, "comparaison de (%d)%s avec (%d)%s", i, tabPrenoms[i], j, tabPrenoms[j]);
+                    if (strcmp(tabPrenoms[i], tabPrenoms[j]) == 0){
+                        log(LOG_DEBUG, "tirage %d : le prenoms masculin %s a dejà ete généré au tirage %d", i, tabPrenoms[i], j);
+                        nbDoublons++;
+                        break;
+                    }
+                }
+            }
+            log(LOG_DEBUG, "%d doublons de prenoms masculins", nbDoublons);
+            resultatTest(rubrique, (nbDoublons < 5));
+            nbDoublons = 0;
+            // tests sur prenoms femin
+            for (int i = 0 ; i < 200 ; i++) strcpy(tabPrenoms[i], "");
+            //log(LOG_DEBUG, "tests prenoms femin");
+            for (int i = 0 ; i < nbPrenomGeneres ; i++){
+                //log(LOG_DEBUG,"--------------------------------");
+                strcpy(tabPrenoms[i], getPrenomAleatoire(FEMME));
+                //log(LOG_DEBUG, "prenoms feminin genere : %s", tabPrenoms[i]);
+                for (int j = 0 ; j < i ; j++){
+                    //log(LOG_DEBUG, "comparaison de (%d)%s avec (%d)%s", i, tabPrenoms[i], j, tabPrenoms[j]);
+                    if (strcmp(tabPrenoms[i], tabPrenoms[j]) == 0){
+                        log(LOG_DEBUG, "tirage %d : le prenoms feminin %s a dejà ete généré au tirage %d", i, tabPrenoms[i], j);
+                        nbDoublons++;
+                        break;
+                    }
+                }
+            }
+            log(LOG_DEBUG, "%d doublons de prenoms feminin", nbDoublons);
+            resultatTest(rubrique, (nbDoublons < 5));
+            nbDoublons = 0;
+        }
 
         if (1 || exec_all ) { // test fonction evaluation expression Int
             log(LOG_DEBUG, "-----------------------------------------------------");
@@ -410,18 +466,6 @@ void executeTests(int mode){
             resultatTest(rubrique, !res);
         } else {
             log(LOG_DEBUG, "Bloc decomposeScript non executé\n");
-        }
-
-        if (1 || exec_all){ // tests génération aleatoire du sexe
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "tests génération aleatoire du sexe");
-            int nbHommes=0, nbFemmes = 0;
-            for (int i = 0 ; i < 100 ; i++){
-                if (getSexeAleatoire() == HOMME) nbHommes++; else nbFemmes++;
-            }
-            printf("nbHommes = %d, nbFemmes = %d\n", nbHommes, nbFemmes);
-            resultatTest(rubrique, (nbHommes >= 40));
-            resultatTest(rubrique, (nbFemmes >= 40));
         }
 
         bilanTestsRubrique(rubrique);

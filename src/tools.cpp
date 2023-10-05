@@ -14,9 +14,21 @@
 #include "../inc/civilisation.hpp"
 #include "../inc/humain.hpp"
 
+#define TAILLE_PRENOM   30
+
 extern Civilisation civilisation;
 char fichierPrenomsMasculin[50] = "datas/liste_des_prenoms_masculin.txt";
 char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
+
+
+//-----------------------------------------
+//
+//          initGenerateurAleatoire
+//
+//-----------------------------------------
+void initGenerateurAleatoire(void){
+    srand (clock());
+}
 
 //-----------------------------------------
 //
@@ -25,7 +37,7 @@ char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
 //-----------------------------------------
 int getSexeAleatoire(void){
     //log(LOG_DEBUG, "Tools.cpp getSexeAleatoire => debut (a affiner)");
-    //srand (time(NULL));
+    srand (clock());
     int rnd = rand() % 100;
     
     bool res = civilisation.getNbHommes() > civilisation.getNbFemmes();
@@ -38,17 +50,134 @@ int getSexeAleatoire(void){
         return HOMME;
 }
 
+char **tabPrenomMasculin = NULL;
+char **tabPrenomFeminin = NULL;
+bool tableauPrenomsOK = false;
+int nbPrenomsMasculin = 0;
+int nbPrenomsFeminin = 0;
+
+//-----------------------------------------
+//
+//          initTableauPrenomsMasculins
+//
+//-----------------------------------------
+void initTableauPrenomsMasculins(void){
+    FILE *fic;
+    char prenom[TAILLE_PRENOM];
+    int nbPrenoms = 0;
+    char nomFichier[50] = "datas/liste_des_prenoms_masculin.txt";
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenomsMasculins => debut (TODO)");
+    // lecture du fichier pour determiner la taille a allouer
+    fic = fopen(nomFichier, "r");
+    if (fic == NULL) {
+        log(LOG_ERROR, "impossible d'ouvrir le fichier de prenom masculin");
+        return;
+    }
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenoms => lecture du fichier de prenoms masculin");
+    while (!feof(fic)){
+        if (fgets(prenom, TAILLE_PRENOM, fic) != NULL){
+            prenom[strlen(prenom)-2] = '\0';
+            nbPrenoms++;
+        }
+    }
+    fclose(fic);
+    log(LOG_DEBUG, "%d prenom masculins trouves", nbPrenoms);
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenoms => allocation dynamique du tableau de prenoms masculin");
+    tabPrenomMasculin = (char **) malloc(nbPrenoms * sizeof(char *));
+    for (int i = 0 ; i < nbPrenoms ; i++){
+        tabPrenomMasculin[i] = (char *)malloc(TAILLE_PRENOM);
+    }
+    // remplissage du tableau
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenoms => remplissage du tableau de prenom masculin");
+    nbPrenoms = 0;
+    fic = fopen(nomFichier, "r");
+    while (!feof(fic)){
+        if (fgets(prenom, TAILLE_PRENOM, fic) != NULL){
+            prenom[strlen(prenom)-2] = '\0';
+            strcpy(tabPrenomMasculin[nbPrenoms], prenom);
+            nbPrenoms++;
+        }
+    }
+    fclose(fic);
+    nbPrenomsMasculin = nbPrenoms;
+}
+
+//-----------------------------------------
+//
+//          initTableauPrenomsFeminins
+//
+//-----------------------------------------
+void initTableauPrenomsFeminins(void){
+    FILE *fic;
+    char prenom[TAILLE_PRENOM];
+    int nbPrenoms = 0;
+    char nomFichier[50] = "datas/liste_des_prenoms_feminin.txt";
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenomsFeminins => debut (TODO)");
+    // lecture du fichier pour determiner la taille a allouer
+    fic = fopen(nomFichier, "r");
+    if (fic == NULL) {
+        log(LOG_ERROR, "impossible d'ouvrir le fichier de prenom feminin");
+        return;
+    }
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenoms => lecture du fichier de prenoms feminin");
+    while (!feof(fic)){
+        if (fgets(prenom, TAILLE_PRENOM, fic) != NULL){
+            prenom[strlen(prenom)-2] = '\0';
+            nbPrenoms++;
+        }
+    }
+    fclose(fic);
+    log(LOG_DEBUG, "%d prenom feminins trouves", nbPrenoms);
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenoms => allocation dynamique du tableau de prenoms feminin");
+    tabPrenomFeminin = (char **) malloc(nbPrenoms * sizeof(char *));
+    for (int i = 0 ; i < nbPrenoms ; i++){
+        tabPrenomFeminin[i] = (char *)malloc(TAILLE_PRENOM);
+    }
+    // remplissage du tableau
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenoms => remplissage du tableau de prenom feminin");
+    nbPrenoms = 0;
+    fic = fopen(nomFichier, "r");
+    while (!feof(fic)){
+        if (fgets(prenom, TAILLE_PRENOM, fic) != NULL){
+            if (strlen(prenom) != 0){
+                prenom[strlen(prenom)-2] = '\0';
+                //printf("%s\n", prenom);
+                strcpy(tabPrenomFeminin[nbPrenoms], prenom);
+                nbPrenoms++;
+            }
+        }
+    }
+    fclose(fic);
+    nbPrenomsFeminin = nbPrenoms;
+    log(LOG_DEBUG, "Tools.cpp initTableauPrenomsFeminins => fin (TODO)");
+}
+
 //-----------------------------------------
 //
 //          getPrenomAleatoire
 //
 //-----------------------------------------
-char tmpPrenom[50];
+char *tmpPrenom;
 int idxPrenom;
 char *getPrenomAleatoire(int sexe){
-    FILE *ficPrenoms;
-    char filenamePrenoms[50];
-    log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => debut (a affiner)");
+    //log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => debut (a affiner)");
+    if (tabPrenomMasculin == NULL) initTableauPrenomsMasculins();
+    if (tabPrenomFeminin == NULL) initTableauPrenomsFeminins();
+
+    int nbPrenom;
+    char **tabPrenoms;
+    if (sexe == HOMME){
+        nbPrenom = nbPrenomsMasculin;
+        tabPrenoms = tabPrenomMasculin;
+    } else {
+        nbPrenom = nbPrenomsFeminin;
+        tabPrenoms = tabPrenomFeminin;
+    } 
+    //srand (clock());
+    int rnd = rand() % nbPrenom;
+    //log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => nb prenom = %d / rnd = %d / prenom = %s", nbPrenom, rnd, tabPrenoms[rnd]);
+    return (tabPrenoms[rnd]);
+    /*
     if (sexe == HOMME){
         snprintf(tmpPrenom, sizeof(tmpPrenom), "albert_%d", idxPrenom);
         strcpy(filenamePrenoms, fichierPrenomsMasculin);
@@ -63,6 +192,7 @@ char *getPrenomAleatoire(int sexe){
     } else {}
     idxPrenom++;
     log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => prenom = %s", tmpPrenom);
+    */
     return tmpPrenom;
 }
 

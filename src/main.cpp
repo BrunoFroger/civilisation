@@ -26,7 +26,8 @@ int main(int argc, char **argv){
     if (!analyseParametres(argc, argv)){
         exit (1);
     }
-
+    initGenerateurAleatoire();
+    
     civilisation.chargeConfiguration(configFilename);
 
     while (1){
