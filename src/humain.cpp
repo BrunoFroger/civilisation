@@ -17,7 +17,6 @@
 char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible", "achat"};
 char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital", "nbEnfants"};
 
-
 //-----------------------------------------
 //
 //          Humain::Humain
@@ -301,6 +300,17 @@ char Humain::getSexeChar(void){
 
 //-----------------------------------------
 //
+//          Humain::getSexeChar
+//
+//-----------------------------------------
+char *Humain::getSexeString(void){
+    if (sexe == HOMME) return (char *)"Homme";
+    if (sexe == FEMME) return (char *)"Femme";
+    return (char *)"Indetermine";
+}
+
+//-----------------------------------------
+//
 //          Humain::getStatusMarital
 //
 //-----------------------------------------
@@ -407,7 +417,8 @@ bool Humain::evalueExpressionHumain(char *expression){
 bool Humain::execCommandeHumain(char *valeur){
     log(LOG_INFO,"Humain::execCommandeHumain <%s> : TODO", valeur);
     for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
-        if (strcmp(listeCommandesHumain[i], valeur) == 0){
+        int tailleCommande = strlen(listeCommandesHumain[i]);
+        if (strncmp(valeur, listeCommandesHumain[i], tailleCommande) == 0) {
             switch(i){ 
                 case 0: // mortPossible
                     mortPossible();
@@ -420,6 +431,13 @@ bool Humain::execCommandeHumain(char *valeur){
                 case 2: // naissancePossible
                     naissancePossible();
                     return true;
+                    break;
+                case 3: // achat
+                    printf(" !!!!!!!        a ecrire    !!!!!!!!\n");
+                    char *fournisseur = &(valeur[tailleCommande +1]);
+                    printf(" nom du fournisseur = <%s>\n", fournisseur);
+                    acheteProduit(Civilisation::getEntrepriseByNom(fournisseur), 1);
+                    return false;
                     break;
             }
             break;
@@ -629,7 +647,8 @@ bool Humain::testSiCommandeValideHumain(char *valeur){
     //printf("test si commande '%s' valide\n", valeur);
     for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
         //printf("comparaison avec %s : ", listeCommandesHumain[i]);
-        if (strcmp(valeur, listeCommandesHumain[i]) == 0) {
+        int tailleCommande = strlen(listeCommandesHumain[i]);
+        if (strncmp(valeur, listeCommandesHumain[i], tailleCommande) == 0) {
             //printf("OK\n");
             return true;
         } else {

@@ -1,15 +1,29 @@
+Dev en cours :
+  - ajouter affichage nom commercial des entreprises
+  - ajouter creation humain et entreprise en ligne de commande
+
+tests a faire ou refaire
+  - .....
+
 Bugs a corriger
   - ....
+  
 Fonctions a completer ou ecrire
-  - tools : génération aléatoire de prenoms
-  - Humain : achat de produits
+  - mettre a jour l'aide
 
-- fonction decomposition de script 
-  - mettre ensemble du script sous forme d'une seule chaine de caractere sans RC ni blanc execedentaires => chaine script
-  - repeter (dans chaine script, extraire 1ere instruction, sauvegarder le reste dans liste des instructions restantes)
-    - analyser (1ere instruction)
-    - mettre liste instruction restantes dans script
-  - jusqu'a script = chaine vide
 
-- fonction analyse instruction
-  - test si instruction est une commande connue
+Description des fonction existantes
+  - tools : génération aléatoire de prenoms => OK
+  - nouveau parametre :
+    - fixer nom du fichier de configuration de la civilisation (-f nomfichier)
+  - Humain : achat de produits => OK
+  - ajouter a gestion commande Humain => OK
+  - fonction decomposition de script 
+    - mettre ensemble du script sous forme d'une seule chaine de caractere sans RC ni blanc execedentaires => chaine script
+    - repeter (dans chaine script, extraire 1ere instruction, sauvegarder le reste dans liste des instructions restantes)
+      - analyser (1ere instruction)
+      - mettre liste instruction restantes dans script
+    - jusqu'a script = chaine vide
+
+  - fonction analyse instruction
+    - test si instruction est une commande connue

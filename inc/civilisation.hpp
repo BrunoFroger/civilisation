@@ -32,6 +32,7 @@
             int getNbFemmes(void);
             int getNbHumain(void);
             int getNbEntreprise(void);
+            static Entreprise *getEntrepriseByNom(char *nom);
 
         private:
             //void incElementId(void);

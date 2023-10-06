@@ -15,6 +15,7 @@
 #include "../inc/element.hpp"
 #include "../inc/civilisation.hpp"
 #include "../inc/analyseParametres.hpp"
+#include "../inc/aide.hpp"
 
 Civilisation civilisation;
 int nbEvolutions = 0;
@@ -39,12 +40,7 @@ int main(int argc, char **argv){
             case 'h': // aide
             case 'H': 
             case '?': 
-                printf("commandes disponibles :\n");
-                printf("    c,C : affichage de la liste des commandes et variables disponibles\n");
-                printf("    h, H, ? : affichage de cette aide\n");
-                printf("    l, L [id] : affichage de la liste des éléments, ou un element specifique\n");
-                printf("    q, Q : quitte le programme\n");
-                printf("    t, T : affichage du tableau de bord\n");
+                aide();
                 break;
             case 'c': // liste des commandes et des variables
             case 'C': 

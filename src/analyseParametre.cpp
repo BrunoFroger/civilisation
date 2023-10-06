@@ -15,6 +15,11 @@
 extern Civilisation civilisation;
 extern char configFilename[100];
 
+//-----------------------------------------
+//
+//          analyseParametres
+//
+//-----------------------------------------
 bool analyseParametres(int argc, char **argv){
     setLogLevel(LOG_INFO);
     log(LOG_DEBUG, "analyseParametres");
@@ -31,7 +36,7 @@ bool analyseParametres(int argc, char **argv){
                 int tmpExecTest = TEST_MODE_STD;
                 // analyse d'une option
                 switch(argv[i][1]){
-                    case 'c':   // fichier de configuration civilisation
+                    case 'c': // fichier de configuration civilisation
                     case 'C':
                         if ((i+1) < argc){
                             log(LOG_DEBUG, "chargement du fichier de configuration %s", argv[i+1]);
@@ -45,9 +50,8 @@ bool analyseParametres(int argc, char **argv){
                         stopOnFail = true;
                         log(LOG_INFO,"Mode Stop On Fail activé");
                         break;
-                    case 'l':
+                    case 'l': // modification du niveau de log
                     case 'L':
-                        // modification du niveau de log
                         if ((i+1) < argc){
                             if (strcmp(argv[i+1], "info") == 0){
                                 setLogLevel(LOG_INFO);

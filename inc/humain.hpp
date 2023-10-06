@@ -48,6 +48,7 @@
             int getPere(void);
             int getSexe();
             char getSexeChar();
+            char *getSexeString();
             int getStatusMarital();
             void initHumain(int id, int sexe, char *nom, int capitalInitial);
             static bool isVariable(char *nomVariable);

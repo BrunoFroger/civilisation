@@ -84,6 +84,12 @@ void baniereFinTests(void){
 //-----------------------------------------
 void initTableauTests(void){
     int index = 0;
+    strcpy(tableauresultatsTests[index].nomRubrique, "tools");
+    tableauresultatsTests[index].nbtests = 0;
+    tableauresultatsTests[index].nbOK = 0;
+    tableauresultatsTests[index].nbKO = 0;
+    tableauresultatsTests[index].tauxReussite = 0;
+    index++;
     strcpy(tableauresultatsTests[index].nomRubrique, "civilisation");
     tableauresultatsTests[index].nbtests = 0;
     tableauresultatsTests[index].nbOK = 0;
@@ -108,12 +114,6 @@ void initTableauTests(void){
     tableauresultatsTests[index].nbKO = 0;
     tableauresultatsTests[index].tauxReussite = 0;
     index++;
-    strcpy(tableauresultatsTests[index].nomRubrique, "tools");
-    tableauresultatsTests[index].nbtests = 0;
-    tableauresultatsTests[index].nbOK = 0;
-    tableauresultatsTests[index].nbKO = 0;
-    tableauresultatsTests[index].tauxReussite = 0;
-    index++;
     strcpy(tableauresultatsTests[index].nomRubrique, "banque");
     tableauresultatsTests[index].nbtests = 0;
     tableauresultatsTests[index].nbOK = 0;
@@ -127,6 +127,7 @@ void initTableauTests(void){
 //
 //-----------------------------------------
 void bilanTests(void){
+    //printf("execute bilanTests\n");
     char tauxReussite[10];
     printf("+----------------------------------------------------------+\n");
     printf("|                       Bilan des tests                    |\n");
@@ -159,36 +160,11 @@ void bilanTests(void){
 
 //-----------------------------------------
 //
-//          resultatTest
-//
-//-----------------------------------------
-bool resultatTest(char *rubrique, bool status){
-    nbTests++;
-    nbTestsRubrique++;
-    if (status){
-        printf("    Test n° %d OK \n", nbTestsRubrique + 1);
-        nbOK++;
-        nbOKRubrique++;
-    } else {
-        printf("    Test n° %d KO dans %s\n", nbTestsRubrique + 1, rubrique);
-        nbKO++;
-        nbKORubrique++;
-        StatusBilanTests = false;
-        if (stopOnFail){
-            bilanTests();
-            baniereFinTests();
-            exit(-1);
-        } 
-    }
-    return status;
-}
-
-//-----------------------------------------
-//
 //          bilanTestrubrique
 //
 //-----------------------------------------
 void bilanTestsRubrique(char *rubrique){
+    //printf("execute bilanTestsRubrique\n");
     if (nbTestsRubrique > 0){
         printf("    %d tests executés dans la rubrique %s\n", nbTestsRubrique, rubrique);
         for (int i = 0; i < NB_RUBRIQUES ; i++){
@@ -208,6 +184,33 @@ void bilanTestsRubrique(char *rubrique){
         nbKORubrique = 0;
     }
     printf("\n");
+}
+
+//-----------------------------------------
+//
+//          resultatTest
+//
+//-----------------------------------------
+bool resultatTest(char *rubrique, bool status){
+    nbTests++;
+    nbTestsRubrique++;
+    if (status){
+        printf("    Test n° %d OK \n", nbTestsRubrique + 1);
+        nbOK++;
+        nbOKRubrique++;
+    } else {
+        printf("    Test n° %d KO dans %s\n", nbTestsRubrique + 1, rubrique);
+        nbKO++;
+        nbKORubrique++;
+        StatusBilanTests = false;
+        if (stopOnFail){
+            bilanTestsRubrique(rubrique);
+            bilanTests();
+            baniereFinTests();
+            exit(-1);
+        } 
+    }
+    return status;
 }
 
 //-----------------------------------------
@@ -512,7 +515,8 @@ void executeTests(int mode){
         resultatTest(rubrique, civilisation.getNbEntreprise() == 0);
         Element *entreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000);
         resultatTest(rubrique, entreprise->getTypeElement() == TYPE_ENTREPRISE);
-        resultatTest(rubrique, strcmp(entreprise->getNomEntreprise(), "au bon pain") == 0);
+        resultatTest(rubrique, strcmp(entreprise->getNomEntreprise(), "auBonPain") == 0);
+        resultatTest(rubrique, strcmp(entreprise->getNomCommercialEntreprise(), "au bon pain") == 0);
         resultatTest(rubrique, entreprise->compteBancaireEntreprise->getSolde() == 25000);
         resultatTest(rubrique, civilisation.getNbEntreprise() == 1);
 
@@ -589,6 +593,7 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test fonction liste de commandes valide");
         resultatTest(rubrique, humain.testSiCommandeValideHumain((char *)"mortPossible"));
         resultatTest(rubrique, !humain.testSiCommandeValideHumain((char *)"sdfqsdfqdf"));
+        resultatTest(rubrique, humain.testSiCommandeValideHumain((char *)"achat-aubonpain"));
         resultatTest(rubrique, humain.calculExpression((char *)"20", '+', (char *)"10") == 30);
         resultatTest(rubrique, !(humain.calculExpression((char *)"20", '+', (char *)"20") == 30));
         resultatTest(rubrique, humain.calculExpression((char *)"20", '*', (char *)"10") == 200);
@@ -673,6 +678,17 @@ void executeTests(int mode){
         resultatTest(rubrique, (entreprise->getNbCommandes() == 0));
         pere->acheteProduit(entreprise, 1);
         resultatTest(rubrique, (entreprise->getNbCommandes() == 1));
+
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test commande achat produits");
+        Element *entrepriseToto = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"toto", 10000);
+        Element *clientToto = civilisation.creeElementHumain(HOMME, (char*)"clientToto", 1000);
+        civilisation.listeCivilisation();
+        resultatTest(rubrique, clientToto->testSiCommandeValideHumain((char *)"achat-toto")); 
+        humain.acheteProduit(entrepriseToto,1);
+        civilisation.listeCivilisation();
+        resultatTest(rubrique, (entrepriseToto->getNbCommandes() == 1));
+        
         bilanTestsRubrique(rubrique);
     }
 
@@ -692,7 +708,8 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration spécifique");
         elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000);
         printf("creation entreprise id : %d\n", elementEntreprise->getElementId());
-        resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"au bon pain") == 0));
+        resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"auBonPain") == 0));
+        resultatTest(rubrique, (strcmp(elementEntreprise->getNomCommercialEntreprise(), (char *)"au bon pain") == 0));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
         resultatTest(rubrique, (elementEntreprise->getCoutSalaries() == 100));
         resultatTest(rubrique, (elementEntreprise->getCoutProduit() == 5));
@@ -704,7 +721,9 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration par default");
         elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000);
         printf("creation entreprise id : %d\n", elementEntreprise->getElementId());
-        resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"entreprise par default") == 0));
+        printf("nom commerciaal de l'entreprise <%s> = <%s>", elementEntreprise->getNomEntreprise(), elementEntreprise->getNomCommercialEntreprise());
+        resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"machin") == 0));
+        resultatTest(rubrique, (strcmp(elementEntreprise->getNomCommercialEntreprise(), (char *)"entreprise par default") == 0));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
         resultatTest(rubrique, (elementEntreprise->getCoutSalaries() == 100));
         resultatTest(rubrique, (elementEntreprise->getCoutProduit() == 5));

@@ -97,11 +97,28 @@ Element *Civilisation::getElement(int index){
 
 //-----------------------------------------
 //
+//          Civilisation::getEntrepriseByNom
+//
+//-----------------------------------------
+Entreprise *Civilisation::getEntrepriseByNom(char *nom){
+    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
+        Element *element = elements[i];
+        if (element->getTypeElement() == TYPE_ENTREPRISE){
+            if (strcmp(element->getNomEntreprise(), nom) == 0){
+                return element;
+            }
+        }
+    }
+    return NULL;
+}
+
+//-----------------------------------------
+//
 //          Civilisation::creeElementHumain
 //
 //-----------------------------------------
 Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
-    log(LOG_INFO, "Civilisation::creeElementHumain(int sexe, char *nom) => %d, %s", sexe, nom);
+    //log(LOG_INFO, "Civilisation::creeElementHumain(int sexe, char *nom) => %d, %s", sexe, nom);
     for (int i = 0 ; i < MAX_HUMAIN ; i++){
         Element *tmpElement = elements[i];
         if (tmpElement->getElementId() == -1){
@@ -119,7 +136,7 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
             } else {
                 nbFemmes++;
             }
-            log(LOG_INFO, "Civilisation::creeElementHumain => %s cree en position %d", nom, tmpElement->getElementId());
+            log(LOG_INFO, "Nouvel humain %s (%s) créé ", nom, tmpElement->getSexeString());
             return tmpElement;
         }
     }
@@ -146,7 +163,7 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
 //
 //-----------------------------------------
 Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capital){
-    log(LOG_INFO, "Civilisation::creeElementEntreprise(int activite, char *nom) => %d, %s", activite, nom);
+    log(LOG_INFO, "Nouvelle enreprise %s", nom);
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *tmpElement = elements[i];
         if (tmpElement->getElementId() == -1){

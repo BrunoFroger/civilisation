@@ -37,7 +37,6 @@
             Element(int id, int type);
             bool execScript(void);
             bool execScript(char *filename);
-            //bool decomposeExpression(char *chaine, structExpression *resultat);
             bool executeExpression(char *expression);
             int getElementId(void);
             void setElementId(int id);

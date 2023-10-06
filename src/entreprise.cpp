@@ -80,7 +80,7 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
         if (strncmp(ligne, "nom", 3) == 0){
             tmp = &ligne[3];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
-            strcpy(this->nom, tmp);
+            strcpy(this->nomCommercial, tmp);
             //printf("nom          :  <%s> <%s>\n", tmp, this->nom);
         } else if (strncmp(ligne, "nbSalarie", 9) == 0){
             tmp = &ligne[9];
@@ -141,7 +141,7 @@ int Entreprise::getRefCommande(void){
 structCommande *Entreprise::creeCommande(Humain *client, int quantite){
     //bool result = false;
     log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
-    log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d\n", client->getNomHumain(), quantite);
+    log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s\n", client->getNomHumain(), quantite, getNomEntreprise());
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         structCommande *tmpCde = &listeCommandes[i];
         if (tmpCde->status == COMMANDE_VIDE){
@@ -268,11 +268,20 @@ int Entreprise::getActivite(void){
 
 //-----------------------------------------
 //
-//          Entreprise::getNom
+//          Entreprise::getNomEntreprise
 //
 //-----------------------------------------
 char *Entreprise::getNomEntreprise(void){
     return nom;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::getNomCommercialEntreprise
+//
+//-----------------------------------------
+char *Entreprise::getNomCommercialEntreprise(void){
+    return nomCommercial;
 }
 
 //-----------------------------------------
@@ -435,14 +444,14 @@ char tmpDataEntreprise[5000];
 char *Entreprise::listeVariables(void){
     strcpy(tmpDataEntreprise, "");
     strcat(tmpDataEntreprise,"liste des variables Entreprise : ");
-    for (int i = 0 ; i < NB_VARIABLE_HUMAIN ; i++){
+    for (int i = 0 ; i < NB_VARIABLE_ENTREPRISE ; i++){
         strcat(tmpDataEntreprise, listeVariablesEntreprise[i]);
         strcat(tmpDataEntreprise,", ");
     }
     strcat(tmpDataEntreprise, "\n");
 
     strcat(tmpDataEntreprise,"liste des commandes Entreprise : ");
-    for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
+    for (int i = 0 ; i < NB_COMMANDES_ENTREPRISE ; i++){
         strcat(tmpDataEntreprise, listeCommandesEntreprise[i]);
         strcat(tmpDataEntreprise,", ");
     }

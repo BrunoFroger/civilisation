@@ -46,6 +46,7 @@
             void evolutionEntreprise(void);
             int getIdEntreprise();
             char *getNomEntreprise();
+            char *getNomCommercialEntreprise();
             int getActivite();
             int getNbSalaries();
             int getCoutSalaries();
@@ -69,6 +70,7 @@
             int id;
             int activite;
             char nom[50];
+            char nomCommercial[50];
             int nbSalaries;
             int coutSalarie;
             int coutProduit;
