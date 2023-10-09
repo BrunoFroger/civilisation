@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 14/09/2023 à 16:54:28
+#     généré automatiquement le 09/10/2023 à 17:05:03
 #         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
@@ -47,6 +47,14 @@ $(EXEC): $(OBJ)
 # Définition des règles pour chaque fichier source
 #------------------------------------------------------------
 $(OBJDIR)/aide.o: $(SRCDIR)/aide.cpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
+$(OBJDIR)/analyseLigneCommande.o: $(SRCDIR)/analyseLigneCommande.cpp \
+	$(INCDIR)/log.hpp \
+	$(INCDIR)/civilisation.hpp \
+	$(INCDIR)/tools.hpp \
+	$(INCDIR)/aide.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -104,7 +112,9 @@ $(OBJDIR)/main.o: $(SRCDIR)/main.cpp \
 	$(INCDIR)/tests.hpp \
 	$(INCDIR)/element.hpp \
 	$(INCDIR)/civilisation.hpp \
-	$(INCDIR)/analyseParametres.hpp
+	$(INCDIR)/analyseParametres.hpp \
+	$(INCDIR)/aide.hpp \
+	$(INCDIR)/analyseLigneCommande.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

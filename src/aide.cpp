@@ -15,9 +15,10 @@ void aide(void){
     printf("      -e => arret si test en erreur uniquement si option test active -t\n");
     printf("      -l [info|warning|error|debug] => fixe le niveau de log\n");
     printf("      -t [all|civilisation|element|humain|entreprise|tools|banque] => doit etre le dernier parametre\n");
-    printf("commandes disponibles en execution \n");
-    printf("    c,C : affichage de la liste des commandes et variables disponibles\n");
-    printf("    h, H, ? : affichage de cette aide\n");
+    printf("commandes disponibles en execution (ligne de commande)\n");
+    printf("    commandes : affichage de la liste des commandes et variables disponibles\n");
+    printf("    cree [humain <sexe> <nom> <capital> | entreprise <activite> <nom> <capital>] : création d'un nouvel element\n");
+    printf("    h, H, ?, aide : affichage de cette aide\n");
     printf("    l, L [id] : affichage de la liste des éléments, ou un element specifique\n");
     printf("    q, Q : quitte le programme\n");
     printf("    t, T : affichage du tableau de bord\n");

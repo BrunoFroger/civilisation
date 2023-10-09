@@ -16,6 +16,7 @@
 #include "../inc/civilisation.hpp"
 #include "../inc/analyseParametres.hpp"
 #include "../inc/aide.hpp"
+#include "../inc/analyseLigneCommande.hpp"
 
 Civilisation civilisation;
 int nbEvolutions = 0;
@@ -41,10 +42,6 @@ int main(int argc, char **argv){
             case 'H': 
             case '?': 
                 aide();
-                break;
-            case 'c': // liste des commandes et des variables
-            case 'C': 
-                civilisation.listeCommandesEtVariables();
                 break;
             case 'l': // liste un element 
             case 'L': // 2eme caractere type element, puis id element
@@ -80,7 +77,7 @@ int main(int argc, char **argv){
                 break; 
             default:
                 if (strlen(ligneSaisie) > 0){
-                    printf("erreur : commade <%s> inconnue\n", ligneSaisie);
+                    analyseLigneCommande(ligneSaisie);
                 } else {
                     civilisation.evolutionCivilisation();
                     nbEvolutions++;
