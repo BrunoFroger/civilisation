@@ -13,8 +13,10 @@
 #include "../inc/tools.hpp"
 #include "../inc/civilisation.hpp"
 
-char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher"};
-char listeVariablesEntreprise[NB_VARIABLE_ENTREPRISE][20] = {"nom", "nbSalarie", "nbCommande"};
+char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher", "livraison"};
+char listeVariablesEntreprise[NB_VARIABLE_ENTREPRISE][20] = {"nom", "nbSalarie", "nbCommande", "stock"};
+
+extern Civilisation civilisation;
 
 //-----------------------------------------
 //
@@ -45,13 +47,15 @@ Entreprise::~Entreprise(){
 //          Entreprise::initEntreprise
 //
 //-----------------------------------------
-void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInitial){
+void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInitial, Entreprise *maisonMere){
     //log(LOG_DEBUG, "Entreprise::initEntreprise : debut");
     this->id = id;
     this->activite = activite;
     this->nbCommandes = 0;
     this->maxEmployes = 0;
     this->nbSalaries = 0;
+    this->maisonMere = NULL;
+    this->nbDemandeEmbauche = 0;
     strcpy(this->nom ,nom);
     // lecture du fichier de définition de l'entreprise
     char filename[100];
@@ -140,6 +144,26 @@ int Entreprise::getRefCommande(void){
 //-----------------------------------------
 structCommande *Entreprise::creeCommande(Humain *client, int quantite){
     //bool result = false;
+    // recherche si dans les filliales une des entreprise a moins de commandes en cours
+    // traitement uniquement pour la maison mere
+    if (this->maisonMere == NULL){
+        log(LOG_DEBUG, "recherche si une filiale est moins chargee en commande");
+        int minCommande = nbCommandes;
+        Entreprise *candidateGestionCommande = this;
+        for (int i = 0 ; i < MAX_FILIALES ; i++){
+            if (listeFiliales[i] != NULL){
+                Entreprise *filiale = listeFiliales[i];
+                if (filiale->getNbCommandes() < minCommande){
+                    candidateGestionCommande = filiale;
+                    minCommande = filiale->getNbCommandes();
+                }
+            }
+        }
+        if (candidateGestionCommande != this){
+            // une filiale est moins chargee, on lui transfere cette commande
+            return candidateGestionCommande->creeCommande(client, quantite);
+        }
+    }
     log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
     log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s\n", client->getNomHumain(), quantite, getNomEntreprise());
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
@@ -161,27 +185,49 @@ structCommande *Entreprise::creeCommande(Humain *client, int quantite){
 
 //-----------------------------------------
 //
+//          Entreprise::gereLivraison
+//
+//-----------------------------------------
+void Entreprise::gereLivraisons(void){
+    log(LOG_DEBUG, "Entreprise::gereLivraisons");
+    for (int i = 0 ; i < MAX_COMMANDES ; i++){
+        if (listeCommandes[i].client != NULL){
+            livraison(listeCommandes[i].client);
+        }
+    }
+
+}
+
+//-----------------------------------------
+//
 //          Entreprise::livraison
 //
 //-----------------------------------------
 void Entreprise::livraison(Humain *client){
     //bool result = false;
-    log(LOG_DEBUG, "Entreprise::livraison => TODO");
-    log(LOG_DEBUG, "Entreprise::livraison à %s \n", client->getNomHumain());
+    //log(LOG_DEBUG, "Entreprise::livraison => TODO");
+    log(LOG_DEBUG, "Entreprise::livraison à %s", client->getNomHumain());
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         structCommande *tmpCde = &listeCommandes[i];
         if (tmpCde->client == client){
-            log(LOG_DEBUG, "livraison de %d produit a %s", tmpCde->quantité, client->getNomHumain());
-            client->valideAchatProduit(this, prixProduit);
-            tmpCde->client = NULL;
-            tmpCde->reference = -1;
-            tmpCde->quantité = -1;
-            tmpCde->prixUnitaire = -1;
-            tmpCde->status = COMMANDE_VIDE;
-            nbCommandes--;
-            return;
+            if (stock > 0){
+                log(LOG_DEBUG, "livraison de %d produit a %s", tmpCde->quantité, client->getNomHumain());
+                client->valideAchatProduit(this, prixProduit);
+                tmpCde->client = NULL;
+                tmpCde->reference = -1;
+                tmpCde->quantité = -1;
+                tmpCde->prixUnitaire = -1;
+                tmpCde->status = COMMANDE_VIDE;
+                nbCommandes--;
+                stock--;
+            } else {
+                // plus de stock on arrete le processus de livraison
+                return;
+            }
+
+            //return;
         }
-        break;
+        //break;
     }
 }
 
@@ -423,7 +469,7 @@ bool Entreprise::embaucher(void){
     log(LOG_DEBUG,"Humain::embaucher : TODO modifier pour trouver aleatoirement un salarie");
     Humain *tmpSalarie = Civilisation::getSalarie();
     if (tmpSalarie != NULL){
-        for (int i = 0 ; i < MAX_EMPLOYES ; i++){
+        for (int i = 0 ; i <= maxEmployes ; i++){
             if (listeEmployes[i] == NULL){
                 listeEmployes[i] = tmpSalarie;
                 tmpSalarie->setEmployeur(this);
@@ -432,6 +478,7 @@ bool Entreprise::embaucher(void){
             }
         }
     }
+    log(LOG_INFO, "l'entreprise %s a ateint son nombre maximal d'employes(%d)", getNomCommercialEntreprise(), maxEmployes);
     return false;
 }
 
@@ -465,7 +512,8 @@ char *Entreprise::listeVariables(void){
 //
 //-----------------------------------------
 bool Entreprise::debaucher(void){
-    log(LOG_DEBUG,"Humain::debaucher : TODO modifier pour trouver aleatoirement un salarie");
+    if (nbSalaries == 0) return true;
+    log(LOG_DEBUG,"Humain::debaucher : TODO modifier pour selectionner aleatoirement un salarie");
     for (int i = 0 ; i < MAX_EMPLOYES ; i++){
         Humain *employe = listeEmployes[i];
         if (employe != NULL){
@@ -512,11 +560,33 @@ bool Entreprise::execCommandeEntreprise(char *valeur){
                     return true;
                     break;
                 case 1: // embaucher
-                    embaucher();
+                    if (!embaucher()){
+                        printf(".....  prevoir duplication entreprise si trop de demande TODO .....\n");
+                        nbDemandeEmbauche++;
+                        if (nbDemandeEmbauche > maxEmployes){
+                            Entreprise *filiale = civilisation.dupliqueEntreprise(this);
+                            int j = 0;
+                            for (j = 0 ; j < MAX_FILIALES ; j++){
+                                if (listeFiliales[j] == NULL){
+                                    listeFiliales[j] = filiale;
+                                    break;
+                                }
+                            }
+                            if (j >= MAX_FILIALES){
+                                log(LOG_ERROR, "ERREUR : nombre max de filliale (%d) atteint pour %s", MAX_FILIALES, this->getNomEntreprise());
+                                return false;
+                            }
+                            nbDemandeEmbauche=0;
+                        }
+                    }
                     return true;
                     break;
                 case 2: // debaucher
                     debaucher();
+                    return true;
+                    break;
+                case 3: // livraison
+                    gereLivraisons();
                     return true;
                     break;
             }
@@ -526,4 +596,107 @@ bool Entreprise::execCommandeEntreprise(char *valeur){
     log(LOG_ERROR, "commande <%s> inconnue", valeur);
 
     return false;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::evalueExpression
+//
+//-----------------------------------------
+bool Entreprise::evalueExpressionEntreprise(char *expression){
+    int val1;
+    int val2;
+    //bool res = false;
+    char data1[30], op[5], data2[30];
+    int i = 0, j = 0;
+    log(LOG_DEBUG, "Entreprise::evalueExpressionHumain => debut : calcul de '%s'", expression);
+
+    // decomposition de l'expression
+    while ((expression[i] != ' ') && (i < strlen(expression))){
+        data1[j++] = expression[i++];
+        data1[j] = '\0';
+    } 
+    j=0;
+    if (i >= strlen(expression)) return false;
+    while((expression[i] == ' ') && (i < strlen(expression))) i++;
+    while ((expression[i] != ' ') && (i < strlen(expression))){
+        putchar(expression[i]);
+        op[j++] = expression[i++];
+        op[j] = '\0';
+    } 
+    j=0;
+    if (i >= strlen(expression)) return false;
+    while((expression[i] == ' ') && (i < strlen(expression))) i++;
+    while ((expression[i] != ' ') && (i < strlen(expression))){
+        data2[j++] = expression[i++];
+        data2[j] = '\0';
+    } 
+    log(LOG_DEBUG, "Entreprise::evalueExpressionHumain => resultat decomposition : '%s' '%s' '%s'", data1, op, data2);
+
+    if (Entreprise::isVariable(data1)){
+        val1 = getIntValue(data1);
+        log(LOG_DEBUG, "Entreprise::evalueExpressionHumain => data1 est une variable : '%s' => '%d'\n", data1, val1);
+    } else {
+        val1 = atoi(data1);
+    }
+    if (Entreprise::isVariable(data2)){
+        val2 = getIntValue(data2);
+        log(LOG_DEBUG, "Entreprise::evalueExpressionHumain => data2 est une variable : '%s' => '%d'\n", data2, val2);
+    } else {
+        val2 = atoi(data2);
+    }
+    log(LOG_DEBUG, "Entreprise::evalueExpressionHumain => apres evaluation : calcul de '%d' '%s' '%d'\n", val1, op, val2);
+    return evaluationExpressionInt(val1, op, val2);
+    //return res;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::getIntValue
+//
+//-----------------------------------------
+int Entreprise::getIntValue(char *valeur){
+    if (strcmp(valeur, "stock") == 0){
+        //printf("Entreprise::getIntValue : variable %s = %d\n", valeur, sexe);
+        return stock;
+    }
+    if (strcmp(valeur, "nbCommande") == 0){
+        //printf("Entreprise::getIntValue : variable %s = %d\n", valeur, age);
+        return nbCommandes;
+    }
+    if (strcmp(valeur, "nbSalarie") == 0){
+        //printf("Entreprise::getIntValue : variable %s = %d\n", valeur, statusMarital);
+        return nbSalaries;
+    }
+    printf("Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
+    return -1;
+}
+
+//-----------------------------------------
+//
+//          Entreprise::isVariable
+//
+//-----------------------------------------
+bool Entreprise::isVariable(char *valeur){
+    //printf("isvariable : test de la variable %s\n", valeur);
+    char *tmp;
+
+    //log(LOG_DEBUG, "TODO : a finir de developper");
+    for (int i = 0 ; i < NB_VARIABLE_ENTREPRISE ; i++){
+        tmp = listeVariablesEntreprise[i];
+        if (strcmp(tmp, valeur) == 0) {
+            return true;
+        } else {
+            //log(LOG_ERROR, "commande <%s> inconnue", valeur);
+        }
+    }
+    return false;
+}
+//-----------------------------------------
+//
+//          Entreprise::getIntValue
+//
+//-----------------------------------------
+int Entreprise::getCapitalInitial(void){
+    return capitalInitial;
 }

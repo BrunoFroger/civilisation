@@ -117,7 +117,7 @@ void commandeCree(char *commande){
         civilisation.creeElementHumain(sexe, nom, capital);
     } else {
         printf("creation d'une entreprise nom : %s de type %d avec un capital de %d\n", nom, typeEntreprise, capital);
-        civilisation.creeElementEntreprise(typeEntreprise, nom, capital);
+        civilisation.creeElementEntreprise(typeEntreprise, nom, capital, NULL);
     }
 }
 

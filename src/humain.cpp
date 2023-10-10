@@ -48,7 +48,7 @@ Humain::Humain(int id, int sexe, char *nom, int capitalInitial){
 //
 //-----------------------------------------
 void Humain::acheteProduit(Entreprise *entreprise, int quantite){
-    log(LOG_INFO, "Humain::acheteProduit : %s achete %d produits a %s", this->nom, quantite, entreprise->getNomEntreprise());
+    log(LOG_INFO, "%s achete %d produits a %s", this->nom, quantite, entreprise->getNomEntreprise());
     entreprise->creeCommande(this, quantite);
 }
 
@@ -58,7 +58,7 @@ void Humain::acheteProduit(Entreprise *entreprise, int quantite){
 //
 //-----------------------------------------
 void Humain::valideAchatProduit(Entreprise *entreprise, int montant){
-    log(LOG_INFO, "Humain::valideAchatProduit : produits recu, on paye %d a %s", montant, entreprise->getNomEntreprise());
+    log(LOG_INFO, "produits recu, on paye %d a %s", montant, entreprise->getNomEntreprise());
     compteBancaireHumain->virement(entreprise->compteBancaireEntreprise, montant);
 }
 
@@ -89,14 +89,14 @@ void Humain::ajouteEnfant(Humain *enfant){
 
 //-----------------------------------------
 //
-//          calculExpression
+//          calculExpressionHumain
 //
 //-----------------------------------------
-int Humain::calculExpression(char *data1, char op, char *data2){
+int Humain::calculExpressionHumain(char *data1, char op, char *data2){
     int val1;
     int val2;
     int res = false;
-    log(LOG_DEBUG, "Humain::calculExpression => debut : calcul de <%s> <%c> <%s>\n", data1, op, data2);
+    log(LOG_DEBUG, "Humain::calculExpressionHumain => debut : calcul de <%s> <%c> <%s>\n", data1, op, data2);
     if (Humain::isVariable(data1)){
         val1 = getIntValue(data1);
         printf("data1 est une variable : <%s> => <%d>\n", data1, val1);
@@ -109,7 +109,7 @@ int Humain::calculExpression(char *data1, char op, char *data2){
     } else {
         val2 = atoi(data2);
     }
-    log(LOG_DEBUG, "Humain::calculExpression => apres evaluation : calcul de <%d> <%c> <%d>\n", val1, op, val2);
+    log(LOG_DEBUG, "Humain::calculExpressionHumain => apres evaluation : calcul de <%d> <%c> <%d>\n", val1, op, val2);
     switch(op){
         case '+' : 
             res = val1 + val2;
@@ -124,7 +124,7 @@ int Humain::calculExpression(char *data1, char op, char *data2){
             res = val1 / val2;
             break;
     }
-    log(LOG_DEBUG, "Humain::calculExpression => resultat : <%d> <%c> <%d> = <%d>\n", val1, op, val2, res);
+    log(LOG_DEBUG, "Humain::calculExpressionHumain => resultat : <%d> <%c> <%d> = <%d>\n", val1, op, val2, res);
     return res;
 }
 
@@ -433,9 +433,9 @@ bool Humain::execCommandeHumain(char *valeur){
                     return true;
                     break;
                 case 3: // achat
-                    printf(" !!!!!!!        a ecrire    !!!!!!!!\n");
+                    //printf(" !!!!!!!        a ecrire    !!!!!!!!\n");
                     char *fournisseur = &(valeur[tailleCommande +1]);
-                    printf(" nom du fournisseur = <%s>\n", fournisseur);
+                    //printf(" nom du fournisseur = <%s>\n", fournisseur);
                     acheteProduit(Civilisation::getEntrepriseByNom(fournisseur), 1);
                     return false;
                     break;

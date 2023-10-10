@@ -15,5 +15,6 @@
 
     extern void log(int logLevel, const char *format, ...);
     extern void setLogLevel(int logLevel);
+    extern void restoreLogLevel(void);
 
 #endif

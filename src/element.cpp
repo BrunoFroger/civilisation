@@ -121,6 +121,22 @@ bool Element::execScript(void){
 
 //-----------------------------------------
 //
+//          Element::evalueExpression
+//
+//-----------------------------------------
+bool Element::evalueExpression(char *expression){
+    if (typeElement == TYPE_HUMAIN){
+        return evalueExpressionHumain(expression);
+    } else if (typeElement == TYPE_ENTREPRISE){
+        return evalueExpressionEntreprise(expression);
+    } else {
+        log(LOG_ERROR, "Element::evalueExpression => le type d'element est invalide");
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
 //          Element::executeExpression
 //
 //-----------------------------------------
@@ -135,7 +151,7 @@ bool Element::executeExpression(char *expression){
             log(LOG_ERROR, "instruction 'si' invalide <%s>", expression);
         } else {
             log(LOG_DEBUG, "Element::executeExpression => traitement de si <%s> alors <%s> sinon <%s> finsi", resultatSi.expression, resultatSi.ListeCommandeSiVrai, resultatSi.ListeCommandeSiFaux);
-            if (evalueExpressionHumain(resultatSi.expression)){
+            if (evalueExpression(resultatSi.expression)){
                 // execution des commandes si vrai
                 log(LOG_DEBUG, "Element::executeExpression => execution des commandes si vrai");
                 executeExpression(resultatSi.ListeCommandeSiVrai);

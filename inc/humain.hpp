@@ -32,7 +32,7 @@
             void acheteProduit(Entreprise *entreprise, int quantite);
             void ajouteEnfant(Humain *enfant);
             void ajouteParents(Humain *pere, Humain *mere);
-            int calculExpression(char *data1, char op, char *data2);
+            int calculExpressionHumain(char *data1, char op, char *data2);
             bool evalueExpressionHumain(char *expression);
             void evolutionHumain(void);
             bool execCommandeHumain(char *commande);

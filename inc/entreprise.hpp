@@ -13,6 +13,8 @@
     #define ACTIVITE_COMMERCE   1
     #define ACTIVITE_INDUSTRIE  2
 
+    #define MAX_FILIALES    100
+
     #define MAX_EMPLOYES    25
     #define MAX_COMMANDES   50
 
@@ -25,8 +27,8 @@
     #define COMMANDE_REGLEE     5
     #define COMMANDE_FERMEE     6
 
-    #define NB_COMMANDES_ENTREPRISE 3
-    #define NB_VARIABLE_ENTREPRISE  3
+    #define NB_COMMANDES_ENTREPRISE 4
+    #define NB_VARIABLE_ENTREPRISE  4
 
     class Humain;
 
@@ -42,7 +44,7 @@
         public:
             Entreprise();
             ~Entreprise();
-            void initEntreprise(int id, int activite, char *nom, int capital);
+            void initEntreprise(int id, int activite, char *nom, int capital, Entreprise *maisonMere);
             void evolutionEntreprise(void);
             int getIdEntreprise();
             char *getNomEntreprise();
@@ -60,11 +62,16 @@
             bool verseSalaire(int salaire, Humain *salarie);
             structCommande *creeCommande(Humain *humain, int quantite);
             void livraison(Humain *humain);
+            void gereLivraisons(void);
             bool testSiCommandeValideEntreprise(char *valeur);
             bool testSiListeCommandeValideEntreprise(char *valeur);
             bool execCommandeEntreprise(char *commande);
             bool demission(Humain *salarie);
             static char *listeVariables(void);
+            bool evalueExpressionEntreprise(char *expression);
+            static bool isVariable(char *nomVariable);
+            int getIntValue(char *valeur);
+            int getCapitalInitial(void);
 
         private:
             int id;
@@ -78,6 +85,7 @@
             int stock;
             int nbCommandes;
             int maxEmployes;
+            int capitalInitial;
             Humain  *listeEmployes[MAX_EMPLOYES];
             structCommande listeCommandes[MAX_COMMANDES];
             int getRefCommande(void);
@@ -85,6 +93,9 @@
             bool embaucher();
             bool debaucher();
             Humain *getSalarie(void);
+            Entreprise *maisonMere;
+            Entreprise *listeFiliales[MAX_FILIALES];
+            int nbDemandeEmbauche;
     };
 
 #endif

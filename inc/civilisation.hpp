@@ -17,7 +17,7 @@
             ~Civilisation();
             void chargeConfiguration(char *configFilename);
             Element *creeElementHumain(int sexe, char *nom, int capitalInitial);
-            Element *creeElementEntreprise(int activite, char *nom, int capitalInitial);
+            Element *creeElementEntreprise(int activite, char *nom, int capitalInitial, Entreprise *maisonMere);
             void evolutionCivilisation(void);
             void listeCivilisation(void);
             void killCivilisation(void);
@@ -33,6 +33,7 @@
             int getNbHumain(void);
             int getNbEntreprise(void);
             static Entreprise *getEntrepriseByNom(char *nom);
+            Entreprise *dupliqueEntreprise(Entreprise *maisonMere);
 
         private:
             //void incElementId(void);

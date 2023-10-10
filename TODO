@@ -13,14 +13,19 @@ Dev en cours :
 
 tests a faire ou refaire
   - tester commande achat dans un script humain
+  - dans les tests process commande/livraison d'entreprise bug
   - .....
 
 Bugs a corriger
-  - ....
+  - Entreprise :
+    - procedure embauche ne va pas jusqu'au nombre max s'arrete a n - 1
   
 Fonctions a completer ou ecrire
   - mettre a jour l'aide
   - affectation dans un script
+  - dans fonction commande si l'entreprise principale ne peux plus produire :
+    - dupliquer l'entreprise
+    - passer les commandes aux entreprises filles
 
 
 Description des fonction existantes

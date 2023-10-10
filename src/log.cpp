@@ -13,6 +13,7 @@
 #include "../inc/log.hpp"
 
 int logLevelLimit=LOG_INFO;
+int oldLogLevel=LOG_INFO;
 
 //-----------------------------------------
 //
@@ -72,6 +73,17 @@ void log(int logLevel, const char *format, ...){
 //
 //-----------------------------------------
 void setLogLevel(int logLevel){
-    log(LOG_DEBUG, "setLogLevel %d", logLevel);
+    oldLogLevel = logLevelLimit;
     logLevelLimit = logLevel;
+    log(LOG_DEBUG, "setLogLevel %d", logLevel);
+} 
+
+//-----------------------------------------
+//
+//          restoreLogLevel
+//
+//-----------------------------------------
+void restoreLogLevel(void){
+    log(LOG_DEBUG, "restoreLogLevel %d", oldLogLevel);
+    logLevelLimit = oldLogLevel;
 }

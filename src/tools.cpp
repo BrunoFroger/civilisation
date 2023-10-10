@@ -329,7 +329,7 @@ bool evaluationExpressionChar(char *data1, char *test, char *data2){
 
 //-----------------------------------------
 //
-//          decomposeIf
+//          decomposeSi
 //
 //-----------------------------------------
 bool decomposeSi(char *ligne, structSi *resultat){

@@ -42,6 +42,7 @@
             void setElementId(int id);
             int getTypeElement(void);
             void setTypeElement(int type);
+            bool evalueExpression(char *expression);
 
         protected:
 
