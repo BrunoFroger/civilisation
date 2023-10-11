@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 10/10/2023 à 16:16:19
+#     généré automatiquement le 11/10/2023 à 16:37:27
 #         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
@@ -54,7 +54,8 @@ $(OBJDIR)/analyseLigneCommande.o: $(SRCDIR)/analyseLigneCommande.cpp \
 	$(INCDIR)/log.hpp \
 	$(INCDIR)/civilisation.hpp \
 	$(INCDIR)/tools.hpp \
-	$(INCDIR)/aide.hpp
+	$(INCDIR)/aide.hpp \
+	$(INCDIR)/analyseLigneCommande.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

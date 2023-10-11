@@ -1,6 +1,7 @@
 Dev en cours :
   - ajouter creation humain et entreprise en ligne de commande
   - ajouter gestion des fleches dans gestion ligne de commande
+    - gestion historique en cours
   - evolution entreprise :
     - lancement du script correspondant
     - decomosition du script

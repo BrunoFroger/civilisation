@@ -12,9 +12,10 @@
 #include "../inc/civilisation.hpp"
 #include "../inc/tools.hpp"
 #include "../inc/aide.hpp"
+#include "../inc/analyseLigneCommande.hpp"
 
 extern Civilisation civilisation;
-
+char historiqueCommandes[NB_COMMANDE_HISTORIQUE][50];
 
 //-----------------------------------------
 //
@@ -122,6 +123,52 @@ void commandeCree(char *commande){
 }
 
 
+//-----------------------------------------
+//
+//          initHistoriqueCommande
+//
+//-----------------------------------------
+void initHistoriqueCommande(void){
+    for(int i = 0 ; i < NB_COMMANDE_HISTORIQUE ; i++){
+        strcpy(historiqueCommandes[i], "");
+    }
+}
+
+//-----------------------------------------
+//
+//          afficheHistorique
+//
+//-----------------------------------------
+void afficheHistorique(void){
+    //log(LOG_INFO, "historique des commandes saisies");
+    //for (int i = 0 ; i < NB_COMMANDE_HISTORIQUE ; i++){
+    //    printf("tmp : %d : %s\n", i, historiqueCommandes[i]);
+    //}
+    for (int i = (NB_COMMANDE_HISTORIQUE - 1) ; i >= 0 ; i--){
+        //printf("tmp : %d : %s\n", i, historiqueCommandes[i]);
+        if (strlen(historiqueCommandes[i]) > 0){
+            printf("%d : %s\n", i, historiqueCommandes[i]);
+        }
+    }
+}
+
+//-----------------------------------------
+//
+//          historiseCommande
+//
+//-----------------------------------------
+void historiseCommande(char *ligneCommande){
+    // pas d'historisation si deja dans l'historique
+    for (int i = 0 ; i < NB_COMMANDE_HISTORIQUE ; i ++){
+        if (strcmp(ligneCommande, historiqueCommandes[i]) == 0) return;
+    }
+    for (int i = (NB_COMMANDE_HISTORIQUE - 1) ; i >= 0 ; i--){
+        //printf("historisation : deplacment de la commande %s de la position %d vers %d", historiqueCommandes[i], i+1, i);
+        strcpy(historiqueCommandes[i], historiqueCommandes[i - 1]);
+    }
+    strcpy(historiqueCommandes[0], ligneCommande);
+    //log(LOG_INFO, "historise la commande '%s'", ligneCommande);
+}
 
 //-----------------------------------------
 //
@@ -135,8 +182,20 @@ void analyseLigneCommande(char *ligneCommande){
         commandeCree(&(ligneCommande[5]));
     } else if (strncmp(ligneCommande, "commandes", 9) == 0) {
         civilisation.listeCommandesEtVariables();
-    } else if (strncmp(ligneCommande, "aide", 9) == 0) {
+    } else if (strncmp(ligneCommande, "historique", 10) == 0) {
+        afficheHistorique();
+    } else if (strncmp(ligneCommande, "liste", 5) == 0) {
+        if (strlen(ligneCommande) > 5){
+            civilisation.listeElement(atoi(&ligneCommande[6]));
+        } else {
+            civilisation.listeCivilisation();
+        }
+    } else if (strncmp(ligneCommande, "aide", 4) == 0) {
         aide();
+    } else if (strncmp(ligneCommande, "quit", 4) == 0) {
+        exit(0);
+    } else if (strncmp(ligneCommande, "logLevel", 8) == 0) {
+        printf(" .... a developper ...\n");
     } else {
         printf("commande <%s> inconnue (tapez 'aide' pour la liste des commandes disponibles\n)", ligneCommande);
     }

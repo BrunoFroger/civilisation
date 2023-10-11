@@ -29,6 +29,7 @@ int main(int argc, char **argv){
         exit (1);
     }
     initGenerateurAleatoire();
+    initHistoriqueCommande();
     
     civilisation.chargeConfiguration(configFilename);
 
@@ -38,19 +39,6 @@ int main(int argc, char **argv){
         fgets(ligneSaisie, 100, stdin);
         ligneSaisie[strlen(ligneSaisie) - 1] = '\0';
         switch(ligneSaisie[0]){
-            case 'h': // aide
-            case 'H': 
-            case '?': 
-                aide();
-                break;
-            case 'l': // liste un element 
-            case 'L': // 2eme caractere type element, puis id element
-                if (strlen(ligneSaisie) > 2){
-                    civilisation.listeElement(atoi(&ligneSaisie[1]));
-                } else {
-                    civilisation.listeCivilisation();
-                }
-                break;
             case 'q':
             case 'Q':
                 return 0;
@@ -58,6 +46,9 @@ int main(int argc, char **argv){
             case 't':
             case 'T':
                 civilisation.tableauDeBord();
+                break; 
+            case '!':
+                afficheHistorique();
                 break; 
             case '0':
             case '1':
@@ -83,6 +74,9 @@ int main(int argc, char **argv){
                     nbEvolutions++;
                 }
                 break;
+        }
+        if (strlen(ligneSaisie) > 0){
+            historiseCommande(ligneSaisie);
         }
     }
     civilisation.killCivilisation();

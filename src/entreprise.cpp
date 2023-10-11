@@ -468,17 +468,23 @@ bool Entreprise::produire(){
 bool Entreprise::embaucher(void){
     log(LOG_DEBUG,"Humain::embaucher : TODO modifier pour trouver aleatoirement un salarie");
     Humain *tmpSalarie = Civilisation::getSalarie();
+    int i = 0;
     if (tmpSalarie != NULL){
-        for (int i = 0 ; i <= maxEmployes ; i++){
+        for (i = 0 ; i < maxEmployes ; i++){
             if (listeEmployes[i] == NULL){
                 listeEmployes[i] = tmpSalarie;
                 tmpSalarie->setEmployeur(this);
                 nbSalaries++;
+                log(LOG_INFO, "l'entreprise %s a embauché le salarie %s", getNomEntreprise(), tmpSalarie->getNomHumain());
                 return true;
             }
         }
     }
-    log(LOG_INFO, "l'entreprise %s a ateint son nombre maximal d'employes(%d)", getNomCommercialEntreprise(), maxEmployes);
+    if (i >= maxEmployes){
+        log(LOG_INFO, "l'entreprise %s a ateint son nombre maximal d'employes(%d)", getNomCommercialEntreprise(), maxEmployes);
+    } else {
+        log(LOG_INFO, "l'entreprise %s n'a pas trouve de salarie a embaucher", getNomEntreprise());
+    }
     return false;
 }
 
