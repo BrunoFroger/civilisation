@@ -18,7 +18,7 @@ void aide(void){
     printf("commandes disponibles en execution (ligne de commande)\n");
     printf("    commandes : affichage de la liste des commandes et variables disponibles\n");
     printf("    cree [humain <sexe> <nom> <capital> | entreprise <activite> <nom> <capital>] : création d'un nouvel element\n");
-    printf("    logLevel [debug | error | warning | info] : change le niveau de log\n");
+    printf("    loglevel [debug | error | warning | info] : change le niveau de log\n");
     printf("    historique, ! : affiche historique des commandes\n");
     printf("    aide : affichage de cette aide\n");
     printf("    liste [id] : affichage de la liste des éléments, ou un element specifique\n");

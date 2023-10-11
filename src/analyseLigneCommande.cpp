@@ -172,6 +172,19 @@ void historiseCommande(char *ligneCommande){
 
 //-----------------------------------------
 //
+//          changeLogLevel
+//
+//-----------------------------------------
+void changeLogLevel(char *logLevel){
+    if (strncmp(logLevel, "debug", 5) == 0) setLogLevel(LOG_DEBUG);
+    else if (strncmp(logLevel, "erreur", 6) == 0) setLogLevel(LOG_ERROR);
+    else if (strncmp(logLevel, "warning", 7) == 0) setLogLevel(LOG_WARNING);
+    else if (strncmp(logLevel, "info", 4) == 0) setLogLevel(LOG_INFO);
+    else log(LOG_ERROR, "miveau de log <%s> inconnu ; voir l'aide", logLevel);
+}
+
+//-----------------------------------------
+//
 //          analyseLigneCommande
 //
 //-----------------------------------------
@@ -194,8 +207,11 @@ void analyseLigneCommande(char *ligneCommande){
         aide();
     } else if (strncmp(ligneCommande, "quit", 4) == 0) {
         exit(0);
-    } else if (strncmp(ligneCommande, "logLevel", 8) == 0) {
+    } else if (strncmp(ligneCommande, "loglevel", 8) == 0) {
         printf(" .... a developper ...\n");
+        if (strlen(ligneCommande) > 10){
+            changeLogLevel(&(ligneCommande[9]));
+        }
     } else {
         printf("commande <%s> inconnue (tapez 'aide' pour la liste des commandes disponibles\n)", ligneCommande);
     }
