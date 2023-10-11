@@ -1,7 +1,6 @@
 Dev en cours :
   - ajouter creation humain et entreprise en ligne de commande
   - ajouter gestion des fleches dans gestion ligne de commande
-    - gestion historique en cours
   - evolution entreprise :
     - lancement du script correspondant
     - decomosition du script
@@ -30,6 +29,7 @@ Fonctions a completer ou ecrire
 
 
 Description des fonction existantes
+  - gestion historique des commandes
   - ajouter affichage nom commercial des entreprises dans liste population
   - tools : génération aléatoire de prenoms => OK
   - nouveau parametre :
