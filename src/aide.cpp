@@ -24,4 +24,6 @@ void aide(void){
     printf("    liste [id] : affichage de la liste des éléments, ou un element specifique\n");
     printf("    q, Q, quit : quitte le programme\n");
     printf("    t, T : affichage du tableau de bord\n");
+    printf("    RC : une ligne vide (touche enter) lance une évolution\n");
+    printf("    xx : execute xx fois l'évolution\n");
 }
