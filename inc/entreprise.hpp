@@ -13,7 +13,7 @@
     #define ACTIVITE_COMMERCE   1
     #define ACTIVITE_INDUSTRIE  2
 
-    #define MAX_FILIALES    100
+    #define MAX_FILIALES    10
 
     #define MAX_EMPLOYES    25
     #define MAX_COMMANDES   50
@@ -72,6 +72,7 @@
             static bool isVariable(char *nomVariable);
             int getIntValue(char *valeur);
             int getCapitalInitial(void);
+            bool embaucher();
 
         private:
             int id;
@@ -90,7 +91,6 @@
             structCommande listeCommandes[MAX_COMMANDES];
             int getRefCommande(void);
             bool produire();
-            bool embaucher();
             bool debaucher();
             Humain *getSalarie(void);
             Entreprise *maisonMere;

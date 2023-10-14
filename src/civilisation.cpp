@@ -101,7 +101,7 @@ Entreprise *Civilisation::getEntrepriseByNom(char *nom){
 //-----------------------------------------
 Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial){
     //log(LOG_INFO, "Civilisation::creeElementHumain(int sexe, char *nom) => %d, %s", sexe, nom);
-    for (int i = 0 ; i < MAX_HUMAIN ; i++){
+    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *tmpElement = elements[i];
         if (tmpElement->getElementId() == -1){
             if (nbHumains >= MAX_HUMAIN){
@@ -122,6 +122,7 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
             return tmpElement;
         }
     }
+    log(LOG_ERROR, "impossible de creer un humain (tous les elements sont pris) ! ");
     return NULL;
     /*
     Element *tmpElement = elements[courantElementId];
@@ -145,7 +146,7 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
 //
 //-----------------------------------------
 Element *Civilisation::creeElementEntreprise(int activite, char *nom, int capital, Entreprise *maisonMere){
-    log(LOG_INFO, "Nouvelle enreprise %s", nom);
+    log(LOG_INFO, "Nouvelle enreprise %s avec un capital de %d", nom, capital);
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *tmpElement = elements[i];
         if (tmpElement->getElementId() == -1){
@@ -228,7 +229,7 @@ void Civilisation::listeCivilisation(void){
             if (ptr->getEmployeur() == NULL){
                 snprintf(employeur, 5, (char *)"NULL");
             } else {
-                snprintf(employeur, 5, "%d", ptr->getElementId());
+                snprintf(employeur, 5, "%d", ptr->getEmployeur()->getIdEntreprise());
             }
             snprintf(ligne, 200, "| %5d  | %25s |  %c  | %3d | %3d | %3d | %3d | %5d | %4s | %5s | %10d | %15d |\n", 
                 ptr->getIdHumain(),
@@ -256,16 +257,16 @@ void Civilisation::listeCivilisation(void){
     printf("%s", ligne); fputs(ligne, fic);
     snprintf(ligne, 200, "|                                                          population  %4d entreprises                                                     |\n", getNbEntreprise());
     printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+-----------------+\n");
+    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
     printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "|   id   |                       nom |            nom commercial | activité | nb cde   |  stock   | nb sal   |    capital |         epargne |\n");
+    snprintf(ligne, 200, "|   id   |                       nom |            nom commercial | activité | nb cde   |  stock   | nb sal   |   cap init |    capital |         epargne |\n");
     printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+-----------------+\n");
+    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
     printf("%s", ligne); fputs(ligne, fic);
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         Element *ptr = elements[i];
         if (ptr->getTypeElement() == TYPE_ENTREPRISE){
-            snprintf(ligne, 200, "| %5d  | %25s | %25s |   %5d  |   %5d  |   %5d  |   %5d  | %10d | %15d |\n", 
+            snprintf(ligne, 200, "| %5d  | %25s | %25s |   %5d  |   %5d  |   %5d  |   %5d  | %10d | %10d | %15d |\n", 
                 ptr->getIdEntreprise(),
                 ptr->getNomEntreprise(), 
                 ptr->getNomCommercialEntreprise(), 
@@ -273,12 +274,13 @@ void Civilisation::listeCivilisation(void){
                 ptr->getNbCommandes(),
                 ptr->getStockProduit(),
                 ptr->getNbSalaries(),
+                ptr->getCapitalInitial(),
                 ptr->compteBancaireEntreprise->getSolde(),
                 ptr->compteBancaireEntreprise->getEpargne());
             printf("%s", ligne); fputs(ligne, fic);
         }
     }
-    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+-----------------+\n");
+    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
     printf("%s", ligne); fputs(ligne, fic);
     fclose(fic);
 }

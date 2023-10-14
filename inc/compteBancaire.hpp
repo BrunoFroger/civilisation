@@ -7,7 +7,6 @@
 #ifndef __COMPTE_BANCAIRE__
 #define __COMPTE_BANCAIRE__
 
-
     class CompteBancaire{
         public:
             CompteBancaire();
@@ -20,6 +19,7 @@
             bool virement(CompteBancaire *destinataire, int valeur);
 
         private:
+            int id;
             int solde;
             long epargne;
             bool debite(int valeur);

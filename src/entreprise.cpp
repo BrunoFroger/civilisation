@@ -56,6 +56,7 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
     this->nbSalaries = 0;
     this->maisonMere = NULL;
     this->nbDemandeEmbauche = 0;
+    this->capitalInitial = capitalInitial;
     strcpy(this->nom ,nom);
     // lecture du fichier de définition de l'entreprise
     char filename[100];
@@ -161,11 +162,12 @@ structCommande *Entreprise::creeCommande(Humain *client, int quantite){
         }
         if (candidateGestionCommande != this){
             // une filiale est moins chargee, on lui transfere cette commande
+            log(LOG_INFO, "on transfere la commande a l'entreprise %s (%d)", candidateGestionCommande->getNomEntreprise(), candidateGestionCommande->getIdEntreprise());
             return candidateGestionCommande->creeCommande(client, quantite);
         }
     }
     log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
-    log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s\n", client->getNomHumain(), quantite, getNomEntreprise());
+    log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s (%d)\n", client->getNomHumain(), quantite, getNomEntreprise(), getIdEntreprise());
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         structCommande *tmpCde = &listeCommandes[i];
         if (tmpCde->status == COMMANDE_VIDE){
@@ -450,7 +452,9 @@ bool Entreprise::produire(){
     for (int i = 0 ; i < MAX_EMPLOYES ; i++){
         Humain *employe = listeEmployes[i];
         if (employe != NULL){
-            compteBancaireEntreprise->virement(NULL, coutProduit);
+            // .... TODO ... prevoir comment payer le cout produit a un compte bancaire fictif
+            compteBancaireEntreprise->virement(compteBancaireNull, coutProduit);
+            log(LOG_INFO,"%s verse un salaire de %d a %s", nom, coutSalarie, employe->getNomHumain());
             compteBancaireEntreprise->virement(employe->compteBancaireHumain, coutSalarie);
             nbProduitsFabriques++;
         }
@@ -467,22 +471,59 @@ bool Entreprise::produire(){
 //-----------------------------------------
 bool Entreprise::embaucher(void){
     log(LOG_DEBUG,"Humain::embaucher : TODO modifier pour trouver aleatoirement un salarie");
+
+    // verification si l'entreprise peut l'embaucher
+    if (getNbSalaries() >= maxEmployes){
+        log(LOG_INFO, "l'entreprise %s a ateint son nombre maximal d'employes(%d)", getNomEntreprise(), maxEmployes);
+        if (maisonMere == NULL){
+            log(LOG_DEBUG, "la maison mere recherche une filiale de %s capable d'embaucher", this->nom);
+            // recherche dans les filiales d'une entreprise n'ayant pas atteint son nombre max de salarie
+            for (int j = 0 ; j < MAX_FILIALES ; j ++){
+                Entreprise *filiale = listeFiliales[j];
+                if (filiale != NULL){
+                    if (filiale->getNbSalaries() < maxEmployes){
+                        // cette filiale peut embaucher
+                        if (filiale->embaucher()){
+                            // l'embauche est OK, on peu quitter
+                            return true;
+                        }
+                    }
+                }
+            }
+            // on a pas trouvé de filiale capable d'embaucher
+            // on essaie d'en creer une nouvelle
+            int j = 0;
+            for (j = 0 ; j < MAX_FILIALES ; j++){
+                log(LOG_INFO, "creation d'une filiale pour l'entreprise %s", this->nom);
+                Entreprise *filiale = civilisation.dupliqueEntreprise(this);
+                if (listeFiliales[j] == NULL){
+                    listeFiliales[j] = filiale;
+                    return filiale->embaucher();
+                    break;
+                }
+            }
+            if (j >= MAX_FILIALES){
+                log(LOG_ERROR, "ERREUR : nombre max de filliale (%d) atteint pour %s", MAX_FILIALES, this->getNomEntreprise());
+                return false;
+            }
+        } else {
+            log(LOG_DEBUG, "on est dans une filiale, on ne peut pas creer de sous filiale");
+        }
+    } 
+    // recherche d'une personne libre pouvant etre embauchee
+    log(LOG_DEBUG, "l'entreprise %s (%d) peut embaucher .... ", this->nom, getIdEntreprise());
     Humain *tmpSalarie = Civilisation::getSalarie();
-    int i = 0;
     if (tmpSalarie != NULL){
-        for (i = 0 ; i < maxEmployes ; i++){
+        for (int i = 0 ; i < maxEmployes ; i++){
             if (listeEmployes[i] == NULL){
                 listeEmployes[i] = tmpSalarie;
                 tmpSalarie->setEmployeur(this);
                 nbSalaries++;
-                log(LOG_INFO, "l'entreprise %s a embauché le salarie %s", getNomEntreprise(), tmpSalarie->getNomHumain());
+                log(LOG_INFO, "l'entreprise %s (%d) a embauché le salarie %s", getNomEntreprise(), getIdEntreprise(), tmpSalarie->getNomHumain());
                 return true;
             }
         }
-    }
-    if (i >= maxEmployes){
-        log(LOG_INFO, "l'entreprise %s a ateint son nombre maximal d'employes(%d)", getNomCommercialEntreprise(), maxEmployes);
-    } else {
+    }else {
         log(LOG_INFO, "l'entreprise %s n'a pas trouve de salarie a embaucher", getNomEntreprise());
     }
     return false;
@@ -566,25 +607,7 @@ bool Entreprise::execCommandeEntreprise(char *valeur){
                     return true;
                     break;
                 case 1: // embaucher
-                    if (!embaucher()){
-                        printf(".....  prevoir duplication entreprise si trop de demande TODO .....\n");
-                        nbDemandeEmbauche++;
-                        if (nbDemandeEmbauche > maxEmployes){
-                            Entreprise *filiale = civilisation.dupliqueEntreprise(this);
-                            int j = 0;
-                            for (j = 0 ; j < MAX_FILIALES ; j++){
-                                if (listeFiliales[j] == NULL){
-                                    listeFiliales[j] = filiale;
-                                    break;
-                                }
-                            }
-                            if (j >= MAX_FILIALES){
-                                log(LOG_ERROR, "ERREUR : nombre max de filliale (%d) atteint pour %s", MAX_FILIALES, this->getNomEntreprise());
-                                return false;
-                            }
-                            nbDemandeEmbauche=0;
-                        }
-                    }
+                    embaucher();
                     return true;
                     break;
                 case 2: // debaucher

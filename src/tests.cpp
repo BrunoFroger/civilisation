@@ -819,7 +819,9 @@ void executeTests(int mode){
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test virement simple");
         CompteBancaire cpt2(100);
+        printf("cpt1 = %d, cpt2 = %d\n", cpt1.getSolde(), cpt2.getSolde());
         cpt1.virement(&cpt2, 500);
+        printf("cpt1 = %d, cpt2 = %d\n", cpt1.getSolde(), cpt2.getSolde());
         resultatTest(rubrique, (cpt1.getSolde() == 500) && (cpt2.getSolde() == 600));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
@@ -828,7 +830,7 @@ void executeTests(int mode){
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test virement vers compte NULL");
-        resultatTest(rubrique, cpt1.virement(NULL, 100));
+        resultatTest(rubrique, !cpt1.virement(NULL, 100));
 
         bilanTestsRubrique(rubrique);
     }

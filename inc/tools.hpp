@@ -19,6 +19,8 @@
         char ListeCommandeSiFaux[1000];
     } structSi;
 
+    extern CompteBancaire *compteBancaireNull;
+
     extern void initGenerateurAleatoire(void);
     extern void remove_extra_spaces(char* str);
     extern bool evaluationExpressionInt(int data1, char *test, int data2);

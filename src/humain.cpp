@@ -58,7 +58,7 @@ void Humain::acheteProduit(Entreprise *entreprise, int quantite){
 //
 //-----------------------------------------
 void Humain::valideAchatProduit(Entreprise *entreprise, int montant){
-    log(LOG_INFO, "produits recu, on paye %d a %s", montant, entreprise->getNomEntreprise());
+    log(LOG_INFO, "produits recu, %s paye %d a %s (%d)", this->nom, montant, entreprise->getNomEntreprise(), entreprise->getIdEntreprise());
     compteBancaireHumain->virement(entreprise->compteBancaireEntreprise, montant);
 }
 
@@ -324,7 +324,7 @@ int Humain::getStatusMarital(void){
 //
 //-----------------------------------------
 void Humain::initHumain(int id, int sexe, char *nom, int capitalInitial){
-    log(LOG_DEBUG, "Humain::initHumain : debut");
+    //log(LOG_DEBUG, "Humain::initHumain : debut");
     this->id = id;
     this->sexe = sexe;
     strcpy(this->nom ,nom);

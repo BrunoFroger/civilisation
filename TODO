@@ -1,5 +1,4 @@
 Dev en cours :
-  - ajouter creation humain et entreprise en ligne de commande
   - ajouter gestion des fleches dans gestion ligne de commande
   - evolution entreprise :
     - lancement du script correspondant
@@ -17,6 +16,7 @@ tests a faire ou refaire
   - .....
 
 Bugs a corriger
+  - bug lors de la livraison, le transfert se fait a l'envers
   - Entreprise :
     - procedure embauche ne va pas jusqu'au nombre max s'arrete a n - 1
   
@@ -29,6 +29,7 @@ Fonctions a completer ou ecrire
 
 
 Description des fonction existantes
+  - ajouter creation humain et entreprise en ligne de commande
   - gestion historique des commandes
   - ajouter affichage nom commercial des entreprises dans liste population
   - tools : génération aléatoire de prenoms => OK
