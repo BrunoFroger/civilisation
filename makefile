@@ -1,8 +1,8 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 12/10/2023 à 16:53:30
-#         avec buildMakefile (version du 23 Aug 2023)
+#     généré automatiquement le 15/10/2023 à 00:00:31
+#         avec buildMakefile (version du  2 Sep 2023)
 #                 (c) B. Froger 
 # 
 #############################################################
@@ -104,6 +104,10 @@ $(OBJDIR)/humain.o: $(SRCDIR)/humain.cpp \
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
+$(OBJDIR)/lectureClavier.o: $(SRCDIR)/lectureClavier.cpp
+	@$(CC) $(CCFLAGS) $< -c -o $@
+	@echo "Compilation de $< OK"
+
 $(OBJDIR)/log.o: $(SRCDIR)/log.cpp \
 	$(INCDIR)/log.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
@@ -117,7 +121,8 @@ $(OBJDIR)/main.o: $(SRCDIR)/main.cpp \
 	$(INCDIR)/civilisation.hpp \
 	$(INCDIR)/analyseParametres.hpp \
 	$(INCDIR)/aide.hpp \
-	$(INCDIR)/analyseLigneCommande.hpp
+	$(INCDIR)/analyseLigneCommande.hpp \
+	$(INCDIR)/lectureClavier.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 
@@ -135,7 +140,8 @@ $(OBJDIR)/tools.o: $(SRCDIR)/tools.cpp \
 	$(INCDIR)/element.hpp \
 	$(INCDIR)/log.hpp \
 	$(INCDIR)/civilisation.hpp \
-	$(INCDIR)/humain.hpp
+	$(INCDIR)/humain.hpp \
+	$(INCDIR)/compteBancaire.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

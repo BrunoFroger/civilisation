@@ -17,6 +17,7 @@
 #include "../inc/analyseParametres.hpp"
 #include "../inc/aide.hpp"
 #include "../inc/analyseLigneCommande.hpp"
+#include "../inc/lectureClavier.hpp"
 
 Civilisation civilisation;
 int nbEvolutions = 0;
@@ -36,7 +37,8 @@ int main(int argc, char **argv){
     while (1){
         printf ("main => evolution (%d) > ", nbEvolutions);
         strcpy(ligneSaisie, "");
-        fgets(ligneSaisie, 100, stdin);
+        //fgets(ligneSaisie, 100, stdin);
+        strcpy(ligneSaisie, lectureClavier());
         ligneSaisie[strlen(ligneSaisie) - 1] = '\0';
         switch(ligneSaisie[0]){
             case 'q':
