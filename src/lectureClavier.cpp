@@ -19,9 +19,10 @@ char *lectureClavier(void){
     char car;
     int i = 0;
     bool fin = false;
+    fflush(stdin);
     while (!fin){
         // lecture d'un caractere au clavier
-        car = getchar();
+        car = getc(stdin);
         switch(car){
             case 13 : // touche entree
             case 10:
@@ -29,7 +30,8 @@ char *lectureClavier(void){
                 fin = true;
                 break;
             default:
-                putchar(car);
+                printf("car lu : %c\n", car);
+                //putchar(car);
                 tmpLectureClavier[i++] = car;
                 tmpLectureClavier[i] = '\0';
                 break;
