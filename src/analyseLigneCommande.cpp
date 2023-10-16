@@ -207,8 +207,11 @@ void analyseLigneCommande(char *ligneCommande){
         aide();
     } else if (strncmp(ligneCommande, "quit", 4) == 0) {
         exit(0);
-    } else if (strncmp(ligneCommande, "loglevel", 8) == 0) {
+    } else if (strncmp(ligneCommande, "auto", 4) == 0) {
         printf(" .... a developper ...\n");
+        char *tmpCommande = &(ligneCommande[5]);
+        setAuto(tmpCommande);
+    } else if (strncmp(ligneCommande, "loglevel", 8) == 0) {
         if (strlen(ligneCommande) > 10){
             changeLogLevel(&(ligneCommande[9]));
         }

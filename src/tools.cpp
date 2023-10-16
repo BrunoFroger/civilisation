@@ -23,6 +23,9 @@ char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
 
 CompteBancaire *compteBancaireFournisseurNull = new CompteBancaire();
 
+bool modeListeAuto = false;
+bool modeTDBAuto = false;
+
 //-----------------------------------------
 //
 //          initGenerateurAleatoire
@@ -179,23 +182,6 @@ char *getPrenomAleatoire(int sexe){
     int rnd = rand() % nbPrenom;
     //log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => nb prenom = %d / rnd = %d / prenom = %s", nbPrenom, rnd, tabPrenoms[rnd]);
     return (tabPrenoms[rnd]);
-    /*
-    if (sexe == HOMME){
-        snprintf(tmpPrenom, sizeof(tmpPrenom), "albert_%d", idxPrenom);
-        strcpy(filenamePrenoms, fichierPrenomsMasculin);
-    }
-    else{
-        snprintf(tmpPrenom, sizeof(tmpPrenom), "alice_%d", idxPrenom);
-        strcpy(filenamePrenoms, fichierPrenomsFeminin);
-    }
-    ficPrenoms = fopen(filenamePrenoms, "r");
-    if (ficPrenoms == NULL){
-        log(LOG_ERROR, "Impossible d'ouvrir le fichier de prenom %s", filenamePrenoms);
-    } else {}
-    idxPrenom++;
-    log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => prenom = %s", tmpPrenom);
-    */
-    return tmpPrenom;
 }
 
 //-----------------------------------------
@@ -525,4 +511,17 @@ bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *lis
         return true;
     }
     return false;
+}
+
+//-----------------------------------------
+//
+//          setAuto
+//
+//-----------------------------------------
+void setAuto(char *parametre){
+    if (strncmp(parametre, "liste", 5) == 0){
+        modeListeAuto = !modeListeAuto;
+    } else if (strncmp(parametre, "tableau", 7) == 0){
+        modeTDBAuto = !modeTDBAuto;
+    }
 }

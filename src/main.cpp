@@ -44,6 +44,9 @@ int main(int argc, char **argv){
             ligneSaisie[strlen(ligneSaisie) - 1] = '\0';
         }
         switch(ligneSaisie[0]){
+            case '?':
+                aide();
+                break;
             case 'q':
             case 'Q':
                 return 0;
@@ -76,6 +79,8 @@ int main(int argc, char **argv){
                     analyseLigneCommande(ligneSaisie);
                 } else {
                     civilisation.evolutionCivilisation();
+                    if (modeListeAuto) civilisation.listeCivilisation();
+                    if (modeTDBAuto) civilisation.tableauDeBord();
                     nbEvolutions++;
                 }
                 break;

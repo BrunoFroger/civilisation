@@ -20,8 +20,9 @@ void aide(void){
     printf("    cree [humain <sexe> <nom> <capital> | entreprise <activite> <nom> <capital>] : création d'un nouvel element\n");
     printf("    loglevel [debug | error | warning | info] : change le niveau de log\n");
     printf("    historique, ! : affiche historique des commandes\n");
-    printf("    aide : affichage de cette aide\n");
+    printf("    aide, ? : affichage de cette aide\n");
     printf("    liste [id] : affichage de la liste des éléments, ou un element specifique\n");
+    printf("    auto [liste|tableau] : switch on/off sur affichage automatique de la liste des elements ou du tableau de bord\n");
     printf("    q, Q, quit : quitte le programme\n");
     printf("    t, T : affichage du tableau de bord\n");
     printf("    RC : une ligne vide (touche enter) lance une évolution\n");

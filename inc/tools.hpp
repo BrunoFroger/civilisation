@@ -20,6 +20,8 @@
     } structSi;
 
     extern CompteBancaire *compteBancaireFournisseurNull;
+    extern bool modeListeAuto;
+    extern bool modeTDBAuto;
 
     extern void initGenerateurAleatoire(void);
     extern void remove_extra_spaces(char* str);
@@ -31,5 +33,6 @@
     extern bool mariage(Humain *homme, Humain *femme);
     extern int getSexeAleatoire(void);
     extern char *getPrenomAleatoire(int sexe);
+    extern void setAuto(char *parametre);
 
 #endif

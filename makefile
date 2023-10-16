@@ -1,8 +1,8 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 16/10/2023 à 09:18:21
-#         avec buildMakefile (version du 23 Aug 2023)
+#     généré automatiquement le 16/10/2023 à 22:58:49
+#         avec buildMakefile (version du  2 Sep 2023)
 #                 (c) B. Froger 
 # 
 #############################################################
@@ -13,7 +13,7 @@
 # de compilation
 CC=g++
 CCFLAGS=-Werror -Wall 
-LDFLAGS=-lcurses 
+LDFLAGS=-lncurses 
 
 # de definition des répertoires
 SRCDIR=src
