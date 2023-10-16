@@ -19,7 +19,7 @@
         char ListeCommandeSiFaux[1000];
     } structSi;
 
-    extern CompteBancaire *compteBancaireNull;
+    extern CompteBancaire *compteBancaireFournisseurNull;
 
     extern void initGenerateurAleatoire(void);
     extern void remove_extra_spaces(char* str);

@@ -1,6 +1,6 @@
 //-----------------------------------------
 //
-//          entreprise.hpp
+//          entreprise.cpp
 //
 //-----------------------------------------
 
@@ -453,7 +453,7 @@ bool Entreprise::produire(){
         Humain *employe = listeEmployes[i];
         if (employe != NULL){
             // .... TODO ... prevoir comment payer le cout produit a un compte bancaire fictif
-            compteBancaireEntreprise->virement(compteBancaireNull, coutProduit);
+            compteBancaireEntreprise->virement(compteBancaireFournisseurNull, coutProduit);
             log(LOG_INFO,"%s verse un salaire de %d a %s", nom, coutSalarie, employe->getNomHumain());
             compteBancaireEntreprise->virement(employe->compteBancaireHumain, coutSalarie);
             nbProduitsFabriques++;

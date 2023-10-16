@@ -253,9 +253,9 @@ void Civilisation::listeCivilisation(void){
     // affichage des entreprises 
     // TODO
     // afichage des individus
-    snprintf(ligne, 200, "+-------------------------------------------------------------------------------------------------------------------------------------------+\n");
+    snprintf(ligne, 200, "+--------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
     printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "|                                                          population  %4d entreprises                                                     |\n", getNbEntreprise());
+    snprintf(ligne, 200, "|                                                          population  %4d entreprises                                                                  |\n", getNbEntreprise());
     printf("%s", ligne); fputs(ligne, fic);
     snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
     printf("%s", ligne); fputs(ligne, fic);

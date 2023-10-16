@@ -37,9 +37,12 @@ int main(int argc, char **argv){
     while (1){
         printf ("main => evolution (%d) > ", nbEvolutions);
         strcpy(ligneSaisie, "");
-        //fgets(ligneSaisie, 100, stdin);
-        strcpy(ligneSaisie, lectureClavier());
-        ligneSaisie[strlen(ligneSaisie) - 1] = '\0';
+        if (0){
+            strcpy(ligneSaisie, lectureClavier());
+        } else {
+            fgets(ligneSaisie, 100, stdin);
+            ligneSaisie[strlen(ligneSaisie) - 1] = '\0';
+        }
         switch(ligneSaisie[0]){
             case 'q':
             case 'Q':
