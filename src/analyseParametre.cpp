@@ -31,8 +31,7 @@ bool analyseParametres(int argc, char **argv){
                 log(LOG_INFO, "===================================");
                 executeTests(TEST_MODE_STD);
                 return false;   // on a executé les tests on excute pas la suite
-            }
-            if (argv[i][0] == '-'){
+            } else if (argv[i][0] == '-'){
                 int tmpExecTest = TEST_MODE_STD;
                 // analyse d'une option
                 switch(argv[i][1]){
@@ -115,11 +114,13 @@ bool analyseParametres(int argc, char **argv){
                         return false;   // on a executé les tests on execute pas la suite
                         break;
                     default:
-                        printf("ERREUR : option %c inconnue\n", argv[i][1]);
+                        printf("ERREUR : option '%c' inconnue\n", argv[i][1]);
                         aide();
                         return false;
                         break;
                 }
+            } else {
+                printf("ERREUR : parametre '%s' inconnu !\n", argv[i]);
             }
         }
     }
