@@ -11,6 +11,10 @@
     #include "element.hpp"
 
 
+    extern bool displayListeHumains;
+    extern bool displayListeEntreprises;
+    extern bool displayListeBanques;
+
     class Civilisation{
         public:
             Civilisation();

@@ -199,8 +199,19 @@ void analyseLigneCommande(char *ligneCommande){
         afficheHistorique();
     } else if (strncmp(ligneCommande, "liste", 5) == 0) {
         if (strlen(ligneCommande) > 5){
-            civilisation.listeElement(atoi(&ligneCommande[6]));
-        } else {
+            char *tmp = &(ligneCommande[6]);
+            if (strtol(&ligneCommande[6], NULL, 10) != 0){
+                civilisation.listeElement(atoi(tmp));
+            } else {
+                if (strncmp(tmp, "humain", 6) == 0){
+                    displayListeHumains = !displayListeHumains;
+                } else if (strncmp(tmp, "entreprise", 10) == 0){
+                    displayListeEntreprises = !displayListeEntreprises;
+                } else if (strncmp(tmp, "banque", 6) == 0){
+                    displayListeBanques = !displayListeBanques;
+                }
+            }
+        }else {
             civilisation.listeCivilisation();
         }
     } else if (strncmp(ligneCommande, "aide", 4) == 0) {
@@ -208,7 +219,6 @@ void analyseLigneCommande(char *ligneCommande){
     } else if (strncmp(ligneCommande, "quit", 4) == 0) {
         exit(0);
     } else if (strncmp(ligneCommande, "auto", 4) == 0) {
-        printf(" .... a developper ...\n");
         char *tmpCommande = &(ligneCommande[5]);
         setAuto(tmpCommande);
     } else if (strncmp(ligneCommande, "loglevel", 8) == 0) {

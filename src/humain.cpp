@@ -330,7 +330,7 @@ void Humain::initHumain(int id, int sexe, char *nom, int capitalInitial){
     strcpy(this->nom ,nom);
     this->age = 0;
     this->statusMarital = STATUS_MARITAL_CELIB;
-    this->compteBancaireHumain = new CompteBancaire(capitalInitial);
+    this->compteBancaireHumain = new CompteBancaire((Element *)this, capitalInitial);
     this->employeur = NULL;
     this->pere = NULL;
     this->mere = NULL;
@@ -539,10 +539,14 @@ void Humain::mortPossible(void){
             int heritage = compteBancaireHumain->getSolde();
             if (heritage > 0){
                 if (conjoint != NULL){
-                    log(LOG_INFO, "transfert du capital de (%s) au son conjoint (%s) => %d", this->nom, this->conjoint->getNomHumain(), compteBancaireHumain->getSolde());
+                    log(LOG_INFO, "transfert du capital de (%s) a son conjoint (%s) => %d", this->nom, this->conjoint->getNomHumain(), compteBancaireHumain->getSolde());
+                    printf("capital du conjoint avant heritage = %d\n", conjoint->compteBancaireHumain->getSolde());
                     compteBancaireHumain->virement(conjoint->compteBancaireHumain, compteBancaireHumain->getSolde());
+                    printf("capital du conjoint apres heritage = %d\n", conjoint->compteBancaireHumain->getSolde());
+                    log(LOG_DEBUG, "transfert heritage vers conjoint OK");
                     conjoint->setStatusMarital(STATUS_MARITAL_VEUF);
                     conjoint->setConjoint(NULL);
+                    log(LOG_DEBUG, "deces OK");
                     return;
                 }
                 if (nbEnfants > 0){
@@ -558,6 +562,10 @@ void Humain::mortPossible(void){
                             compteBancaireHumain->virement(enfants[i]->compteBancaireHumain, partHeritage);
                         }
                     }
+                    log(LOG_DEBUG, "transfert heritage vers heritiers OK");
+                } else {
+                    log(LOG_INFO, "transfert de %d du capital sur un compte specifique quand il n'y a pas d'heritiers", compteBancaireHumain->getSolde());
+                    compteBancaireHumain->virement(compteBancaireHeritageNull, compteBancaireHumain->getSolde());
                 }
             }
         }

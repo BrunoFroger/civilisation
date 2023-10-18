@@ -22,6 +22,7 @@ void aide(void){
     printf("    historique, ! : affiche historique des commandes\n");
     printf("    aide, ? : affichage de cette aide\n");
     printf("    liste [id] : affichage de la liste des éléments, ou un element specifique\n");
+    printf("    liste [humain|entreprise|banque] : active/desactive affichage des rubrique avec la commande liste\n");
     printf("    auto [liste|tableau] : switch on/off sur affichage automatique de la liste des elements ou du tableau de bord\n");
     printf("    q, Q, quit : quitte le programme\n");
     printf("    t, T : affichage du tableau de bord\n");

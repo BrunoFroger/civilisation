@@ -20,6 +20,7 @@
     } structSi;
 
     extern CompteBancaire *compteBancaireFournisseurNull;
+    extern CompteBancaire *compteBancaireHeritageNull;
     extern bool modeListeAuto;
     extern bool modeTDBAuto;
 

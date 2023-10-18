@@ -18,8 +18,8 @@ int idCompteBancaire = 0;
 //          CompteBancaire
 //
 //-----------------------------------------
-CompteBancaire::CompteBancaire(int CapitalInitial){
-    initCompteBancaire(CapitalInitial);
+CompteBancaire::CompteBancaire(Element *titulaire, int capitalInitial){
+    initCompteBancaire(titulaire, capitalInitial);
     id = idCompteBancaire++;
     //log(LOG_DEBUG, "creation compte bancaire N° : %d", id);
 }
@@ -29,8 +29,8 @@ CompteBancaire::CompteBancaire(int CapitalInitial){
 //          CompteBancaire
 //
 //-----------------------------------------
-CompteBancaire::CompteBancaire(){
-    CompteBancaire(0);
+CompteBancaire::CompteBancaire(Element *tutulaire){
+    CompteBancaire(titulaire, 0);
 }
 
 //-----------------------------------------
@@ -38,8 +38,8 @@ CompteBancaire::CompteBancaire(){
 //          initCompteBancaire
 //
 //-----------------------------------------
-void CompteBancaire::initCompteBancaire(int CapitalInitial){
-    solde = CapitalInitial;
+void CompteBancaire::initCompteBancaire(Element *titulaire, int capitalInitial){
+    solde = capitalInitial;
 }
 
 //-----------------------------------------
@@ -58,6 +58,15 @@ int CompteBancaire::getSolde(){
 //-----------------------------------------
 int CompteBancaire::getEpargne(){
     return epargne;
+}
+
+//-----------------------------------------
+//
+//          getId
+//
+//-----------------------------------------
+int CompteBancaire::getId(){
+    return id;
 }
 
 //-----------------------------------------
@@ -120,7 +129,6 @@ bool CompteBancaire::restitueEpargne(int valeur){
 //
 //-----------------------------------------
 bool CompteBancaire::virement(CompteBancaire *destinataire, int valeur){
-    log(LOG_DEBUG, "virement de %d", valeur);
     if (valeur < 0 ){
         log(LOG_ERROR, "virement négatif interdit");
         return false;
@@ -130,6 +138,9 @@ bool CompteBancaire::virement(CompteBancaire *destinataire, int valeur){
         return false;
     } 
     if (destinataire != NULL){
+        //log(LOG_DEBUG, "virement de %d de la part de %s (id=%d) vers %s (id=%d)", valeur,
+        //            this->titulaire->getNom(), this->titulaire->getElementId(),
+        //            destinataire->titulaire->getNom(), destinataire->titulaire->getElementId());
         bool res = debite(valeur);
         res &= destinataire->credite(valeur);
         //log(LOG_INFO, "virement de %d fait res = %d", valeur, res);

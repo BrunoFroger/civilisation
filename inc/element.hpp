@@ -43,6 +43,8 @@
             int getTypeElement(void);
             void setTypeElement(int type);
             bool evalueExpression(char *expression);
+            char *getNom(void);
+            CompteBancaire *getCompteBancaire(void);
 
         protected:
 

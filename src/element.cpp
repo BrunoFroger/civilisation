@@ -90,6 +90,34 @@ int Element::getElementId(void){
 
 //-----------------------------------------
 //
+//          getNom
+//
+//-----------------------------------------
+char *Element::getNom(void){
+    if (getTypeElement() == TYPE_HUMAIN){
+        return this->getNomHumain();
+    } else if (getTypeElement() == TYPE_ENTREPRISE){
+        return this->getNomEntreprise();
+    }
+    return (char *)"NC";
+}
+
+//-----------------------------------------
+//
+//          getCompteBancaire
+//
+//-----------------------------------------
+CompteBancaire *Element::getCompteBancaire(void){
+    if (getTypeElement() == TYPE_HUMAIN){
+        return compteBancaireHumain;
+    } else if (getTypeElement() == TYPE_ENTREPRISE){
+        return compteBancaireEntreprise;
+    }
+    return NULL;
+}
+
+//-----------------------------------------
+//
 //          setElementId
 //
 //-----------------------------------------

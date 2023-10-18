@@ -1,6 +1,6 @@
 Dev en cours :
   - ajouter gestion des fleches dans gestion ligne de commande
-    - lire les caracteres au clavier sans attendre le RC
+    - lire les caracteres au clavier sans attendre le RC (temporise pour le moment voir fichier analyseLigneCommande.cpp)
   - evolution entreprise :
     - lancement du script correspondant
     - decomosition du script
@@ -12,8 +12,6 @@ Dev en cours :
       - debauche
 
 tests a faire ou refaire
-  - tester commande achat dans un script humain
-  - dans les tests process commande/livraison d'entreprise bug
   - .....
 
 Bugs a corriger

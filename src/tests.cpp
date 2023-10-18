@@ -259,7 +259,10 @@ void executeTests(int mode){
     if (0 || exec_all || exec_tools){
         strcpy(rubrique, "tools");
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "=====================================================");
         
         if (1 || exec_all ) { // test de suppression des blancs inutiles d'une chaine
             log(LOG_DEBUG, "-----------------------------------------------------");
@@ -482,7 +485,10 @@ void executeTests(int mode){
     if (0 || exec_all || exec_civilisation){
         strcpy(rubrique, "civilisation");
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "=====================================================");
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation de civilisation avec id element = 0");
@@ -550,15 +556,21 @@ void executeTests(int mode){
     if (0 || exec_all || exec_element){
         strcpy(rubrique, "element");
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "=====================================================");
         Element element;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation element");
         element.initHumain(10, FEMME, (char *)"eve", 1000);
+        element.setElementId(10);
         element.setTypeElement(TYPE_HUMAIN);
         resultatTest(rubrique, element.getIdHumain() == 10);
+        resultatTest(rubrique, element.getElementId() == 10);
         resultatTest(rubrique, element.getAge() == 0);
+        resultatTest(rubrique, (strcmp(element.getNom(), "eve") == 0));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test execution script");
@@ -575,7 +587,10 @@ void executeTests(int mode){
     if (0 || exec_all || exec_humain){
         strcpy(rubrique, "humain");
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "=====================================================");
         //Civilisation civilisation;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
@@ -700,14 +715,16 @@ void executeTests(int mode){
     if (0 || exec_all || exec_entreprise){
         strcpy(rubrique, "entreprise");
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "=====================================================");
         //Civilisation civilisation;
         Element *elementEntreprise, *elementHumain;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration spécifique");
         elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000, NULL);
-        printf("creation entreprise id : %d\n", elementEntreprise->getElementId());
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"auBonPain") == 0));
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomCommercialEntreprise(), (char *)"au bon pain") == 0));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
@@ -720,8 +737,6 @@ void executeTests(int mode){
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration par default");
         elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000, NULL);
-        printf("creation entreprise id : %d\n", elementEntreprise->getElementId());
-        printf("nom commerciaal de l'entreprise <%s> = <%s>", elementEntreprise->getNomEntreprise(), elementEntreprise->getNomCommercialEntreprise());
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"machin") == 0));
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomCommercialEntreprise(), (char *)"entreprise par default") == 0));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
@@ -750,6 +765,13 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test commande/livraison de produit");
         //elementEntreprise->creeCommande(elementHumain, 1);
         elementHumain->acheteProduit(elementEntreprise,1);
+        log(LOG_DEBUG, "test l'entreprise embauche un salarie");
+        elementEntreprise->embaucher();
+        resultatTest(rubrique, elementEntreprise->getNbSalaries() > 0);
+        log(LOG_DEBUG, "test l'entreprise effectue une production");
+        elementEntreprise->produire();
+        elementEntreprise->produire();
+        resultatTest(rubrique, elementEntreprise->getStockProduit() > 0);
         resultatTest(rubrique, elementEntreprise->getNbCommandes() == 1);
         elementHumain->acheteProduit(elementEntreprise,1);
         resultatTest(rubrique, elementEntreprise->getNbCommandes() == 2);
@@ -759,12 +781,12 @@ void executeTests(int mode){
         log(LOG_DEBUG, "anciens soldes : entreprise (%d) client (%d)", ancienSoldeEntreprise, ancienSoldeHumain);
         int prixProduit = elementEntreprise->getPrixProduit();
         elementEntreprise->livraison(elementHumain);
-        log(LOG_DEBUG, "anciens soldes : nb commandes en cours pour entreprise (%s) : (%d)", elementEntreprise->getNomEntreprise(), elementEntreprise->getNbCommandes());
+        log(LOG_DEBUG, "nouveaux soldes : nb commandes en cours pour entreprise (%s) : (%d)", elementEntreprise->getNomEntreprise(), elementEntreprise->getNbCommandes());
         log(LOG_DEBUG, "nouveaux soldes : entreprise (%d) client (%d) prix produit (%d)", elementEntreprise->compteBancaireEntreprise->getSolde(), 
                     elementHumain->compteBancaireHumain->getSolde(), prixProduit);
-        resultatTest(rubrique, elementEntreprise->getNbCommandes() == 1);
-        resultatTest(rubrique, (elementHumain->compteBancaireHumain->getSolde() == (ancienSoldeHumain - prixProduit)));
-        resultatTest(rubrique, (elementEntreprise->compteBancaireEntreprise->getSolde() == (ancienSoldeEntreprise + prixProduit)));
+        resultatTest(rubrique, elementEntreprise->getNbCommandes() == 0);
+        resultatTest(rubrique, (elementHumain->compteBancaireHumain->getSolde() == (ancienSoldeHumain - (prixProduit * 2))));
+        resultatTest(rubrique, (elementEntreprise->compteBancaireEntreprise->getSolde() == (ancienSoldeEntreprise + (prixProduit * 2))));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test fonction liste de commandes valide");
@@ -777,11 +799,11 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test execution commandes");
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"produire"));
         resultatTest(rubrique, !elementEntreprise->execCommandeEntreprise((char *)"toto"));
-        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
-        resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"embaucher"));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 1));
+        resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"embaucher"));
+        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 2));
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"debaucher"));
-        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
+        resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 1));
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"livraison"));
 
         bilanTestsRubrique(rubrique);
@@ -795,18 +817,21 @@ void executeTests(int mode){
     if (0 || exec_all || exec_banque){
         strcpy(rubrique, "banque");
         log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
+        log(LOG_DEBUG, "");
+        log(LOG_DEBUG, "=====================================================");
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation de compte");
-        CompteBancaire cpt;
+        CompteBancaire cpt(NULL);
         resultatTest(rubrique, cpt.getSolde() == 0);
-        cpt.initCompteBancaire(100);
+        cpt.initCompteBancaire(NULL, 100);
         resultatTest(rubrique, cpt.getSolde() == 100);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation de compte initialisé");
-        CompteBancaire cpt1(1000);
+        CompteBancaire cpt1(NULL, 1000);
         resultatTest(rubrique, cpt1.getSolde() == 1000);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
@@ -818,10 +843,8 @@ void executeTests(int mode){
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test virement simple");
-        CompteBancaire cpt2(100);
-        printf("cpt1 = %d, cpt2 = %d\n", cpt1.getSolde(), cpt2.getSolde());
+        CompteBancaire cpt2(NULL, 100);
         cpt1.virement(&cpt2, 500);
-        printf("cpt1 = %d, cpt2 = %d\n", cpt1.getSolde(), cpt2.getSolde());
         resultatTest(rubrique, (cpt1.getSolde() == 500) && (cpt2.getSolde() == 600));
 
         log(LOG_DEBUG, "-----------------------------------------------------");

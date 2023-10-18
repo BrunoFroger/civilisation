@@ -15,6 +15,9 @@
 
 const Element elementVide = Element(-1, TYPE_INDEFINI);
 Element *elements[MAX_ELEMENTS];
+bool displayListeHumains = true;
+bool displayListeEntreprises = true;
+bool displayListeBanques = true;
 
 //-----------------------------------------
 //
@@ -193,95 +196,127 @@ void Civilisation::listeCivilisation(void){
     char employeur[5];
     char ligne[200];
     FILE *fic = fopen("listeCivilisation.txt", "w");
-    snprintf(ligne, 200, "+------------------------------------------------------------------------------------------------------------------------+\n");
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "|                                               population  %4d individus                                               |\n", getNbHumain());
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+-------+------------+-----------------+\n");
-    printf("%s", ligne);
-    snprintf(ligne, 200, "|   id   |                       nom | sexe| conj| enf | pere| mere|  age  |status|  empl |    capital |         epargne |\n");
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+-------+------------+-----------------+\n");
-    printf("%s", ligne); fputs(ligne, fic);
-    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
-        Element *ptr = elements[i];
-        if (ptr->getTypeElement() == TYPE_HUMAIN){
-            switch(ptr->getStatusMarital()){
-                case STATUS_MARITAL_CELIB: 
-                    strcpy(tmp, "CELI");
-                    break;
-                case STATUS_MARITAL_MARIE: 
-                    strcpy(tmp, "MARI");
-                    break;
-                case STATUS_MARITAL_VEUF: 
-                    strcpy(tmp, "VEUF");
-                    break;
-                case STATUS_MARITAL_DIVOR: 
-                    strcpy(tmp, "DIVO");
-                    break;
-                case STATUS_MARITAL_DECES: 
-                    strcpy(tmp, "DECE");
-                    break;
-                default: 
-                    strcpy(tmp, "-NC-");
-                    break;
+    if (displayListeHumains){
+        snprintf(ligne, 200, "+------------------------------------------------------------------------------------------------------------------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "|                                               population  %4d individus                                               |\n", getNbHumain());
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+-------+------------+-----------------+\n");
+        printf("%s", ligne);
+        snprintf(ligne, 200, "|   id   |                       nom | sexe| conj| enf | pere| mere|  age  |status|  empl |    capital |         epargne |\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+-------+------------+-----------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        for (int i = 0 ; i < MAX_ELEMENTS ; i++){
+            Element *ptr = elements[i];
+            if (ptr->getTypeElement() == TYPE_HUMAIN){
+                switch(ptr->getStatusMarital()){
+                    case STATUS_MARITAL_CELIB: 
+                        strcpy(tmp, "CELI");
+                        break;
+                    case STATUS_MARITAL_MARIE: 
+                        strcpy(tmp, "MARI");
+                        break;
+                    case STATUS_MARITAL_VEUF: 
+                        strcpy(tmp, "VEUF");
+                        break;
+                    case STATUS_MARITAL_DIVOR: 
+                        strcpy(tmp, "DIVO");
+                        break;
+                    case STATUS_MARITAL_DECES: 
+                        strcpy(tmp, "DECE");
+                        break;
+                    default: 
+                        strcpy(tmp, "-NC-");
+                        break;
+                }
+                if (ptr->getEmployeur() == NULL){
+                    snprintf(employeur, 5, (char *)"NULL");
+                } else {
+                    snprintf(employeur, 5, "%d", ptr->getEmployeur()->getIdEntreprise());
+                }
+                snprintf(ligne, 200, "| %5d  | %25s |  %c  | %3d | %3d | %3d | %3d | %5d | %4s | %5s | %10d | %15d |\n", 
+                    ptr->getIdHumain(),
+                    ptr->getNomHumain(), 
+                    ptr->getSexeChar(),
+                    ptr->getConjoint(),
+                    ptr->getNbEnfants(),
+                    ptr->getPere(),
+                    ptr->getMere(),
+                    ptr->getAge(),
+                    tmp,
+                    employeur,
+                    ptr->compteBancaireHumain->getSolde(),
+                    ptr->compteBancaireHumain->getEpargne());
+                printf("%s", ligne); fputs(ligne, fic);
             }
-            if (ptr->getEmployeur() == NULL){
-                snprintf(employeur, 5, (char *)"NULL");
-            } else {
-                snprintf(employeur, 5, "%d", ptr->getEmployeur()->getIdEntreprise());
-            }
-            snprintf(ligne, 200, "| %5d  | %25s |  %c  | %3d | %3d | %3d | %3d | %5d | %4s | %5s | %10d | %15d |\n", 
-                ptr->getIdHumain(),
-                ptr->getNomHumain(), 
-                ptr->getSexeChar(),
-                ptr->getConjoint(),
-                ptr->getNbEnfants(),
-                ptr->getPere(),
-                ptr->getMere(),
-                ptr->getAge(),
-                tmp,
-                employeur,
-                ptr->compteBancaireHumain->getSolde(),
-                ptr->compteBancaireHumain->getEpargne());
-            printf("%s", ligne); fputs(ligne, fic);
         }
+        snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+-------+------------+-----------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
     }
-    snprintf(ligne, 200, "+--------+---------------------------+-----+-----+-----+-----+-----+-------+------+-------+------------+-----------------+\n");
-    printf("%s", ligne); fputs(ligne, fic);
 
     // affichage des entreprises 
-    // TODO
-    // afichage des individus
-    snprintf(ligne, 200, "+--------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "|                                                          population  %4d entreprises                                                                  |\n", getNbEntreprise());
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "|   id   |                       nom |            nom commercial | activité | nb cde   |  stock   | nb sal   |   cap init |    capital |         epargne |\n");
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
-    printf("%s", ligne); fputs(ligne, fic);
-    for (int i = 0 ; i < MAX_ELEMENTS ; i++){
-        Element *ptr = elements[i];
-        if (ptr->getTypeElement() == TYPE_ENTREPRISE){
-            snprintf(ligne, 200, "| %5d  | %25s | %25s |   %5d  |   %5d  |   %5d  |   %5d  | %10d | %10d | %15d |\n", 
-                ptr->getIdEntreprise(),
-                ptr->getNomEntreprise(), 
-                ptr->getNomCommercialEntreprise(), 
-                ptr->getActivite(),
-                ptr->getNbCommandes(),
-                ptr->getStockProduit(),
-                ptr->getNbSalaries(),
-                ptr->getCapitalInitial(),
-                ptr->compteBancaireEntreprise->getSolde(),
-                ptr->compteBancaireEntreprise->getEpargne());
+    if (displayListeEntreprises){
+        snprintf(ligne, 200, "+--------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "|                                                          population  %4d entreprises                                                                  |\n", getNbEntreprise());
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "|   id   |                       nom |            nom commercial | activité | nb cde   |  stock   | nb sal   |   cap init |    capital |         epargne |\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        for (int i = 0 ; i < MAX_ELEMENTS ; i++){
+            Element *ptr = elements[i];
+            if (ptr->getTypeElement() == TYPE_ENTREPRISE){
+                snprintf(ligne, 200, "| %5d  | %25s | %25s |   %5d  |   %5d  |   %5d  |   %5d  | %10d | %10d | %15d |\n", 
+                    ptr->getIdEntreprise(),
+                    ptr->getNomEntreprise(), 
+                    ptr->getNomCommercialEntreprise(), 
+                    ptr->getActivite(),
+                    ptr->getNbCommandes(),
+                    ptr->getStockProduit(),
+                    ptr->getNbSalaries(),
+                    ptr->getCapitalInitial(),
+                    ptr->compteBancaireEntreprise->getSolde(),
+                    ptr->compteBancaireEntreprise->getEpargne());
+                printf("%s", ligne); fputs(ligne, fic);
+            }
+        }
+        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+    }
+
+    // liste des comptes bancaire génériques
+    if (displayListeBanques){
+        snprintf(ligne, 200, "+-----------------------------------------------------------------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "|                         comptes bancaires                             |\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        snprintf(ligne, 200, "+---------------------------------+---------+-------------+-------------+\n");
+        snprintf(ligne, 200, "|            titulaire du compte  |    id   |      solde  |    epargne  |\n");
+        snprintf(ligne, 200, "+---------------------------------+---------+-------------+-------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
+        CompteBancaire *cptGeneriques[2] = {compteBancaireFournisseurNull, compteBancaireHeritageNull};
+        char *nomCptGeneriques[2] = {(char *)"compte generique Fournisseurs", (char *)"compte generique Heritages"};
+        for (int i = 0 ; i < 2 ; i++){
+            CompteBancaire *compte = cptGeneriques[i];
+            snprintf(ligne, 200, "|  %30s |  %5d  |  %10d |  %10d |\n", nomCptGeneriques[i], compte->getId(), compte->getSolde(), compte->getEpargne());
             printf("%s", ligne); fputs(ligne, fic);
         }
+        for (int i = 0 ; i < MAX_ELEMENTS ; i++){
+            Element *ptr = elements[i];
+            if (ptr->getElementId() != -1){
+                snprintf(ligne, 200, "|  %30s |  %5d  |  %10d |  %10d |\n",ptr->getNom(), ptr->getElementId(), ptr->getCompteBancaire()->getSolde(), ptr->getCompteBancaire()->getEpargne());
+                printf("%s", ligne); fputs(ligne, fic);
+            }
+        }
+        snprintf(ligne, 200, "+---------------------------------+---------+-------------+-------------+\n");
+        printf("%s", ligne); fputs(ligne, fic);
     }
-    snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
-    printf("%s", ligne); fputs(ligne, fic);
+
+    // fermeture du fichier de status de la configuration affichee
     fclose(fic);
 }
 

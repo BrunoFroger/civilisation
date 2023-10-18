@@ -73,6 +73,7 @@
             int getIntValue(char *valeur);
             int getCapitalInitial(void);
             bool embaucher();
+            bool produire();
 
         private:
             int id;
@@ -90,7 +91,6 @@
             Humain  *listeEmployes[MAX_EMPLOYES];
             structCommande listeCommandes[MAX_COMMANDES];
             int getRefCommande(void);
-            bool produire();
             bool debaucher();
             Humain *getSalarie(void);
             Entreprise *maisonMere;

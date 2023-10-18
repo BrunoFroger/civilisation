@@ -7,11 +7,14 @@
 #ifndef __COMPTE_BANCAIRE__
 #define __COMPTE_BANCAIRE__
 
+    class Element;
+
     class CompteBancaire{
         public:
-            CompteBancaire();
-            CompteBancaire(int capitalInitial);
-            void initCompteBancaire(int capitalInitial);
+            CompteBancaire(Element *titulaire);
+            CompteBancaire(Element *titulaire, int capitalInitial);
+            void initCompteBancaire(Element *titulaire, int capitalInitial);
+            int getId();
             int getSolde(void);
             int getEpargne(void);
             bool sauveEpargne(int valeur);
@@ -22,6 +25,7 @@
             int id;
             int solde;
             long epargne;
+            Element *titulaire;
             bool debite(int valeur);
             bool credite(int valeur);
     };

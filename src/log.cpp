@@ -12,6 +12,10 @@
 
 #include "../inc/log.hpp"
 
+//Paramètre  Couleur
+//0 reinit |30 Noir |31 Rouge | 32 Vert | 33 Jaune | 34 Bleu| 35 Magenta | 36 Cyan | 37 Blanc
+#define color(param) printf("\033[%dm",param)
+
 int logLevelLimit=LOG_INFO;
 int oldLogLevel=LOG_INFO;
 
@@ -61,8 +65,12 @@ void log(int logLevel, const char *format, ...){
         if (sizeof(args) > 1) {
             vsnprintf(message, sizeof(message), format, args);
         }
+        if (logLevel == 0) color(31);   // erreur
+        if (logLevel == 1) color(33);   // warning
+        if (logLevel == 3) color(34);   // debug
         snprintf(ligne, sizeof(ligne), "civilisation (%s) %s => %s", logLevelString, logDate, message);
         printf("%s\n",ligne);
+        color(0);
     }
     va_end(args);
 }   

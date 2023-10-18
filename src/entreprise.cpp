@@ -24,7 +24,7 @@ extern Civilisation civilisation;
 //
 //-----------------------------------------
 Entreprise::Entreprise(){
-    this->compteBancaireEntreprise = new CompteBancaire();
+    this->compteBancaireEntreprise = new CompteBancaire((Element*)this);
     for (int i = 0 ; i < MAX_EMPLOYES ; i++){
         listeEmployes[i] = NULL;
     }
@@ -63,17 +63,17 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
     char repertoire[50] = "scripts/entreprises";
     char ligne[100];
     char *tmp;
-    compteBancaireEntreprise = new CompteBancaire(capitalInitial);
+    compteBancaireEntreprise = new CompteBancaire((Element *)this, capitalInitial);
     snprintf(filename, sizeof(filename), "%s/%s", repertoire, nom);
     FILE *fic;
     fic = fopen(filename, "r");
     if (fic == NULL){
-        log(LOG_ERROR, "Impossible d'ouvrir le fichier de définition d'entreprise %s\n", filename );
+        log(LOG_ERROR, "Impossible d'ouvrir le fichier de définition d'entreprise %s", filename );
         snprintf(filename, sizeof(filename),"%s/default", repertoire);
-        log(LOG_ERROR, "        ouverture du fichier par defaut %s\n", filename );
+        log(LOG_WARNING, "        ouverture du fichier par defaut %s", filename );
         fic = fopen(filename, "r");
         if (fic == NULL){
-            log(LOG_ERROR, "Impossible d'ouvrir le fichier par defaut de définition d'entreprise %s\n", filename );
+            log(LOG_ERROR, "Impossible d'ouvrir le fichier par defaut de définition d'entreprise %s", filename );
             exit(-1);  
         }
     }
@@ -224,6 +224,7 @@ void Entreprise::livraison(Humain *client){
                 stock--;
             } else {
                 // plus de stock on arrete le processus de livraison
+                log(LOG_ERROR, "livraison de %d produit a %s impossible (pas assez de stock)", tmpCde->quantité, client->getNomHumain());
                 return;
             }
 

@@ -21,7 +21,8 @@ extern Civilisation civilisation;
 char fichierPrenomsMasculin[50] = "datas/liste_des_prenoms_masculin.txt";
 char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
 
-CompteBancaire *compteBancaireFournisseurNull = new CompteBancaire();
+CompteBancaire *compteBancaireFournisseurNull = new CompteBancaire(NULL);
+CompteBancaire *compteBancaireHeritageNull = new CompteBancaire(NULL);
 
 bool modeListeAuto = false;
 bool modeTDBAuto = false;
