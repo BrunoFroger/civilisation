@@ -521,7 +521,7 @@ void Humain::mortPossible(void){
     srand (time(NULL));
     int ageMoyenDeces = 75;
     if (age > 15){
-        int rnd = int(rand() % 20);
+        int rnd = int(rand() % 30);
         log(LOG_DEBUG,"Humain::mortPossible =>  rnd           = %3d", rnd);
         log(LOG_DEBUG,"Humain::mortPossible =>  age           = %3d", age);
         log(LOG_DEBUG,"Humain::mortPossible =>  age + rnd     = %3d", age + rnd);
