@@ -8,7 +8,7 @@ les types d'éléments actuellement proposé sont :
 
 
 ## Description du fichier de script
-ce fichier doit contenir le comportement qui régit chaque évolution de l'objet concerné, le nom du fichier de script est compose du mon du type + '.scr'. les scripts sont stockés dans un répertoire nommé 'scripts'
+Ce fichier doit contenir le comportement qui régit chaque évolution de l'objet concerné, le nom du fichier de script est compose du mon du type + '.scr'. les scripts sont stockés dans un répertoire nommé 'scripts'
 
 - '#' désigne un commentaire => ligne ignorée
 - Les lignes vides sont ignorées
@@ -24,17 +24,42 @@ ce fichier doit contenir le comportement qui régit chaque évolution de l'objet
 	<operateur> = "&&" | "||"
 	<item> = <variable> | <valeur> | "("<expression>")"
 	<opTest> = "=" | "!=" | "<" | ">" | "<=" | ">="
-	<Variable> = texte du nom de la variable dépend de l'objet
+	<Variable> = 'voir ci dessous la liste des variables disponibles'
 	<valeur> = nombre
 	<affectation> = <variable> "=" <valeur>
 	
 	<listeCommandes> = <commande> | <listeCommandes>
-	<commande> = texte du nom de la fonction a réaliser dépend de l'objet
+	<commande> = 'voir ci dessous la liste des commandes disponibles'
 
 
-### Liste des commandes disponibles pour l'objet Humain :
-	<commande> =["mort"|"evolutionSituationMaritale"|"ecole"|
-		"naissancePossible"|"achatNouriture"]
+### Liste des commandes de script disponibles par type d'objet : 
+
+- civilisation :
+	- humain, [homme|femme], < nom >, < capital initial > => creation d'un humain
+	- entreprise, < type >, < nom >, < capital initial > => creation d'une en treprise
+
+- Humain : 
+	- mort
+	- evolutionSituationMaritale
+	- ecole
+	- naissancePossible
+	- achat-< nom entreprise > => achete nourriture a l'entreprise citee apres le '-' 
+- Entreprise : 
+	- produire	=> lance la produition du nombre de produit prevu pour chaque salarie
+	- embaucher => cherche dans les humain si une personne est embeauchable
+	- debaucher => supprime un des salarié
+
+### Liste des variables de script disponibles par type d'objet : 
+
+- variables obligatoires : 
+	- civilisation: tauxEpargne
+	- Humain : 
+	- Entreprise : nom, cout Salarie, prix produit, cout produit, maxEmploye, productiviteSalarie
+
+- variables facultatives : 
+	- civilisation : 
+	- Humain : age
+	- Entreprise : nbSalarie, stock, nbCommande
 	
 	
 ## Differents niveau de log

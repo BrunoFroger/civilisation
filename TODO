@@ -1,6 +1,5 @@
 Dev en cours :
-  - ajouter gestion des fleches dans gestion ligne de commande
-    - lire les caracteres au clavier sans attendre le RC (temporise pour le moment voir fichier analyseLigneCommande.cpp)
+  - compter le nombre de variables obligatoire pour chaque type de scripts
   - evolution entreprise :
     - lancement du script correspondant
     - decomosition du script
@@ -26,6 +25,8 @@ Fonctions a completer ou ecrire
   - dans fonction commande si l'entreprise principale ne peux plus produire :
     - dupliquer l'entreprise
     - passer les commandes aux entreprises filles
+  - ajouter gestion des fleches dans gestion ligne de commande
+    - lire les caracteres au clavier sans attendre le RC (temporise pour le moment voir fichier analyseLigneCommande.cpp)
 
 
 Description des fonction existantes

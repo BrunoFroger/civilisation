@@ -5,4 +5,4 @@ prix produit = 10
 cout produit = 5
 stock = 0;
 maxEmployes = 5
-capacite production salarie = 15
+productiviteSalarie = 15
