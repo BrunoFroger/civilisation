@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <cstdlib>
+#include <sys/time.h>
 
 #include "../inc/civilisation.hpp"
 #include "../inc/element.hpp"
@@ -25,6 +26,7 @@ typedef struct {
     int nbOK;
     int nbKO;
     int tauxReussite;
+    long duree;
 } structResultatTest;
 
 int nbTests=0;
@@ -42,8 +44,31 @@ bool exec_tools=false;
 bool exec_banque=false;
 bool stopOnFail = false;
 bool StatusBilanTests = true;
+struct timeval debutTests, finTests;
+struct timeval debutRubrique, finRubrique;
+void *tmpTime=NULL;
 
 structResultatTest tableauresultatsTests[NB_RUBRIQUES];
+
+
+
+//-----------------------------------------
+//
+//          diffTime
+//
+//-----------------------------------------
+long myDifftime(struct timeval *debut, struct timeval *fin){
+    //printf("myDiffTime => nbSec debut = %ld\n", debut->tv_sec);
+    //printf("myDiffTime => nbSec fin   = %ld\n", fin->tv_sec);
+    unsigned long nbSec = difftime(fin->tv_sec, debut->tv_sec);
+    //printf("myDiffTime => nbSec = %ld\n", nbSec);
+    unsigned long nbMs = (unsigned long)fin->tv_usec - (unsigned long)debut->tv_usec;
+    //printf("myDiffTime => nb microSec = %ld\n", nbMs);
+    long retValue = (long)nbSec * 1000000;
+    retValue += (long)nbMs;
+    //printf("myDiffTime => retValue = %ld\n", retValue);
+    return retValue;
+}
 
 //-----------------------------------------
 //
@@ -56,6 +81,21 @@ void baniereDebutTests(void){
     log(LOG_INFO, "       execution des tests         ");
     log(LOG_INFO, "                                   ");
     log(LOG_INFO, "===================================");
+    gettimeofday(&debutTests, tmpTime);
+}
+
+//-----------------------------------------
+//
+//          baniereDebutRubrique
+//
+//-----------------------------------------
+void baniereDebutRubrique(char *rubrique){
+    log(LOG_DEBUG, "=====================================================");
+    log(LOG_DEBUG, "");
+    log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
+    log(LOG_DEBUG, "");
+    log(LOG_DEBUG, "=====================================================");
+    gettimeofday(&debutRubrique, tmpTime);
 }
 
 //-----------------------------------------
@@ -129,11 +169,14 @@ void initTableauTests(void){
 void bilanTests(void){
     //printf("execute bilanTests\n");
     char tauxReussite[10];
-    printf("+----------------------------------------------------------+\n");
-    printf("|                       Bilan des tests                    |\n");
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
-    printf("|                  rubrique      |  NB |  OK |  KO |  %% OK |\n");
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
+    gettimeofday(&finTests, tmpTime);
+    long dureeTests = myDifftime(&debutTests, &finTests);
+    //log(LOG_INFO, "durée des tests : %ld",dureeTests);
+    printf("+-------------------------------------------------------------------+\n");
+    printf("|                 Bilan des tests (duree en microsecondes)          |\n");
+    printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
+    printf("|                  rubrique      |  NB |  OK |  KO |  %% OK |  duree |\n");
+    printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
     for (int i = 0 ; i < NB_RUBRIQUES ; i++){
         if (tableauresultatsTests[i].nbtests == 0){
             strcpy(tauxReussite, "");
@@ -141,21 +184,22 @@ void bilanTests(void){
         } else {
             snprintf(tauxReussite, sizeof(tauxReussite), "%3d%%", tableauresultatsTests[i].nbOK * 100 / tableauresultatsTests[i].nbtests);
         }
-        printf("| %30s | %3d | %3d | %3d | %5s |\n", 
+        printf("| %30s | %3d | %3d | %3d | %5s |  %5ld |\n", 
             tableauresultatsTests[i].nomRubrique,
             tableauresultatsTests[i].nbtests,
             tableauresultatsTests[i].nbOK,
             tableauresultatsTests[i].nbKO, 
-            tauxReussite);
+            tauxReussite,
+            tableauresultatsTests[i].duree);
     }
     if (nbTests == 0){
         strcpy(tauxReussite, "");
     } else {
         snprintf(tauxReussite, sizeof(tauxReussite), "%3d%%", nbOK * 100 / nbTests);
     }
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
-    printf("|                  Total         | %3d | %3d | %3d | %5s |\n", nbTests, nbOK, nbKO, tauxReussite);
-    printf("+--------------------------------+-----+-----+-----+-------+\n");
+    printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
+    printf("|                  Total         | %3d | %3d | %3d | %5s |  %5ld |\n", nbTests, nbOK, nbKO, tauxReussite, dureeTests);
+    printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
 }
 
 //-----------------------------------------
@@ -165,15 +209,18 @@ void bilanTests(void){
 //-----------------------------------------
 void bilanTestsRubrique(char *rubrique){
     //printf("execute bilanTestsRubrique\n");
+    gettimeofday(&finRubrique, tmpTime);
+    long dureeRubrique = myDifftime(&debutRubrique, &finRubrique);
     if (nbTestsRubrique > 0){
         printf("    %d tests executés dans la rubrique %s\n", nbTestsRubrique, rubrique);
+        printf("    Durée de la rubrique = %ld\n", dureeRubrique);
         for (int i = 0; i < NB_RUBRIQUES ; i++){
             //printf("construction ligne %d de la rubrique %s (%s)=> ", i, rubrique, tableauresultatsTests[i].nomRubrique);
             if (strcmp(tableauresultatsTests[i].nomRubrique, rubrique) == 0){
                 tableauresultatsTests[i].nbtests = nbTestsRubrique;
                 tableauresultatsTests[i].nbOK = nbOKRubrique;
                 tableauresultatsTests[i].nbKO = nbKORubrique;
-                //printf("OK\n");
+                tableauresultatsTests[i].duree = dureeRubrique;
                 break;
             } else {
                 //printf("KO\n");
@@ -184,6 +231,7 @@ void bilanTestsRubrique(char *rubrique){
         nbKORubrique = 0;
     }
     printf("\n");
+    
 }
 
 //-----------------------------------------
@@ -258,11 +306,7 @@ void executeTests(int mode){
     //=======================================
     if (0 || exec_all || exec_tools){
         strcpy(rubrique, "tools");
-        log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "=====================================================");
+        baniereDebutRubrique(rubrique);
         
         if (1 || exec_all ) { // test de suppression des blancs inutiles d'une chaine
             log(LOG_DEBUG, "-----------------------------------------------------");
@@ -484,11 +528,7 @@ void executeTests(int mode){
     //=======================================
     if (0 || exec_all || exec_civilisation){
         strcpy(rubrique, "civilisation");
-        log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "=====================================================");
+        baniereDebutRubrique(rubrique);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test de creation de civilisation avec id element = 0");
@@ -555,11 +595,7 @@ void executeTests(int mode){
     //=======================================
     if (0 || exec_all || exec_element){
         strcpy(rubrique, "element");
-        log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "=====================================================");
+        baniereDebutRubrique(rubrique);
         Element element;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
@@ -586,11 +622,7 @@ void executeTests(int mode){
     //=======================================
     if (0 || exec_all || exec_humain){
         strcpy(rubrique, "humain");
-        log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "=====================================================");
+        baniereDebutRubrique(rubrique);
         //Civilisation civilisation;
 
         log(LOG_DEBUG, "-----------------------------------------------------");
@@ -714,11 +746,7 @@ void executeTests(int mode){
     //=======================================
     if (0 || exec_all || exec_entreprise){
         strcpy(rubrique, "entreprise");
-        log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "=====================================================");
+        baniereDebutRubrique(rubrique);
         //Civilisation civilisation;
         Element *elementEntreprise, *elementHumain;
 
@@ -816,11 +844,7 @@ void executeTests(int mode){
     //=======================================
     if (0 || exec_all || exec_banque){
         strcpy(rubrique, "banque");
-        log(LOG_DEBUG, "=====================================================");
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "        execution des tests rubrique %s", rubrique);
-        log(LOG_DEBUG, "");
-        log(LOG_DEBUG, "=====================================================");
+        baniereDebutRubrique(rubrique);
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation de compte");
