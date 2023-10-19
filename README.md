@@ -35,15 +35,15 @@ Ce fichier doit contenir le comportement qui régit chaque évolution de l'objet
 ### Liste des commandes de script disponibles par type d'objet : 
 
 - civilisation :
-	- humain, [homme|femme], < nom >, < capital initial > => creation d'un humain
-	- entreprise, < type >, < nom >, < capital initial > => creation d'une en treprise
+	- humain, [homme|femme], < nom >, < capital initial > => creation d'un humain (exemple humain, homme, gilbert, 4000)
+	- entreprise, < type >, < nom >, < capital initial > => creation d'une entreprise (entreprise, 1, aubonpain, 10000)
 
 - Humain : 
-	- mort
-	- evolutionSituationMaritale
-	- ecole
-	- naissancePossible
-	- achat-< nom entreprise > => achete nourriture a l'entreprise citee apres le '-' 
+	- mort => si age > 15 et age > 75 + rnd(30)
+	- evolutionSituationMaritale => a verifier
+	- ecole => a verifier
+	- naissancePossible => genere une naissance si age entre 20 et 50 + une condition aleatoire.
+	- achat-< nom entreprise > => achete nourriture a l'entreprise citee apres le '-' (exemple achat-aubonpain)
 - Entreprise : 
 	- produire	=> lance la produition du nombre de produit prevu pour chaque salarie
 	- embaucher => cherche dans les humain si une personne est embeauchable
@@ -51,22 +51,32 @@ Ce fichier doit contenir le comportement qui régit chaque évolution de l'objet
 
 ### Liste des variables de script disponibles par type d'objet : 
 
-- variables obligatoires : 
-	- civilisation: tauxEpargne
+- Variables obligatoires : 
+	- civilisation: 
+		- tauxEpargne
 	- Humain : 
-	- Entreprise : nom, cout Salarie, prix produit, cout produit, maxEmploye, productiviteSalarie
+	- Entreprise : 
+		- nom
+		- cout Salarie
+		- prix produit
+		- cout produit
+		- maxEmploye
+		- productiviteSalarie
 
-- variables facultatives : 
+- Variables facultatives : 
 	- civilisation : 
-	- Humain : age
-	- Entreprise : nbSalarie, stock, nbCommande
+	- Humain : 
+		- age
+	- Entreprise : 
+		- nbSalarie
+		- stock
+		- nbCommande
 	
 	
 ## Differents niveau de log
-	LOG_INFO'   0 : message informatif sans 
-	LOG_WARNING 1 : signale avertissement lors de l'exécution
-	LOG_ERROR   2 : signale les erreurs d'exécution
+	LOG_ERROR   0 : signale les erreurs d'exécution	LOG_WARNING 1 : signale avertissement lors de l'exécution
+	LOG_INFO'   2 : message informatif sans 
 	LOG_DEBUG   3 : utilise pour la mise au point du programme
 	
 ## Algorithme analyse de script
-	
+	A rediger .....
