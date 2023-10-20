@@ -257,20 +257,20 @@ void Civilisation::listeCivilisation(void){
 
     // affichage des entreprises 
     if (displayListeEntreprises){
-        snprintf(ligne, 200, "+--------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
+        snprintf(ligne, 200, "+-------------------------------------------------------------------------------------------------------------------------------------------------------------------+\n");
         printf("%s", ligne); fputs(ligne, fic);
-        snprintf(ligne, 200, "|                                                          population  %4d entreprises                                                                  |\n", getNbEntreprise());
+        snprintf(ligne, 200, "|                                                          population  %4d entreprises                                                                             |\n", getNbEntreprise());
         printf("%s", ligne); fputs(ligne, fic);
-        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
+        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+----------+------------+------------+-----------------+\n");
         printf("%s", ligne); fputs(ligne, fic);
-        snprintf(ligne, 200, "|   id   |                       nom |            nom commercial | activité | nb cde   |  stock   | nb sal   |   cap init |    capital |         epargne |\n");
+        snprintf(ligne, 200, "|   id   |                       nom |            nom commercial | activité | nb cde   |  stock   | nb sal   | prod sal |   cap init |    capital |         epargne |\n");
         printf("%s", ligne); fputs(ligne, fic);
-        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
+        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+----------+------------+------------+-----------------+\n");
         printf("%s", ligne); fputs(ligne, fic);
         for (int i = 0 ; i < MAX_ELEMENTS ; i++){
             Element *ptr = elements[i];
             if (ptr->getTypeElement() == TYPE_ENTREPRISE){
-                snprintf(ligne, 200, "| %5d  | %25s | %25s |   %5d  |   %5d  |   %5d  |   %5d  | %10d | %10d | %15d |\n", 
+                snprintf(ligne, 200, "| %5d  | %25s | %25s |   %5d  |   %5d  |   %5d  |   %5d  |   %5d  | %10d | %10d | %15d |\n", 
                     ptr->getIdEntreprise(),
                     ptr->getNomEntreprise(), 
                     ptr->getNomCommercialEntreprise(), 
@@ -278,13 +278,14 @@ void Civilisation::listeCivilisation(void){
                     ptr->getNbCommandes(),
                     ptr->getStockProduit(),
                     ptr->getNbSalaries(),
+                    ptr->getProductiviteSalarie(),
                     ptr->getCapitalInitial(),
                     ptr->compteBancaireEntreprise->getSolde(),
                     ptr->compteBancaireEntreprise->getEpargne());
                 printf("%s", ligne); fputs(ligne, fic);
             }
         }
-        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+------------+------------+-----------------+\n");
+        snprintf(ligne, 200, "+--------+---------------------------+---------------------------+----------+----------+----------+----------+----------+------------+------------+-----------------+\n");
         printf("%s", ligne); fputs(ligne, fic);
     }
 

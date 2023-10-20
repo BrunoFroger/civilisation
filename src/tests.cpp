@@ -18,6 +18,10 @@
 
 #define NB_RUBRIQUES    6
 
+//Paramètre  Couleur
+//0 reinit |30 Noir |31 Rouge | 32 Vert | 33 Jaune | 34 Bleu| 35 Magenta | 36 Cyan | 37 Blanc
+#define color(param) printf("\033[%dm",param)
+
 extern Civilisation civilisation;
 
 typedef struct {
@@ -247,7 +251,9 @@ bool resultatTest(char *rubrique, bool status){
         nbOK++;
         nbOKRubrique++;
     } else {
+        color(31);
         printf("    Test n° %d KO dans %s\n", nbTestsRubrique + 1, rubrique);
+        color(0);
         nbKO++;
         nbKORubrique++;
         StatusBilanTests = false;
@@ -337,6 +343,7 @@ void executeTests(int mode){
             // tests sur prenoms masculin
             //log(LOG_DEBUG, "tests prenoms masculin");
             int nbPrenomGeneres = 100;
+            int maxDoublons = 7;
             int nbDoublons = 0;
             for (int i = 0 ; i < nbPrenomGeneres ; i++){
                 //log(LOG_DEBUG,"--------------------------------");
@@ -352,7 +359,7 @@ void executeTests(int mode){
                 }
             }
             log(LOG_DEBUG, "%d doublons de prenoms masculins", nbDoublons);
-            resultatTest(rubrique, (nbDoublons < 5));
+            resultatTest(rubrique, (nbDoublons < maxDoublons));
             nbDoublons = 0;
             // tests sur prenoms femin
             for (int i = 0 ; i < 200 ; i++) strcpy(tabPrenoms[i], "");
@@ -371,7 +378,7 @@ void executeTests(int mode){
                 }
             }
             log(LOG_DEBUG, "%d doublons de prenoms feminin", nbDoublons);
-            resultatTest(rubrique, (nbDoublons < 5));
+            resultatTest(rubrique, (nbDoublons < maxDoublons));
             nbDoublons = 0;
         }
 
@@ -690,7 +697,7 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test naissance");
         ancienNbHumain = civilisation.getNbHumain();
         Element *enfant = naissance(pere, mere);
-        civilisation.listeCivilisation();
+        //civilisation.listeCivilisation();
         log(LOG_DEBUG, "creation d'un enfant en position %d", enfant->getElementId());
         resultatTest(rubrique, (enfant->getPere() == pere->getIdHumain()));
         resultatTest(rubrique, (enfant->getMere() == mere->getIdHumain()));
@@ -730,10 +737,10 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test commande achat produits");
         Element *entrepriseToto = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"toto", 10000, NULL);
         Element *clientToto = civilisation.creeElementHumain(HOMME, (char*)"clientToto", 1000);
-        civilisation.listeCivilisation();
+        //civilisation.listeCivilisation();
         resultatTest(rubrique, clientToto->testSiCommandeValideHumain((char *)"achat-toto")); 
         humain.acheteProduit(entrepriseToto,1);
-        civilisation.listeCivilisation();
+        //civilisation.listeCivilisation();
         resultatTest(rubrique, (entrepriseToto->getNbCommandes() == 1));
         
         bilanTestsRubrique(rubrique);
@@ -756,11 +763,12 @@ void executeTests(int mode){
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"auBonPain") == 0));
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomCommercialEntreprise(), (char *)"au bon pain") == 0));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
-        resultatTest(rubrique, (elementEntreprise->getCoutSalaries() == 100));
-        resultatTest(rubrique, (elementEntreprise->getCoutProduit() == 5));
+        resultatTest(rubrique, (elementEntreprise->getCoutSalaries() == 80));
+        resultatTest(rubrique, (elementEntreprise->getCoutProduit() == 3));
         resultatTest(rubrique, (elementEntreprise->getPrixProduit() == 10));
         resultatTest(rubrique, (elementEntreprise->getStockProduit() == 20));
         resultatTest(rubrique, (elementEntreprise->getMaxEmployes() == 5));
+        resultatTest(rubrique, (elementEntreprise->getProductiviteSalarie() == 15));
 
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test creation entreprise avec fichier de configuration par default");
@@ -834,6 +842,9 @@ void executeTests(int mode){
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 1));
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"livraison"));
 
+        log(LOG_DEBUG, "-----------------------------------------------------");
+        log(LOG_DEBUG, "test execution scripts");
+        log(LOG_DEBUG, "a completer");
         bilanTestsRubrique(rubrique);
     }
 

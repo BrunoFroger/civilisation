@@ -1,8 +1,8 @@
 
-si nbCommande > 0 alors livraison finsi
-
 si nbCommande > stock alors produire finsi
 
-si nbCommande = 0 alors debaucher finsi
+si nbCommande > 0 alors livraison finsi
+
+si nbCommande = 0 alors si stock = 0 alors debaucher finsi finsi
 
 si nbCommande > stock alors embaucher finsi

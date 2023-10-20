@@ -12,6 +12,7 @@
 #include "../inc/log.hpp"
 #include "../inc/tools.hpp"
 #include "../inc/civilisation.hpp"
+#include "../inc/aide.hpp"
 
 char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher", "livraison"};
 char listeVariablesEntreprise[NB_VARIABLE_ENTREPRISE][20] = {"nom", "nbSalarie", "nbCommande", "stock"};
@@ -78,6 +79,7 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
         }
     }
     // lecture et analyse du fichier de definition entreprise
+    int nbVariablesObligatoires = NB_VARIABLES_SCRIPT_OBLIGATOIRES;
     while (!feof(fic)){
         strcpy(ligne,"");
         fgets(ligne, 100, fic);
@@ -86,6 +88,7 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
             tmp = &ligne[3];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             strcpy(this->nomCommercial, tmp);
+            nbVariablesObligatoires--;
             //printf("nom          :  <%s> <%s>\n", tmp, this->nom);
         } else if (strncmp(ligne, "nbSalarie", 9) == 0){
             tmp = &ligne[9];
@@ -96,16 +99,19 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
             tmp = &ligne[13];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->coutSalarie = atoi(tmp);
+            nbVariablesObligatoires--;
             //printf("cout salarie :  <%s> <%d>\n", tmp, this->coutSalarie);
         } else if (strncmp(ligne, "prix produit", 11) == 0){
             tmp = &ligne[13];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->prixProduit = atoi(tmp);
+            nbVariablesObligatoires--;
             //printf("prix produit :  <%s> <%d>\n", tmp, this->prixProduit);
         } else if (strncmp(ligne, "cout produit", 11) == 0){
             tmp = &ligne[13];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->coutProduit = atoi(tmp);
+            nbVariablesObligatoires--;
             //printf("cout produit :  <%s> <%d>\n", tmp, this->coutProduit);
         } else if (strncmp(ligne, "stock", 5) == 0){
             tmp = &ligne[5];
@@ -116,8 +122,20 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
             tmp = &ligne[11];
             while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
             this->maxEmployes = atoi(tmp);
+            nbVariablesObligatoires--;
+            //printf("maxEmployes  :  <%s> <%d>\n", tmp,this->maxEmployes);
+        } else if (strncmp(ligne, "productiviteSalarie", 19) == 0){
+            tmp = &ligne[19];
+            while ((tmp[0] == ' ') || (tmp[0] == '=')) tmp++;
+            this->productiviteSalarie = atoi(tmp);
+            nbVariablesObligatoires--;
             //printf("maxEmployes  :  <%s> <%d>\n", tmp,this->maxEmployes);
         }
+    }
+    if (nbVariablesObligatoires != 0){
+        log(LOG_ERROR, "ERREUR, il manque au moins une des variables obligatoires");
+        aide();
+        exit(-1);
     }
     fclose(fic);
 }
@@ -299,6 +317,15 @@ int Entreprise::getMaxEmployes(void){
 
 //-----------------------------------------
 //
+//          Entreprise::getProductiviteSalaries
+//
+//-----------------------------------------
+int Entreprise::getProductiviteSalarie(void){
+    return productiviteSalarie;
+}
+
+//-----------------------------------------
+//
 //          Entreprise::getNbCommandes
 //
 //-----------------------------------------
@@ -454,10 +481,10 @@ bool Entreprise::produire(){
         Humain *employe = listeEmployes[i];
         if (employe != NULL){
             // .... TODO ... prevoir comment payer le cout produit a un compte bancaire fictif
-            compteBancaireEntreprise->virement(compteBancaireFournisseurNull, coutProduit);
+            compteBancaireEntreprise->virement(compteBancaireFournisseurNull, (coutProduit * productiviteSalarie));
             log(LOG_INFO,"%s verse un salaire de %d a %s", nom, coutSalarie, employe->getNomHumain());
             compteBancaireEntreprise->virement(employe->compteBancaireHumain, coutSalarie);
-            nbProduitsFabriques++;
+            nbProduitsFabriques += productiviteSalarie;
         }
     }
     stock += nbProduitsFabriques;

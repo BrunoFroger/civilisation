@@ -30,6 +30,9 @@
     #define NB_COMMANDES_ENTREPRISE 4
     #define NB_VARIABLE_ENTREPRISE  4
 
+    #define NB_VARIABLES_SCRIPT_OBLIGATOIRES   6
+    // nom, cout salarie, prix produit, cout produit
+
     class Humain;
 
     typedef struct{
@@ -51,6 +54,7 @@
             char *getNomCommercialEntreprise();
             int getActivite();
             int getNbSalaries();
+            int getProductiviteSalarie();
             int getCoutSalaries();
             int getCoutProduit();
             int getPrixProduit();
@@ -84,6 +88,7 @@
             int coutSalarie;
             int coutProduit;
             int prixProduit;
+            int productiviteSalarie;
             int stock;
             int nbCommandes;
             int maxEmployes;
@@ -96,6 +101,7 @@
             Entreprise *maisonMere;
             Entreprise *listeFiliales[MAX_FILIALES];
             int nbDemandeEmbauche;
+            Humain *patron;
     };
 
 #endif

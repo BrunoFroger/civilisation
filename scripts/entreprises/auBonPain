@@ -1,8 +1,8 @@
 nom = au bon pain
 nbSalarie = 0
-cout Salarie = 100
-capacite production salarie = 15
+cout Salarie = 80
+productiviteSalarie = 15
 prix produit = 10
-cout produit = 5
+cout produit = 3
 stock = 20
 maxEmployes = 5

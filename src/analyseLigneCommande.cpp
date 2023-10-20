@@ -203,12 +203,24 @@ void analyseLigneCommande(char *ligneCommande){
             if (strtol(&ligneCommande[6], NULL, 10) != 0){
                 civilisation.listeElement(atoi(tmp));
             } else {
+                bool res;
                 if (strncmp(tmp, "humain", 6) == 0){
                     displayListeHumains = !displayListeHumains;
+                    res = displayListeHumains;
                 } else if (strncmp(tmp, "entreprise", 10) == 0){
                     displayListeEntreprises = !displayListeEntreprises;
+                    res = displayListeEntreprises;
                 } else if (strncmp(tmp, "banque", 6) == 0){
                     displayListeBanques = !displayListeBanques;
+                    res = displayListeBanques;
+                } else {
+                    log(LOG_ERROR, "parametre de la commande 'liste' inconnu : %s", tmp);
+                    return;
+                }
+                if (res){
+                    log(LOG_INFO, "activation affichage de la liste des '%s'", tmp);
+                } else {
+                    log(LOG_INFO, "desactivation affichage de la liste des '%s'", tmp);
                 }
             }
         }else {

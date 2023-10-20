@@ -520,9 +520,20 @@ bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *lis
 //
 //-----------------------------------------
 void setAuto(char *parametre){
+    bool res;
     if (strncmp(parametre, "liste", 5) == 0){
         modeListeAuto = !modeListeAuto;
+        res = modeListeAuto;
     } else if (strncmp(parametre, "tableau", 7) == 0){
         modeTDBAuto = !modeTDBAuto;
+        res = modeTDBAuto;
+    } else {
+        log(LOG_ERROR, "parametre de la commande 'auto' inconnu : %s", parametre);
+        return;
+    }
+    if (res){
+        log(LOG_INFO, "activation affichage automatique de '%s'", parametre);
+    } else {
+        log(LOG_INFO, "desactivation affichage automatique de '%s'", parametre);
     }
 }
