@@ -45,6 +45,7 @@
             bool evalueExpression(char *expression);
             char *getNom(void);
             CompteBancaire *getCompteBancaire(void);
+            bool testSiListeCommandeValide(char *valeur);
 
         protected:
 

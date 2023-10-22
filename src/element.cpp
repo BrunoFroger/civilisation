@@ -212,6 +212,20 @@ bool Element::executeExpression(char *expression){
 
 //-----------------------------------------
 //
+//          Element::testSiListeCommandeValide
+//
+//-----------------------------------------
+bool Element::testSiListeCommandeValide(char *valeur){
+    if (typeElement == TYPE_HUMAIN){
+        return testSiListeCommandeValideHumain(valeur);
+    } else if (typeElement == TYPE_ENTREPRISE){
+        return testSiListeCommandeValideEntreprise(valeur);
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
 //          Element::execScript
 //
 //-----------------------------------------
@@ -275,11 +289,11 @@ bool Element::execScript(char *filename){
                     return false;
                 } else {
                     // traitement de la ligne si
-                    if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiVrai)){
+                    if (!testSiListeCommandeValide(resultat.ListeCommandeSiVrai)){
                         log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiVrai);
                         return false;
                     }
-                    if (!testSiListeCommandeValideHumain(resultat.ListeCommandeSiFaux)){
+                    if (!testSiListeCommandeValide(resultat.ListeCommandeSiFaux)){
                         log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiFaux);
                         return false;
                     }
