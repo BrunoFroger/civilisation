@@ -73,7 +73,7 @@
             bool demission(Humain *salarie);
             static char *listeVariables(void);
             bool evalueExpressionEntreprise(char *expression);
-            static bool isVariable(char *nomVariable);
+            bool isVariable(char *nomVariable);
             int getIntValue(char *valeur);
             int getCapitalInitial(void);
             bool embaucher();
