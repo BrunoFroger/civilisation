@@ -35,5 +35,6 @@
     extern int getSexeAleatoire(void);
     extern char *getPrenomAleatoire(int sexe);
     extern void setAuto(char *parametre);
+    extern char *getBoolString(bool val);
 
 #endif

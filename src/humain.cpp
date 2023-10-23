@@ -433,11 +433,9 @@ bool Humain::execCommandeHumain(char *valeur){
                     return true;
                     break;
                 case 3: // achat
-                    //printf(" !!!!!!!        a ecrire    !!!!!!!!\n");
                     char *fournisseur = &(valeur[tailleCommande +1]);
-                    //printf(" nom du fournisseur = <%s>\n", fournisseur);
                     acheteProduit(Civilisation::getEntrepriseByNom(fournisseur), 1);
-                    return false;
+                    return true;
                     break;
             }
             break;

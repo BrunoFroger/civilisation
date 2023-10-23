@@ -245,10 +245,7 @@ void Entreprise::livraison(Humain *client){
                 log(LOG_ERROR, "livraison de %d produit a %s impossible (pas assez de stock)", tmpCde->quantité, client->getNomHumain());
                 return;
             }
-
-            //return;
         }
-        //break;
     }
 }
 
@@ -587,7 +584,7 @@ char *Entreprise::listeVariables(void){
 //
 //-----------------------------------------
 bool Entreprise::debaucher(void){
-    if (nbSalaries == 0) return true;
+    if (nbSalaries == 0) return false;
     log(LOG_DEBUG,"Humain::debaucher : TODO modifier pour selectionner aleatoirement un salarie");
     for (int i = 0 ; i < MAX_EMPLOYES ; i++){
         Humain *employe = listeEmployes[i];

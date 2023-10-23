@@ -327,11 +327,12 @@ bool decomposeSi(char *ligne, structSi *resultat){
     char *tmp;
     char buffer[200];
     log(LOG_DEBUG, "Tools.cpp => -----------------------------");
-    log(LOG_DEBUG, "Tools.cpp => decomposeSi => debut");
+    log(LOG_DEBUG, "Tools.cpp => decomposeSi => debut ");
 
     strcpy(resultat->expression,"");
     strcpy(resultat->ListeCommandeSiVrai,"");
     strcpy(resultat->ListeCommandeSiFaux,"");
+    log(LOG_DEBUG, "Tools.cpp => decomposeSi => decomposition de '%s' ", ligne);
     if (strncmp(ligne, "si", 2) != 0){
         return false;
     } else {
@@ -340,22 +341,6 @@ bool decomposeSi(char *ligne, structSi *resultat){
             ligne[strlen(ligne) - 1] = '\0';
         }
         tmp = &ligne[2];
-        /*
-        // recherche si 'finsi' dans la ligne, sinon, on concatene avec les lignes suivantes
-        while (strstr(ligne, "finsi") == NULL){
-            // le finsi n'est pas sur la ligne courante, on lit les suivantes et on concatene la chaine 
-            char ligneSupp[50];
-            fgets(ligneSupp, 50, fic);
-            if (feof(fic)){
-                log(LOG_ERROR, "finsi non trouve");
-                return false;
-            }
-            ligneSupp[strlen(ligneSupp) - 1] = '\0';
-            strcat(ligne, " ");
-            strcat(ligne, ligneSupp);
-            //printf("ligne supplementaire lue : '%s'\n", ligne);
-        }*/
-        //printf("ligne complete de si a traiter : '%s'\n", ligne);
 
         // recuperation de l'expresion
         i=0;
@@ -387,6 +372,27 @@ bool decomposeSi(char *ligne, structSi *resultat){
         i = 0;
         while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
         //printf("tmp avant recherche liste commandes si vrai = '%s'\n", tmp);
+        if (strncmp(tmp, "si", 2) == 0) {
+            // gestion du si imbriqué
+            log(LOG_DEBUG,"on commence un si imbrique '%s'", tmp);
+            while ((strncmp(tmp, "finsi", 5) != 0)){
+                if (tmp[0] == '\0'){
+                    // on est arrive en fin de chaine sans avoir trouve sinon ou finsi
+                    log(LOG_ERROR, "finsi non trouve dans si imbrique");
+                    return false;
+                }
+                    resultat->ListeCommandeSiVrai[i++] = *tmp++;
+                    resultat->ListeCommandeSiVrai[i] = '\0';
+            }
+            strcat(resultat->ListeCommandeSiVrai, (char *)"finsi");
+            tmp += 5;
+            log(LOG_DEBUG, "si imbrique = '%s'", resultat->ListeCommandeSiVrai);
+            log(LOG_DEBUG, "chaine restant a traiter = '%s'", tmp);
+            structSi resultat1;
+            decomposeSi(resultat->ListeCommandeSiVrai, &resultat1);
+            strcpy(resultat->ListeCommandeSiVrai, resultat1.ListeCommandeSiVrai);
+            i = strlen(resultat->ListeCommandeSiVrai);
+        }
         while ((strncmp(tmp, "sinon", 4) != 0) && (strncmp(tmp, "finsi", 5) != 0)){
             if (tmp[0] == '\0'){
                 // on est arrive en fin de chaine sans avoir trouve sinon ou finsi
@@ -403,10 +409,10 @@ bool decomposeSi(char *ligne, structSi *resultat){
             remove_extra_spaces(resultat->expression);
             remove_extra_spaces(resultat->ListeCommandeSiVrai);
             remove_extra_spaces(resultat->ListeCommandeSiFaux);
-            log(LOG_DEBUG, "Tools.cpp => expression          = '%s'", resultat->expression);
-            log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiVrai = '%s'", resultat->ListeCommandeSiVrai);
-            log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiFaux = '%s'", resultat->ListeCommandeSiFaux);
-            log(LOG_DEBUG, "Tools.cpp => fin 181\n");
+            log(LOG_DEBUG, "Tools.cpp => expression     = '%s'", resultat->expression);
+            log(LOG_DEBUG, "Tools.cpp => alors          = '%s'", resultat->ListeCommandeSiVrai);
+            log(LOG_DEBUG, "Tools.cpp => sinon          = '%s'", resultat->ListeCommandeSiFaux);
+            log(LOG_DEBUG, "Tools.cpp => -------- pas de sinon -------");
             return true;
         }
 
@@ -438,10 +444,10 @@ bool decomposeSi(char *ligne, structSi *resultat){
         remove_extra_spaces(resultat->expression);
         remove_extra_spaces(resultat->ListeCommandeSiVrai);
         remove_extra_spaces(resultat->ListeCommandeSiFaux);
-        log(LOG_DEBUG, "Tools.cpp => expression          = '%s'", resultat->expression);
-        log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiVrai = '%s'", resultat->ListeCommandeSiVrai);
-        log(LOG_DEBUG, "Tools.cpp => ListeCommandeSiFaux = '%s'", resultat->ListeCommandeSiFaux);
-        log(LOG_DEBUG, "Tools.cpp => fin 214\n");
+        log(LOG_DEBUG, "Tools.cpp => expression     = '%s'", resultat->expression);
+        log(LOG_DEBUG, "Tools.cpp => alors          = '%s'", resultat->ListeCommandeSiVrai);
+        log(LOG_DEBUG, "Tools.cpp => sinon          = '%s'", resultat->ListeCommandeSiFaux);
+        log(LOG_DEBUG, "Tools.cpp => -------- avec sinon ---------");
         return true;
     }
 }
@@ -536,4 +542,14 @@ void setAuto(char *parametre){
     } else {
         log(LOG_INFO, "desactivation affichage automatique de '%s'", parametre);
     }
+}
+
+//-----------------------------------------
+//
+//          getBoolString
+//
+//-----------------------------------------
+char *getBoolString(bool val){
+    if (val) return (char *)"true";
+    return (char *)"false";
 }
