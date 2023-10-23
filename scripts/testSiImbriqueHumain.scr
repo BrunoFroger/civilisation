@@ -1,0 +1,10 @@
+
+# test de si imbrique pour variables et commandes humain
+
+si statusMarital = 0 alors
+    si nbEnfants = 0 alors
+        naissancePossible
+    finsi
+sinon 
+    chercheConjoint
+finsi
