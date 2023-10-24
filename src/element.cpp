@@ -231,7 +231,6 @@ bool Element::testSiListeCommandeValide(char *valeur){
 //-----------------------------------------
 bool Element::execScript(char *filename){
     FILE *fic;
-    int numLigne=0;
     char ligne[500];
     char script[5000] = "";
     char scriptRestant[5000] = "";
@@ -268,65 +267,12 @@ bool Element::execScript(char *filename){
     //structExpression expressionResultat;
     do {
         log(LOG_DEBUG, "---- decompose script -------\n");
+        strcpy(expression, "");
+        strcpy(scriptRestant, "");
         decomposeScript(script, expression, scriptRestant);
         executeExpression(expression);
         strcpy(script, scriptRestant);
     } while (strcmp(scriptRestant, "") != 0);
     fclose(fic);
-    return true;
-
-    //      code inutilisé
-    // a voir si reutilisable
-
-    if (tmp[0] != '#'){ // commentaire on passe
-        if (strlen(tmp) != 0){  // ligne vide on passe
-            //printf("ligne a analyser = '%s'\n", tmp);
-            if (strncmp(tmp, "si", 2) == 0){
-                //printf("Analyse d'une ligne contenant un 'si'\n");
-                structSi resultat;
-                if (!decomposeSi(tmp, &resultat)){
-                    log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
-                    return false;
-                } else {
-                    // traitement de la ligne si
-                    if (!testSiListeCommandeValide(resultat.ListeCommandeSiVrai)){
-                        log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiVrai);
-                        return false;
-                    }
-                    if (!testSiListeCommandeValide(resultat.ListeCommandeSiFaux)){
-                        log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiFaux);
-                        return false;
-                    }
-                    log(LOG_DEBUG, "decomposition de l'expression %s\n", resultat.expression);
-                    /*
-                    int val1, val2;
-                    if (isVariable(resultat.expression1)){
-                        val1 = getIntValue(resultat.expression1);
-                    } else {
-                        val1 = atoi(resultat.expression1);
-                    }
-                    if (isVariable(resultat.expression2)){
-                        val2 = getIntValue(resultat.expression2);
-                    } else {
-                        val2 = atoi(resultat.expression2);
-                    }
-                    Element::evaluationExpressionInt(val1, resultat.operateur, val2);
-                    */
-                } 
-            } else {
-                log(LOG_ERROR, "instruction inconnue dans la ligne '%s'\n", ligne);
-                return false;
-            }
-        }
-    }
-    //printf("fin traitement de ligne\n");
-    if (!feof(fic)){
-        strcpy(ligne, "");
-        //printf("Lecture nouvelle ligne\n");
-        fgets(ligne, 500, fic);
-        //printf("'%s'", ligne);
-        numLigne++;
-    }
-    //printf("\n");
     return true;
 }

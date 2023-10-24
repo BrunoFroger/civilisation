@@ -24,6 +24,10 @@ char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
 CompteBancaire *compteBancaireFournisseurNull = new CompteBancaire(NULL);
 CompteBancaire *compteBancaireHeritageNull = new CompteBancaire(NULL);
 
+#define NB_INSTRUCTION_COMPLEXES 3
+
+char listeInstructionComplexe[NB_INSTRUCTION_COMPLEXES][20] = {"si", "pour", "tantque"};
+
 bool modeListeAuto = false;
 bool modeTDBAuto = false;
 
@@ -448,65 +452,105 @@ bool decomposeSi(char *ligne, structSi *resultat){
 
 //-----------------------------------------
 //
+//          testSiInstructionComplexe
+//
+//-----------------------------------------
+bool testSiInstructionComplexe(char *instruction){
+    //log(LOG_DEBUG, "tests si instruction <%s> complexe", instruction);
+    char *commande;
+    for (int i = 0 ; i < NB_INSTRUCTION_COMPLEXES ; i++){
+        commande = listeInstructionComplexe[i];
+        //log(LOG_DEBUG, "comparaison de <%s> avec <%s> de taille %d", instruction, commande, strlen(commande));
+        if (strncmp(instruction, commande, strlen(commande)) == 0){
+            //log(LOG_DEBUG, "<%s> est bien une instruction complexe", instruction);
+            return true;
+        } 
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
+//          decomposeScript
+//
+//-----------------------------------------
+bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
+    log(LOG_DEBUG,"extraireSi de la liste d'instructions <%s>", ListeInstructionOrigine);
+    char *tmp = ListeInstructionOrigine;
+    int index = 0;
+    int niveauSi = 0;
+    bool fin = false;
+    while (!fin){
+        if (niveauSi == 0){
+            if (strncmp(tmp, "si", 5) == 0){
+                niveauSi++;
+                log(LOG_DEBUG, "c'est un si imbrique, on incremente le niveauSi : %d", niveauSi);
+            } else if (strncmp(&tmp[index], "finsi", 5) == 0){
+                // on a trouve le finSi correspondant
+                strncpy(instruction, ListeInstructionOrigine, index+5);
+                strcpy(listeInstructionsRestante, &ListeInstructionOrigine[index+5]);
+                log(LOG_DEBUG, "extraireSi => fin OK : instruction = <%s>, instructions restantes = <%s>", instruction, listeInstructionsRestante);
+                remove_extra_spaces(instruction);
+                remove_extra_spaces(listeInstructionsRestante);
+                return true;
+            }
+        } else {
+            // recherche du finSi imbriqueelse 
+            if (strncmp(tmp, "finsi", 5) == 0){
+                // on a trouve le finSi du si imbrique
+                niveauSi--;
+            }
+        }
+        if (index >= strlen(ListeInstructionOrigine)){
+            // on a pas trouve le finSi
+            log(LOG_ERROR, "fin de script sans avoir trouve le finsi correspondant dans <%s>", ListeInstructionOrigine);
+            return false;
+        }
+        index++;
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
 //          decomposeScript
 //
 //-----------------------------------------
 bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
     log(LOG_DEBUG, "tools decomposeScript => debut");
+    remove_extra_spaces(ListeInstructionOrigine);
     log(LOG_DEBUG, "tools decomposeScript => Decomposition du script <%s>", ListeInstructionOrigine);
     strcpy(instruction, (char *)"");
     strcpy(listeInstructionsRestante, (char *)"");
+    char *tmp = ListeInstructionOrigine;
+    char mot[100] = "";
+    int index = 0;
     if (strlen(ListeInstructionOrigine) > 0){
-        int j = 0;
-        // analyse si la liste d'origine commence par un mot clé d'une instruction complexe
-        // multiligne possible
-        if (strncmp(ListeInstructionOrigine, "si", 2) == 0){ // traitement d'un si 
-            // recherche du finsi
-            char *tmp = ListeInstructionOrigine;
-            while (strncmp(&tmp[j], "finsi", 5) != 0){
-                j++;
-                if (j > strlen(tmp)){
-                    log(LOG_ERROR, "finsi non trouvé dans %s", ListeInstructionOrigine);
-                    return false;
-                }
-                //log(LOG_DEBUG, "TODO => Finir le dev");
-            } 
-            /*        
-            printf("tools decomposeScript => traitement d'un si\n");
-            char *tmp = ListeInstructionOrigine;
-            while (strncmp(tmp, "finsi ", 6) != 0){
-                if (tmp - ListeInstructionOrigine >= strlen(ListeInstructionOrigine)){
-                    // on a pas trouvé le finsi
-                    log(LOG_ERROR, "pas de finsi dans le script");
-                    return false;
-                }
-                instruction[j++] = tmp[0];
-                tmp++;
-                instruction[j] = '\0';
-            }*/
-            strncat(instruction, tmp, j+5);
-            if (strlen(tmp) > j+6){
-                strcpy(listeInstructionsRestante, tmp+j+6);
-            } else {
-                strcpy(listeInstructionsRestante, "");
-            }
-        } else { // traitement d'un instruction simple finissant par une fin de ligne
-            for (int i = 0 ; i < strlen(ListeInstructionOrigine) ; i++){
-                // test si 
-                while (ListeInstructionOrigine[i] != '\n'){
-                    instruction[j++] = ListeInstructionOrigine[i++];
-                    instruction[j] = '\0';
-                }
-                if (i < strlen(ListeInstructionOrigine)){
-                    strcpy(listeInstructionsRestante, &ListeInstructionOrigine[i+1]);
-                } else {
-                    strcpy(listeInstructionsRestante, "");
-                }
-                break;
-            }
+        // extraction premier mot
+        while ((tmp[index] != ' ') && (tmp[index] != '\n')){
+            mot[index] = tmp[index];
+            index++;
+            mot[index] = '\0';
         }
-        //remove_extra_spaces(instruction);
-        //remove_extra_spaces(listeInstructionsRestante);
+        log(LOG_DEBUG, "mot trouve : <%s>", mot);
+        if (testSiInstructionComplexe(mot)){
+            // on a trouvé une instruction compexe
+            log(LOG_DEBUG, "traitement d'une instruction complexe (%s)", mot);
+            if (strncmp(mot, "si", 2) == 0){
+                if (!extraireSi(ListeInstructionOrigine, instruction, listeInstructionsRestante)){
+                    return false;
+                }
+            } else {
+                log(LOG_ERROR, "ERREUR : instrcution complexe inconnue (%s)", mot);
+            }
+            
+        } else {
+            strcpy(instruction, mot);
+            strcpy(listeInstructionsRestante, &tmp[index]);
+        }
+        // c'est une instruction simple
+        remove_extra_spaces(instruction);
+        remove_extra_spaces(listeInstructionsRestante);
         log(LOG_DEBUG, "tools decomposeScript => instruction à traiter = <%s>", instruction);
         log(LOG_DEBUG, "tools decomposeScript => liste instr restante  = <%s>", listeInstructionsRestante);
         return true;

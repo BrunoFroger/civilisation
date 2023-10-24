@@ -127,20 +127,6 @@ Element *Civilisation::creeElementHumain(int sexe, char *nom, int capitalInitial
     }
     log(LOG_ERROR, "impossible de creer un humain (tous les elements sont pris) ! ");
     return NULL;
-    /*
-    Element *tmpElement = elements[courantElementId];
-    tmpElement->initHumain(courantElementId, sexe, nom, capitalInitial);
-    tmpElement->setTypeElement(TYPE_HUMAIN);
-    tmpElement->setElementId(courantElementId);
-    incElementId();
-    this->nbHumains++;
-    if (sexe == HOMME){
-        nbHommes++;
-    } else {
-        nbFemmes++;
-    }
-    return tmpElement;
-    */
 }
 
 //-----------------------------------------
