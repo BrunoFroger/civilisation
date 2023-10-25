@@ -52,7 +52,10 @@ bool analyseParametres(int argc, char **argv){
                     case 'l': // modification du niveau de log
                     case 'L':
                         if ((i+1) < argc){
-                            if (strcmp(argv[i+1], "info") == 0){
+                            if (strcmp(argv[i+1], "none") == 0){
+                                setLogLevel(LOG_NONE);
+                                i++;
+                            } else if (strcmp(argv[i+1], "info") == 0){
                                 setLogLevel(LOG_INFO);
                                 i++;
                             } else if (strcmp(argv[i+1], "waarning") == 0){

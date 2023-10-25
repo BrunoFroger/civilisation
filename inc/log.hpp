@@ -8,6 +8,7 @@
 #ifndef __LOG__
 #define __LOG__
 
+    #define LOG_NONE    -1
     #define LOG_ERROR   0
     #define LOG_WARNING 1
     #define LOG_INFO    2
