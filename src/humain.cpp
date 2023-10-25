@@ -394,17 +394,17 @@ bool Humain::evalueExpressionHumain(char *expression){
 
     if (Humain::isVariable(data1)){
         val1 = getIntValue(data1);
-        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data1 est une variable : '%s' => '%d'\n", data1, val1);
+        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data1 est une variable : '%s' => '%d'", data1, val1);
     } else {
         val1 = atoi(data1);
     }
     if (Humain::isVariable(data2)){
         val2 = getIntValue(data2);
-        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data2 est une variable : '%s' => '%d'\n", data2, val2);
+        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data2 est une variable : '%s' => '%d'", data2, val2);
     } else {
         val2 = atoi(data2);
     }
-    log(LOG_DEBUG, "Humain::evalueExpressionHumain => apres evaluation : calcul de '%d' '%s' '%d'\n", val1, op, val2);
+    log(LOG_DEBUG, "Humain::evalueExpressionHumain => apres evaluation : calcul de '%d' '%s' '%d'", val1, op, val2);
     return evaluationExpressionInt(val1, op, val2);
     //return res;
 }
