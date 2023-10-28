@@ -25,6 +25,7 @@ int oldLogLevel=LOG_INFO;
 //
 //-----------------------------------------
 void log(int logLevel, const char *format, ...){
+    if (logLevel == -1) return;
     char ligne[500];
     char message[500];
     char logLevelString[10];
@@ -43,6 +44,9 @@ void log(int logLevel, const char *format, ...){
     snprintf(logDate, sizeof(logDate), "%02d-%02d-%04d %02d:%02d:%02d", day, mois, an, h, min, s);
 
     switch (logLevel){
+        case -1:
+            strcpy(logLevelString, "NONE");
+            break;
         case 0:
             strcpy(logLevelString, "ERROR");
             break;
