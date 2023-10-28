@@ -13,6 +13,7 @@
 #include "../inc/element.hpp"
 #include "../inc/civilisation.hpp"
 
+extern Civilisation civilisation;
 
 char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible", "achat"};
 char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital", "nbEnfants"};
@@ -588,9 +589,9 @@ bool Humain::naissancePossible(void){
             if (conjoint != NULL){
                 log(LOG_INFO, "Humain::naissancePossible => naissance pour %s et %s", nom, conjoint->getNomHumain());
                 if (sexe == HOMME){
-                    naissance(this, conjoint);
+                    naissance(&civilisation, this, conjoint);
                 } else {
-                    naissance(conjoint, this);
+                    naissance(&civilisation, conjoint, this);
                 }
                 return true;
             }

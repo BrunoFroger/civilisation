@@ -171,6 +171,11 @@ bool Element::evalueExpression(char *expression){
 bool Element::executeExpression(char *expression){
     log(LOG_DEBUG, "Element::executeExpression => TODO");
     log(LOG_DEBUG, "Element::executeExpression => traitement de '%s'", expression);
+    // test si expression vide
+    if (strlen(expression) == 0){
+        log(LOG_DEBUG, "Element::executeExpression => expression vide, on retourne true");
+        return true;
+    } 
     // tests si expression simple ou complexe
     if (strncmp(expression, "si", 2) == 0){
         structSi resultatSi;
@@ -274,8 +279,8 @@ bool Element::decomposeScript(char *ListeInstructionOrigine, char *instruction, 
     log(LOG_DEBUG, "Element::decomposeScript => debut");
     remove_extra_spaces(ListeInstructionOrigine);
     log(LOG_DEBUG, "Element::decomposeScript => Decomposition du script <%s>", ListeInstructionOrigine);
-    strcpy(instruction, (char *)"");
-    strcpy(listeInstructionsRestante, (char *)"");
+    char instructionLocale[1000] = "";
+    char listeInstructionRestanteLocale[5000] = "";
     char *tmp = ListeInstructionOrigine;
     char mot[100] = "";
     int index = 0;
@@ -291,36 +296,32 @@ bool Element::decomposeScript(char *ListeInstructionOrigine, char *instruction, 
             // on a trouvé une instruction compexe
             log(LOG_DEBUG, "Element::decomposeScript => traitement d'une instruction complexe (%s)", mot);
             if (strncmp(mot, "si", 2) == 0){
-                if (!extraireSi(ListeInstructionOrigine, instruction, listeInstructionsRestante)){
+                if (!extraireSi(ListeInstructionOrigine, instructionLocale, listeInstructionRestanteLocale)){
                     return false;
                 }
                 // traitement du si
                 structSi resultat;
-                if (!decomposeSi(instruction, &resultat)) return false;
-                if (!evalueListeInstructions(listeInstructionsRestante)) return false;
-                return true;
+                if (!decomposeSi(instructionLocale, &resultat)) return false;
+                if (!evalueListeInstructions(listeInstructionRestanteLocale)) return false;
+                //return true;
             } else {
-                log(LOG_ERROR, "ERREUR : instrcution complexe inconnue (%s)", mot);
+                log(LOG_ERROR, "ERREUR : instruction complexe pas encore traitee .... (%s)", mot);
             }
         } else {
-            strcpy(instruction, mot);
+            strcpy(instructionLocale, mot);
             //strcpy(listeInstructionsRestante, &tmp[index]);
         }
         // c'est une instruction simple
-        remove_extra_spaces(instruction);
+        remove_extra_spaces(instructionLocale);
         remove_extra_spaces(listeInstructionsRestante);
-        log(LOG_DEBUG, "Element::decomposeScript => instruction à traiter = <%s>", instruction);
+        log(LOG_DEBUG, "Element::decomposeScript => instruction à traiter = <%s>", instructionLocale);
         log(LOG_DEBUG, "Element::decomposeScript => liste instr restante  = <%s>", listeInstructionsRestante);
-        // TODO traiter instruction et traiter liste des instructions restantes
-        /*if (!executeExpression(instruction)){
-            log(LOG_ERROR, "<%s> n'est pas une expression evaluable");
-            return false;
-        } 
-        if (!evalueListeInstructions(listeInstructionsRestante)){
-            log(LOG_ERROR, "<%s> n'est pas une liste d'expression valide");
-            return false;
-        }*/
+    } else {
+        log(LOG_DEBUG, "Element::decomposeScript => la liste a evaluer est vide, on return true");
     }
+    strcpy(instruction, instructionLocale);
+    strcpy(listeInstructionsRestante, listeInstructionRestanteLocale);
+    log(LOG_DEBUG, "Element::decomposeScript => fin, on return true : instruction = <%s>, reste = <%s>", instruction, listeInstructionsRestante);
     return true;
 }
 
@@ -335,7 +336,7 @@ bool Element::decomposeSi(char *ligne, structSi *resultat){
     char *tmp;
     char buffer[200];
     log(LOG_DEBUG, "Element::decomposeSi => -----------------------------");
-    log(LOG_DEBUG, "Element::decomposeSi => decomposeSi => debut");
+    log(LOG_DEBUG, "Element::decomposeSi => decomposeSi => debut <%s>", ligne);
 
     strcpy(resultat->expression,"");
     strcpy(resultat->ListeCommandeSiVrai,"");
@@ -464,19 +465,26 @@ bool Element::evalueListeInstructions(char *listeInstructions){
     // tester si c'est une instruction simple, 
     // si oui, l'executer 
     // sinon, la decomposer et relancer cette fonction avec la liste restante
-    char scriptRestant[5000] = "";
-    char intruction[500];
+    char scriptRestant[2000];
+    char instruction[1000];
     // test si liste vide, si oui, fin normale => return true
-    if (strlen(listeInstructions) == 0) return true;
+    if (strlen(listeInstructions) == 0){
+        log(LOG_DEBUG, "Element::evalueListeInstructions => la liste a evaluer est vide, on return true");
+        return true;
+    } 
     do {
         log(LOG_DEBUG, "Element::evalueListeInstructions =>  '%s'", listeInstructions);
-        strcpy(intruction, "");
-        strcpy(scriptRestant, "");
-        if (!decomposeScript(listeInstructions, intruction, scriptRestant)){
+        strcpy(instruction, (char *)"");
+        strcpy(scriptRestant, (char *)"");
+        printf("Element::evalueListeInstructions =>  entree dans decompose script\n");
+        bool res = decomposeScript(listeInstructions, instruction, scriptRestant);
+        printf("Element::evalueListeInstructions =>  sortie de decompose script\n");
+        if (!res){
             log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans decomposeScript");
             return false;
         }
-        if (!executeExpression(intruction)){
+        log(LOG_DEBUG, "Element::evalueListeInstructions => decomposeScropt OK, on essaye d'evaluer l'instruction extraite <%s>", instruction);
+        if (!executeExpression(instruction)){
             log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans executeExpression");
             return false;
         } else if (!evalueListeInstructions(scriptRestant)){
@@ -484,5 +492,5 @@ bool Element::evalueListeInstructions(char *listeInstructions){
         } 
     } while (strcmp(scriptRestant, "") != 0);
     log(LOG_DEBUG, "Element::evalueListeInstructions => fin du traitement de '%s'  .......     TODO   .....", listeInstructions);
-    return false;
+    return true;
 }

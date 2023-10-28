@@ -95,13 +95,13 @@
             int capitalInitial;
             Humain  *listeEmployes[MAX_EMPLOYES];
             structCommande listeCommandes[MAX_COMMANDES];
-            int getRefCommande(void);
             bool debaucher();
             Humain *getSalarie(void);
             Entreprise *maisonMere;
             Entreprise *listeFiliales[MAX_FILIALES];
             int nbDemandeEmbauche;
             Humain *patron;
+            int cptRefCommande;
     };
 
 #endif

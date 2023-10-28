@@ -194,18 +194,18 @@ char *getPrenomAleatoire(int sexe){
 //           naissance
 //
 //-----------------------------------------
-Element *naissance(Humain *pere, Humain *mere){
+Element *naissance(Civilisation *civilisation, Humain *pere, Humain *mere){
     log(LOG_INFO, "tools naissance essai entre %s et %s => TODO", pere->getNomHumain(), mere->getNomHumain());
     Element *tmpElement;
     for (int i = 0 ; i < MAX_HUMAIN ; i++){
         //log(LOG_INFO, "tools naissance verification si l'élément %d est libre", i);
-        tmpElement = civilisation.getElement(i);
+        tmpElement = civilisation->getElement(i);
         if (tmpElement->getElementId() == -1){
             //log(LOG_INFO, "tools naissance l'élément %d est libre", i);
             if ((pere->getNbEnfants() < MAX_ENFANTS) && (mere->getNbEnfants() < MAX_ENFANTS)){
                 int sexe = getSexeAleatoire();           // TODO genere aleatoirement HOMME ou FEMME
                 char *prenom = getPrenomAleatoire(sexe);   // Generer prenom depuis liste a definir
-                tmpElement = civilisation.creeElementHumain(sexe, prenom, 1000);
+                tmpElement = civilisation->creeElementHumain(sexe, prenom, 1000);
                 log(LOG_INFO, "tools naissance => %s et %s ont %s comme enfant", pere->getNomHumain(), mere->getNomHumain(), tmpElement->getNomHumain());
                 pere->ajouteEnfant(tmpElement);
                 mere->ajouteEnfant(tmpElement);
@@ -371,33 +371,35 @@ bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeIns
     index += 3;
     printf("construction du si : <");
     for (int i = 3 ; i < strlen(ListeInstructionOrigine) ; i++){
-        //printf("on teste le caractere '%c'\n", ListeInstructionOrigine[i]);
-        //printf("%c", ListeInstructionOrigine[i]);
-        //tmp = &ListeInstructionOrigine[i];
-        if (strncmp(&ListeInstructionOrigine[i], "si ", 3) == 0){
-            niveauSi++;
-            log(LOG_DEBUG, "c'est un si imbrique, on incremente le niveauSi : %d", niveauSi);
-        }
-        if (strncmp(&ListeInstructionOrigine[i], "finsi ", 6) == 0){
-            log(LOG_DEBUG, "finsi detecte");
-            // on a  trouve le finsi
-            // on verifie qu'on est pas dans un si imbrique
-            if (niveauSi > 0){
-                 niveauSi--;
-                log(LOG_DEBUG, "c'est la fin d'un si imbrique, on decremente le niveauSi : %d", niveauSi);
+        if (insideSi){
+            //printf("on teste le caractere '%c'\n", ListeInstructionOrigine[i]);
+            //printf("%c", ListeInstructionOrigine[i]);
+            //tmp = &ListeInstructionOrigine[i];
+            if (strncmp(&ListeInstructionOrigine[i], "si ", 3) == 0){
+                niveauSi++;
+                log(LOG_DEBUG, "c'est un si imbrique, on incremente le niveauSi : %d", niveauSi);
+            }
+            if (strncmp(&ListeInstructionOrigine[i], "finsi ", 6) == 0){
+                log(LOG_DEBUG, "finsi detecte");
+                // on a  trouve le finsi
+                // on verifie qu'on est pas dans un si imbrique
+                if (niveauSi > 0){
+                    niveauSi--;
+                    log(LOG_DEBUG, "c'est la fin d'un si imbrique, on decremente le niveauSi : %d", niveauSi);
+                    strcat(instruction, "finsi ");
+                    i += 5;
+                    index += 6;
+                    continue;
+                } else {
+                    // c'est le finSi de plus haut niveau
+                    insideSi = false;
+                }
                 strcat(instruction, "finsi ");
                 i += 5;
-                index += 6;
-                 continue;
+                index = 0;
+                printf(">\nconstruction du reste : <");
+                continue;
             }
-            insideSi = false;
-            strcat(instruction, "finsi ");
-            i += 5;
-            index = 0;
-            printf(">\nconstruction du reste : <");
-            continue;
-        }
-        if (insideSi){
             printf("%c", ListeInstructionOrigine[i]);
             instruction[index++] = ListeInstructionOrigine[i];
             instruction[index] = '\0';
