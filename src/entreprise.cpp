@@ -148,10 +148,12 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
 //-----------------------------------------
 structCommande *Entreprise::creeCommande(Humain *client, int quantite){
     //bool result = false;
-    // recherche si dans les filliales une des entreprise a moins de commandes en cours
-    // traitement uniquement pour la maison mere
     if (getNbCommandes() >= MAX_COMMANDES){
+        // l'entreprise a ateint son nombre max de commandes
+        // tentative de creation de filiale
+        // traitement uniquement pour la maison mere
         if (this->maisonMere == NULL){
+            // recherche si dans les filliales une des entreprise a moins de commandes en cours
             log(LOG_DEBUG, "recherche si une filiale est moins chargee en commande");
             int minCommande = nbCommandes;
             Entreprise *candidateGestionCommande = this;
@@ -172,7 +174,7 @@ structCommande *Entreprise::creeCommande(Humain *client, int quantite){
         }
     } else {
         log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
-        log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s (%d)\n", client->getNomHumain(), quantite, getNomEntreprise(), getIdEntreprise());
+        log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s (%d)", client->getNomHumain(), quantite, getNomEntreprise(), getIdEntreprise());
         for (int i = 0 ; i < MAX_COMMANDES ; i++){
             structCommande *tmpCde = &listeCommandes[i];
             if (tmpCde->status == COMMANDE_VIDE){
@@ -187,7 +189,7 @@ structCommande *Entreprise::creeCommande(Humain *client, int quantite){
             }
         }
     }
-    log(LOG_DEBUG, "Entreprise::creeCommande le tableau des commandes est plein\n");
+    log(LOG_DEBUG, "Entreprise::creeCommande le tableau des commandes est plein");
     return NULL;
 }
 
