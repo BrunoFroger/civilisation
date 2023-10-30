@@ -460,19 +460,16 @@ void executeTests(int mode){
             char ligne[5000] = "";
             char expression[200];
             char expressionsRestantes[200];
-            bool res = false;
             snprintf(ligne, sizeof(ligne),  "si age = 0 alors mortPossible sinon chercheConjoint finsi naissancePossible");
-            res = extraireSi(ligne, expression, expressionsRestantes);
-            res &= (strcmp(expression, "si age = 0 alors mortPossible sinon chercheConjoint finsi") == 0);
-            res &= (strcmp(expressionsRestantes, "naissancePossible") == 0);
-            resultatTest(rubrique, res);
+            resultatTest(rubrique, extraireSi(ligne, expression, expressionsRestantes));
+            resultatTest(rubrique, (strcmp(expression, "si age = 0 alors mortPossible sinon chercheConjoint finsi") == 0));
+            resultatTest(rubrique, (strcmp(expressionsRestantes, "naissancePossible") == 0));
 
             baniereTest(rubrique, (char *)"test extraire si imbrique");
             snprintf(ligne, sizeof(ligne),  "si age = 0 alors mortPossible sinon si age > 20 alors chercheConjoint finsi naissancePossible finsi achat-aubonpain");
-            res = extraireSi(ligne, expression, expressionsRestantes);
-            res &= (strcmp(expression, "si age = 0 alors mortPossible sinon si age > 20 alors chercheConjoint finsi naissancePossible finsi") == 0);
-            res &= (strcmp(expressionsRestantes, "achat-aubonpain") == 0);
-            resultatTest(rubrique, res);
+            resultatTest(rubrique, extraireSi(ligne, expression, expressionsRestantes));
+            resultatTest(rubrique, (strcmp(expression, "si age = 0 alors mortPossible sinon si age > 20 alors chercheConjoint finsi naissancePossible finsi") == 0));
+            resultatTest(rubrique, (strcmp(expressionsRestantes, "achat-aubonpain") == 0));
         }
 
         if (1 || exec_all ){ // test decompose si 
@@ -480,21 +477,18 @@ void executeTests(int mode){
             Civilisation newCivilisation;
             char ligne[5000] = "";
             structSi resultat;
-            bool res = false;
             Element *testScript = newCivilisation.creeElementHumain(HOMME, (char *)"joseph", 2000);
             snprintf(ligne, sizeof(ligne),  "si age = 0 alors mortPossible finsi");
-            res = testScript->decomposeSi(ligne, &resultat);
-            res &= (strcmp(resultat.expression, "age = 0") == 0);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "mortPossible") == 0);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "") == 0);
-            resultatTest(rubrique, res);
+            resultatTest(rubrique, testScript->decomposeSi(ligne, &resultat));
+            resultatTest(rubrique, (strcmp(resultat.expression, "age = 0") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiVrai, "mortPossible") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiFaux, "") == 0));
             
             snprintf(ligne, sizeof(ligne), "si age = 0 alors mortPossible sinon naissancePossible finsi");
-            res = testScript->decomposeSi(ligne, &resultat);
-            res &= (strcmp(resultat.expression, "age = 0") == 0);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "mortPossible") == 0);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "naissancePossible") == 0);
-            resultatTest(rubrique, res);
+            resultatTest(rubrique, testScript->decomposeSi(ligne, &resultat));
+            resultatTest(rubrique, (strcmp(resultat.expression, "age = 0") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiVrai, "mortPossible") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiFaux, "naissancePossible") == 0));
         }
 
         if (1 || exec_all ){ // test decomposeScript
@@ -507,7 +501,6 @@ void executeTests(int mode){
             strcpy(script, (char*)"");
             strcpy(instruction, (char*)"");
             strcpy(listeInstructions, (char*)"");
-            //bool res = true;
 
             log(LOG_DEBUG, "------------------------------------------");
             snprintf(script, sizeof(script), "");
