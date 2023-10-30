@@ -14,8 +14,9 @@
 #include "../inc/civilisation.hpp"
 #include "../inc/aide.hpp"
 
-char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher", "livraison"};
+char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher", "livraison", "creeFilliale"};
 char listeVariablesEntreprise[NB_VARIABLE_ENTREPRISE][20] = {"nom", "nbSalarie", "nbCommande", "stock"};
+char VariablesDeScriptEntreprise[NB_VARIABLE_SCRIPT_ENT][50];
 
 extern Civilisation civilisation;
 
@@ -148,31 +149,7 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
 //-----------------------------------------
 structCommande *Entreprise::creeCommande(Humain *client, int quantite){
     //bool result = false;
-    if (getNbCommandes() >= MAX_COMMANDES){
-        // l'entreprise a ateint son nombre max de commandes
-        // tentative de creation de filiale
-        // traitement uniquement pour la maison mere
-        if (this->maisonMere == NULL){
-            // recherche si dans les filliales une des entreprise a moins de commandes en cours
-            log(LOG_DEBUG, "recherche si une filiale est moins chargee en commande");
-            int minCommande = nbCommandes;
-            Entreprise *candidateGestionCommande = this;
-            for (int i = 0 ; i < MAX_FILIALES ; i++){
-                if (listeFiliales[i] != NULL){
-                    Entreprise *filiale = listeFiliales[i];
-                    if (filiale->getNbCommandes() < minCommande){
-                        candidateGestionCommande = filiale;
-                        minCommande = filiale->getNbCommandes();
-                    }
-                }
-            }
-            if (candidateGestionCommande != this){
-                // une filiale est moins chargee, on lui transfere cette commande
-                log(LOG_INFO, "on transfere la commande a l'entreprise %s (%d)", candidateGestionCommande->getNomEntreprise(), candidateGestionCommande->getIdEntreprise());
-                return candidateGestionCommande->creeCommande(client, quantite);
-            }
-        }
-    } else {
+    if (getNbCommandes() < MAX_COMMANDES){
         log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
         log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s (%d)", client->getNomHumain(), quantite, getNomEntreprise(), getIdEntreprise());
         for (int i = 0 ; i < MAX_COMMANDES ; i++){

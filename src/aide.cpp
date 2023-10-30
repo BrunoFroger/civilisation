@@ -37,4 +37,6 @@ void aide(void){
     printf("        A chaque evolution un script est lance pour chaque type d'element : \n");
     printf("            humain.scr : execute lors de l'evolution d'un humain\n");
     printf("            entreprise.scr : execute lors de l'evolution d'une entreprise\n");
+    printf("\n");
+    printf("La documentation de ce logiciel est disponible sur Github : https://github.com/BrunoFroger/civilisation/blob/newScriptAnalyse/README.md\n");
 }

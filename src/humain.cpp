@@ -17,6 +17,7 @@ extern Civilisation civilisation;
 
 char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible", "achat"};
 char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital", "nbEnfants"};
+char VariablesDeScriptHumain[NB_VARIABLE_SCRIPT_HUM][50];
 
 //-----------------------------------------
 //

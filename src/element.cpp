@@ -240,6 +240,7 @@ bool Element::execScript(char *filename){
     char script[5000] = "";
     char *tmp;
 
+    log(LOG_DEBUG, "Element::execScript => debut avec fichier <%s>", filename);
     fic = fopen(filename, "r");
     if (fic == NULL){
         log(LOG_ERROR, "Element::execScript => impossible d'ouvrir le fichier script <%s>", filename);
@@ -487,9 +488,14 @@ bool Element::evalueListeInstructions(char *listeInstructions){
         if (!executeExpression(instruction)){
             log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans executeExpression");
             return false;
-        } else if (!evalueListeInstructions(scriptRestant)){
-            return false;
+        } else{
+            log(LOG_DEBUG, "on a reussi a evaluer l'expression <%s> on evalue la liste restante <%s> ", instruction, scriptRestant);
+            if (!evalueListeInstructions(scriptRestant)){
+                return false;
+            }
+            return true;
         } 
+        printf("appuyer sur enter (strcmp(scriptRestant, '""') = %d, scriptRestant = <%s>) \n", strcmp(scriptRestant, ""), scriptRestant);getchar();
     } while (strcmp(scriptRestant, "") != 0);
     log(LOG_DEBUG, "Element::evalueListeInstructions => fin du traitement de '%s'  .......     TODO   .....", listeInstructions);
     return true;
