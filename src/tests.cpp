@@ -22,8 +22,6 @@
 //0 reinit |30 Noir |31 Rouge | 32 Vert | 33 Jaune | 34 Bleu| 35 Magenta | 36 Cyan | 37 Blanc
 #define color(param) printf("\033[%dm",param)
 
-extern Civilisation civilisation;
-
 typedef struct {
     char nomRubrique[30];
     int nbtests;
@@ -86,6 +84,19 @@ void baniereDebutTests(void){
     log(LOG_INFO, "                                   ");
     log(LOG_INFO, "===================================");
     gettimeofday(&debutTests, tmpTime);
+}
+
+//-----------------------------------------
+//
+//          baniereTest
+//
+//-----------------------------------------
+void baniereTest(char *rubrique, char *descriptionTest){
+    log(LOG_DEBUG, "-----------------------------------------------------");
+    log(LOG_DEBUG, "");
+    log(LOG_DEBUG, "    %s : %s", rubrique, descriptionTest);
+    log(LOG_DEBUG, "");
+    log(LOG_DEBUG, "-----------------------------------------------------");
 }
 
 //-----------------------------------------
@@ -178,7 +189,7 @@ void bilanTests(void){
     long dureeTests = myDifftime(&debutTests, &finTests);
     //log(LOG_INFO, "durée des tests : %ld",dureeTests);
     printf("+-------------------------------------------------------------------+\n");
-    printf("|                 Bilan des tests (duree en microsecondes)          |\n");
+    printf("|                 Bilan des tests (durees en microsecondes)         |\n");
     printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
     printf("|                  rubrique      |  NB |  OK |  KO |  %% OK |  duree |\n");
     printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
@@ -248,7 +259,7 @@ bool resultatTest(char *rubrique, bool status){
     nbTests++;
     nbTestsRubrique++;
     if (status){
-        printf("    Test n° %d OK \n", nbTestsRubrique);
+        printf("    Test n° %d OK dans %s\n", nbTestsRubrique, rubrique);
         nbOK++;
         nbOKRubrique++;
     } else {
@@ -316,18 +327,16 @@ void executeTests(int mode){
         baniereDebutRubrique(rubrique);
         
         if (1 || exec_all ) { // test de suppression des blancs inutiles d'une chaine
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "test de suppression des blancs inutiles d'une chaine");
+            baniereTest(rubrique, (char *)"test de suppression des blancs inutiles d'une chaine");
             char expression[200];
-            snprintf(expression, sizeof(expression), " 1234   12345     12345678     123   123456789   ");
+            snprintf(expression, sizeof(expression), "   1234   12345     12345678     123   123456789   ");
             char resultat_attendu[200] = "1234 12345 12345678 123 123456789";
             remove_extra_spaces(expression);
             resultatTest(rubrique, (strcmp(expression, resultat_attendu) == 0));
         }
 
         if (1 || exec_all){ // tests génération aleatoire du sexe
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "tests génération aleatoire du sexe");
+            baniereTest(rubrique, (char *)"tests génération aleatoire du sexe");
             int nbHommes=0, nbFemmes = 0;
             for (int i = 0 ; i < 100 ; i++){
                 if (getSexeAleatoire() == HOMME) nbHommes++; else nbFemmes++;
@@ -338,8 +347,7 @@ void executeTests(int mode){
         }
 
         if (1 || exec_all){ // tests génération aleatoire du prenom
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "tests génération aleatoire du prenom");
+            baniereTest(rubrique, (char *)"tests génération aleatoire du prenom");
             char tabPrenoms[200][20];
             // tests sur prenoms masculin
             //log(LOG_DEBUG, "tests prenoms masculin");
@@ -384,8 +392,7 @@ void executeTests(int mode){
         }
 
         if (1 || exec_all ) { // test fonction evaluation expression Int
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "test fonction evaluation expression Int");
+            baniereTest(rubrique, (char *)"test fonction evaluation expression Int");
             int val1, val2;
             char opeTest[100];
             val1=10; val2 =10;
@@ -447,26 +454,27 @@ void executeTests(int mode){
             strcpy(opeTest, "<=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1, opeTest, val2));
-        } 
+        } else {
+            log(LOG_DEBUG, "Bloc evaluationExpressionInt non executé\n");
+        }
 
         if (1 || exec_all ){ // test decompose si 
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "test decompose si ");
+            baniereTest(rubrique, (char *)"test decompose si");
+            Civilisation newCivilisation;
             char ligne[5000] = "";
             structSi resultat;
-            bool res = false;
+            Element *testScript = newCivilisation.creeElementHumain(HOMME, (char *)"joseph", 2000);
+            snprintf(ligne, sizeof(ligne),  "si age = 0 alors mortPossible finsi");
+            resultatTest(rubrique, testScript->decomposeSi(ligne, &resultat));
+            resultatTest(rubrique, (strcmp(resultat.expression, "age = 0") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiVrai, "mortPossible") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiFaux, "") == 0));
             
-            snprintf(ligne, sizeof(ligne), "si toto alors titi finsi commande");
-            res = decomposeSi(ligne, &resultat);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "toto") == 0);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "titi") == 0);
-            resultatTest(rubrique, res);
-            
-            snprintf(ligne, sizeof(ligne), "si toto alors titi \n tata finsi commande1\ncommande2");
-            res = decomposeSi(ligne, &resultat);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "titi \n tata ") == 0);
-            res |= (strcmp(resultat.ListeCommandeSiVrai, "commande1\ncommande2") == 0);
-            resultatTest(rubrique, res);
+            snprintf(ligne, sizeof(ligne), "si age = 0 alors mortPossible sinon naissancePossible finsi");
+            resultatTest(rubrique, testScript->decomposeSi(ligne, &resultat));
+            resultatTest(rubrique, (strcmp(resultat.expression, "age = 0") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiVrai, "mortPossible") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiFaux, "naissancePossible") == 0));
         }
 
         if (1 || exec_all ){ // test decompose si imbriques
@@ -533,6 +541,8 @@ void executeTests(int mode){
             snprintf(script, sizeof(script), "si toto alors titi commande\n ");
             res = decomposeScript(script, instruction, listeInstructions);
             resultatTest(rubrique, !res);
+        } else {
+            log(LOG_DEBUG, "Bloc decomposeScript non executé\n");
         }
 
         bilanTestsRubrique(rubrique);
@@ -546,55 +556,50 @@ void executeTests(int mode){
     if (0 || exec_all || exec_civilisation){
         strcpy(rubrique, "civilisation");
         baniereDebutRubrique(rubrique);
+        Civilisation newCivilisation;
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de creation de civilisation avec id element = 0");
-        resultatTest(rubrique, (civilisation.getNbHumain() == 0));
-        resultatTest(rubrique, (civilisation.getNbHommes() == 0));
-        resultatTest(rubrique, (civilisation.getNbFemmes() == 0));
+        baniereTest(rubrique, (char *)"test de creation de civilisation avec id element = 0");
+        resultatTest(rubrique, (newCivilisation.getNbHumain() == 0));
+        resultatTest(rubrique, (newCivilisation.getNbHommes() == 0));
+        resultatTest(rubrique, (newCivilisation.getNbFemmes() == 0));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de creation d'un homme");
-        Element *pere = civilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
+        baniereTest(rubrique, (char *)"test de creation d'un homme");
+        Element *pere = newCivilisation.creeElementHumain(HOMME, (char *)"Marcel", 1000);
         resultatTest(rubrique, strcmp(pere->getNomHumain(), "Marcel") == 0);
         resultatTest(rubrique, pere->getTypeElement() == TYPE_HUMAIN);
         resultatTest(rubrique, pere->getSexe() == HOMME);
-        resultatTest(rubrique, (civilisation.getNbHumain() == 1));
-        resultatTest(rubrique, (civilisation.getNbHommes() == 1));
-        resultatTest(rubrique, (civilisation.getNbFemmes() == 0));
+        resultatTest(rubrique, (newCivilisation.getNbHumain() == 1));
+        resultatTest(rubrique, (newCivilisation.getNbHommes() == 1));
+        resultatTest(rubrique, (newCivilisation.getNbFemmes() == 0));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de creation d'une femme");
-        Element *mere = civilisation.creeElementHumain(FEMME, (char *)"Simone", 1000);
+        baniereTest(rubrique, (char *)"test de creation d'une femme");
+        Element *mere = newCivilisation.creeElementHumain(FEMME, (char *)"Simone", 1000);
         resultatTest(rubrique, strcmp(mere->getNomHumain(), "Simone") == 0);
         resultatTest(rubrique, mere->getTypeElement() == TYPE_HUMAIN);
         resultatTest(rubrique, mere->getSexe() == FEMME);
-        resultatTest(rubrique, (civilisation.getNbHumain() == 2));
-        resultatTest(rubrique, (civilisation.getNbHommes() == 1));
-        resultatTest(rubrique, (civilisation.getNbFemmes() == 1));
+        resultatTest(rubrique, (newCivilisation.getNbHumain() == 2));
+        resultatTest(rubrique, (newCivilisation.getNbHommes() == 1));
+        resultatTest(rubrique, (newCivilisation.getNbFemmes() == 1));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de creation d'un element entreprise");
-        resultatTest(rubrique, civilisation.getNbEntreprise() == 0);
-        Element *entreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000, NULL);
+        baniereTest(rubrique, (char *)"test de creation d'un element entreprise");
+        resultatTest(rubrique, newCivilisation.getNbEntreprise() == 0);
+        Element *entreprise = newCivilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000, NULL);
         resultatTest(rubrique, entreprise->getTypeElement() == TYPE_ENTREPRISE);
         resultatTest(rubrique, strcmp(entreprise->getNomEntreprise(), "auBonPain") == 0);
         resultatTest(rubrique, strcmp(entreprise->getNomCommercialEntreprise(), "au bon pain") == 0);
         resultatTest(rubrique, entreprise->compteBancaireEntreprise->getSolde() == 25000);
-        resultatTest(rubrique, civilisation.getNbEntreprise() == 1);
+        resultatTest(rubrique, newCivilisation.getNbEntreprise() == 1);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de mariage");
+        baniereTest(rubrique, (char *)"test de mariage");
         resultatTest(rubrique, mariage(pere, mere));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test de creation d'enfants");
+        baniereTest(rubrique, (char *)"test de creation d'enfants");
         for (int i = 0 ; i < MAX_ENFANTS + 2 ; i++){
             bool result;
             if (i >= MAX_ENFANTS) {
                 result = true;
             } else {
-                Element *enfant = naissance(pere, mere);
+                Element *enfant = naissance(&newCivilisation, pere, mere);
                 int id = enfant->getElementId();
                 log(LOG_DEBUG, "test creation enfant %d", id);
                 result = (enfant->getElementId() != -1);
@@ -613,21 +618,18 @@ void executeTests(int mode){
     if (0 || exec_all || exec_element){
         strcpy(rubrique, "element");
         baniereDebutRubrique(rubrique);
-        Element element;
+        Civilisation newCivilisation;
+        Element *element = newCivilisation.creeElementHumain(FEMME, (char *)"eve", 1000);
+        newCivilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000, NULL);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test creation element");
-        element.initHumain(10, FEMME, (char *)"eve", 1000);
-        element.setElementId(10);
-        element.setTypeElement(TYPE_HUMAIN);
-        resultatTest(rubrique, element.getIdHumain() == 10);
-        resultatTest(rubrique, element.getElementId() == 10);
-        resultatTest(rubrique, element.getAge() == 0);
-        resultatTest(rubrique, (strcmp(element.getNom(), "eve") == 0));
+        baniereTest(rubrique, (char *)"test creation element");
+        resultatTest(rubrique, element->getIdHumain() == 0);
+        resultatTest(rubrique, element->getElementId() == 0);
+        resultatTest(rubrique, element->getAge() == 0);
+        resultatTest(rubrique, (strcmp(element->getNom(), "eve") == 0));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test execution script");
-        resultatTest(rubrique, element.execScript());
+        baniereTest(rubrique, (char *)"test execution script");
+        resultatTest(rubrique, element->execScript());
 
         bilanTestsRubrique(rubrique);
     }
@@ -640,21 +642,18 @@ void executeTests(int mode){
     if (0 || exec_all || exec_humain){
         strcpy(rubrique, "humain");
         baniereDebutRubrique(rubrique);
-        //Civilisation civilisation;
+        Civilisation *newCivilisation = new Civilisation();
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test creation humain");
+        baniereTest(rubrique, (char *)"test creation humain");
         Humain humain(0,HOMME, (char *)"adam", 1000);
         resultatTest(rubrique, humain.getAge() == 0);
         resultatTest(rubrique, strcmp(humain.getNomHumain(), "adam") == 0);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test evolution");
+        baniereTest(rubrique, (char *)"test evolution");
         humain.evolutionHumain();
         resultatTest(rubrique, humain.getAge() == 1);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test fonction liste de commandes valide");
+        baniereTest(rubrique, (char *)"test fonction liste de commandes valide");
         resultatTest(rubrique, humain.testSiCommandeValideHumain((char *)"mortPossible"));
         resultatTest(rubrique, !humain.testSiCommandeValideHumain((char *)"sdfqsdfqdf"));
         resultatTest(rubrique, humain.testSiCommandeValideHumain((char *)"achat-aubonpain"));
@@ -665,8 +664,7 @@ void executeTests(int mode){
         resultatTest(rubrique, humain.calculExpressionHumain((char *)"20", '-', (char *)"10") == 10);
         resultatTest(rubrique, humain.calculExpressionHumain((char *)"age", '+', (char *)"10") == 11);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test execution commandes");
+        baniereTest(rubrique, (char *)"test execution commandes");
         resultatTest(rubrique, humain.execCommandeHumain((char *)"mortPossible"));
         resultatTest(rubrique, !humain.execCommandeHumain((char *)"toto"));
         resultatTest(rubrique, !(humain.getStatusMarital() == STATUS_MARITAL_DECES));
@@ -674,19 +672,18 @@ void executeTests(int mode){
         humain.execCommandeHumain((char *)"mortPossible");
         //resultatTest(rubrique, humain.getStatusMarital() == STATUS_MARITAL_DECES);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test mariage");
-        int ancienNbHomme = civilisation.getNbHommes();
-        int ancienNbFemme = civilisation.getNbFemmes();
-        int ancienNbHumain = civilisation.getNbHumain();
-        Element *pere = civilisation.creeElementHumain(HOMME, (char *)"papa", 1000);
-        resultatTest(rubrique, (civilisation.getNbHommes() == ancienNbHomme + 1));
-        resultatTest(rubrique, (civilisation.getNbFemmes() == ancienNbFemme));
-        resultatTest(rubrique, (civilisation.getNbHumain() == ancienNbHumain + 1));
-        Element *mere = civilisation.creeElementHumain(FEMME, (char *)"maman", 1000);
-        resultatTest(rubrique, (civilisation.getNbHommes() == ancienNbHomme + 1));
-        resultatTest(rubrique, (civilisation.getNbFemmes() == ancienNbFemme + 1));
-        resultatTest(rubrique, (civilisation.getNbHumain() == ancienNbHumain + 2));
+        baniereTest(rubrique, (char *)"test mariage et naissance");
+        int ancienNbHomme = newCivilisation->getNbHommes();
+        int ancienNbFemme = newCivilisation->getNbFemmes();
+        int ancienNbHumain = newCivilisation->getNbHumain();
+        Element *pere = newCivilisation->creeElementHumain(HOMME, (char *)"papa", 1000);
+        resultatTest(rubrique, (newCivilisation->getNbHommes() == ancienNbHomme + 1));
+        resultatTest(rubrique, (newCivilisation->getNbFemmes() == ancienNbFemme));
+        resultatTest(rubrique, (newCivilisation->getNbHumain() == ancienNbHumain + 1));
+        Element *mere = newCivilisation->creeElementHumain(FEMME, (char *)"maman", 1000);
+        resultatTest(rubrique, (newCivilisation->getNbHommes() == ancienNbHomme + 1));
+        resultatTest(rubrique, (newCivilisation->getNbFemmes() == ancienNbFemme + 1));
+        resultatTest(rubrique, (newCivilisation->getNbHumain() == ancienNbHumain + 2));
         resultatTest(rubrique, (pere->getStatusMarital() == STATUS_MARITAL_CELIB));
         resultatTest(rubrique, (mere->getStatusMarital() == STATUS_MARITAL_CELIB));
         resultatTest(rubrique, (pere->compteBancaireHumain->getSolde() == 1000));
@@ -700,25 +697,22 @@ void executeTests(int mode){
         mariage(pere, mere);
         resultatTest(rubrique, (pere->getStatusMarital() == STATUS_MARITAL_MARIE));
         resultatTest(rubrique, (mere->getStatusMarital() == STATUS_MARITAL_MARIE));
-
         //civilisation.listeCivilisation();
-
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test naissance");
-        ancienNbHumain = civilisation.getNbHumain();
-        Element *enfant = naissance(pere, mere);
-        //civilisation.listeCivilisation();
+        newCivilisation->listeCivilisation();
+        ancienNbHumain = newCivilisation->getNbHumain();
+        printf("ancienNbHumain = %d\n", ancienNbHumain);
+        Element *enfant = naissance(newCivilisation, pere, mere);
         log(LOG_DEBUG, "creation d'un enfant en position %d", enfant->getElementId());
         resultatTest(rubrique, (enfant->getPere() == pere->getIdHumain()));
         resultatTest(rubrique, (enfant->getMere() == mere->getIdHumain()));
-        //civilisation.listeCivilisation();
+        newCivilisation->listeCivilisation();
+        printf("getNbHumain = %d\n", newCivilisation->getNbHumain());
+        resultatTest(rubrique, (newCivilisation->getNbHumain() == ancienNbHumain + 1));
+        //newCivilisation.listeCivilisation();
 
-        resultatTest(rubrique, (civilisation.getNbHumain() == ancienNbHumain + 1));
-
-        //civilisation.listeCivilisation();
-        
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test deces et transfert capital");
+        baniereTest(rubrique, (char *)"test deces et transfert capital");
         for (int i = 0 ; i < 100 ; i++){
             pere->evolutionHumain();
             mere->evolutionHumain();
@@ -736,17 +730,15 @@ void executeTests(int mode){
         log(LOG_DEBUG, "test transfert capital");
         resultatTest(rubrique, (enfant->compteBancaireHumain->getSolde() == (ancienSoldeEnfant + ancienSoldePere + ancienSoldeMere)));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test commande produit");
-        Element *entreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000, NULL);
+        baniereTest(rubrique, (char *)"test commande produit");
+        Element *entreprise = newCivilisation->creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 25000, NULL);
         resultatTest(rubrique, (entreprise->getNbCommandes() == 0));
         pere->acheteProduit(entreprise, 1);
         resultatTest(rubrique, (entreprise->getNbCommandes() == 1));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test commande achat produits");
-        Element *entrepriseToto = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"toto", 10000, NULL);
-        Element *clientToto = civilisation.creeElementHumain(HOMME, (char*)"clientToto", 1000);
+        baniereTest(rubrique, (char *)"test commande achat produits");
+        Element *entrepriseToto = newCivilisation->creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"toto", 10000, NULL);
+        Element *clientToto = newCivilisation->creeElementHumain(HOMME, (char*)"clientToto", 1000);
         //civilisation.listeCivilisation();
         resultatTest(rubrique, clientToto->testSiCommandeValideHumain((char *)"achat-toto")); 
         humain.acheteProduit(entrepriseToto,1);
@@ -769,12 +761,11 @@ void executeTests(int mode){
     if (0 || exec_all || exec_entreprise){
         strcpy(rubrique, "entreprise");
         baniereDebutRubrique(rubrique);
-        //Civilisation civilisation;
+        Civilisation newCivilisation;
         Element *elementEntreprise, *elementHumain;
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test creation entreprise avec fichier de configuration spécifique");
-        elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000, NULL);
+        baniereTest(rubrique, (char *)"test creation entreprise avec fichier de configuration spécifique");
+        elementEntreprise = newCivilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"auBonPain", 10000, NULL);
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"auBonPain") == 0));
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomCommercialEntreprise(), (char *)"au bon pain") == 0));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
@@ -785,9 +776,8 @@ void executeTests(int mode){
         resultatTest(rubrique, (elementEntreprise->getMaxEmployes() == 5));
         resultatTest(rubrique, (elementEntreprise->getProductiviteSalarie() == 15));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test creation entreprise avec fichier de configuration par default");
-        elementEntreprise = civilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000, NULL);
+        baniereTest(rubrique, (char *)"test creation entreprise avec fichier de configuration par default");
+        elementEntreprise = newCivilisation.creeElementEntreprise(ACTIVITE_COMMERCE, (char *)"machin", 10000, NULL);
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomEntreprise(), (char *)"machin") == 0));
         resultatTest(rubrique, (strcmp(elementEntreprise->getNomCommercialEntreprise(), (char *)"entreprise par default") == 0));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 0));
@@ -796,9 +786,9 @@ void executeTests(int mode){
         resultatTest(rubrique, (elementEntreprise->getPrixProduit() == 10));
         resultatTest(rubrique, (elementEntreprise->getStockProduit() == 0));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test versement de salaire");
-        elementHumain = civilisation.creeElementHumain(HOMME, (char *)"Adam", 1000);
+        baniereTest(rubrique, (char *)"test versement de salaire");
+        elementHumain = newCivilisation.creeElementHumain(HOMME, (char *)"Adam", 1000);
+        elementHumain = newCivilisation.creeElementHumain(FEMME, (char *)"Eve", 1000);
         //elementHumain = civilisation.getElement(idSalarie);
         int ancienSoldeHumain, ancienSoldeEntreprise, soldeAttendu;
         int salaire = 100;
@@ -812,8 +802,7 @@ void executeTests(int mode){
         //printf("ancien solde = %d ; salaire = %d ; nouveau solde = %d\n", ancienSoldeEntreprise, salaire, soldeAttendu);
         resultatTest(rubrique, soldeAttendu == elementEntreprise->compteBancaireEntreprise->getSolde());
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test commande/livraison de produit");
+        baniereTest(rubrique, (char *)"test commande/livraison de produit");
         //elementEntreprise->creeCommande(elementHumain, 1);
         elementHumain->acheteProduit(elementEntreprise,1);
         log(LOG_DEBUG, "test l'entreprise embauche un salarie");
@@ -839,15 +828,13 @@ void executeTests(int mode){
         resultatTest(rubrique, (elementHumain->compteBancaireHumain->getSolde() == (ancienSoldeHumain - (prixProduit * 2))));
         resultatTest(rubrique, (elementEntreprise->compteBancaireEntreprise->getSolde() == (ancienSoldeEntreprise + (prixProduit * 2))));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test fonction liste de commandes valide");
+        baniereTest(rubrique, (char *)"test fonction liste de commandes valide");
         resultatTest(rubrique, elementEntreprise->testSiCommandeValideEntreprise((char *)"produire"));
         resultatTest(rubrique, elementEntreprise->testSiCommandeValideEntreprise((char *)"embaucher"));
         resultatTest(rubrique, elementEntreprise->testSiCommandeValideEntreprise((char *)"livraison"));
         resultatTest(rubrique, !elementEntreprise->testSiCommandeValideEntreprise((char *)"sdfqsdfqdf"));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test execution commandes");
+        baniereTest(rubrique, (char *)"test execution commandes");
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"produire"));
         resultatTest(rubrique, !elementEntreprise->execCommandeEntreprise((char *)"toto"));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 1));
@@ -857,8 +844,7 @@ void executeTests(int mode){
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 1));
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"livraison"));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test execution scripts");
+        baniereTest(rubrique, (char *)"test execution scripts");
         log(LOG_DEBUG, "a completer");
         bilanTestsRubrique(rubrique);
     }
@@ -872,44 +858,35 @@ void executeTests(int mode){
         strcpy(rubrique, "banque");
         baniereDebutRubrique(rubrique);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test creation de compte");
+        baniereTest(rubrique, (char *)"test creation de compte");
         CompteBancaire cpt(NULL);
         resultatTest(rubrique, cpt.getSolde() == 0);
         cpt.initCompteBancaire(NULL, 100);
         resultatTest(rubrique, cpt.getSolde() == 100);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test creation de compte initialisé");
+        baniereTest(rubrique, (char *)"test creation de compte initialisé");
         CompteBancaire cpt1(NULL, 1000);
         resultatTest(rubrique, cpt1.getSolde() == 1000);
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test gestion epargne");
+        baniereTest(rubrique, (char *)"test gestion epargne");
         cpt.sauveEpargne(50);
         resultatTest(rubrique, (cpt.getSolde() == 50) && (cpt.getEpargne() == 50));
         cpt.restitueEpargne(25);
         resultatTest(rubrique, (cpt.getSolde() == 75) && (cpt.getEpargne() == 25));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test virement simple");
+        baniereTest(rubrique, (char *)"test virement simple");
         CompteBancaire cpt2(NULL, 100);
         cpt1.virement(&cpt2, 500);
         resultatTest(rubrique, (cpt1.getSolde() == 500) && (cpt2.getSolde() == 600));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test virement négatif impossible");
+        baniereTest(rubrique, (char *)"test virement négatif impossible");
         resultatTest(rubrique, !cpt1.virement(&cpt2, -100));
 
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test virement vers compte NULL");
+        baniereTest(rubrique, (char *)"test virement vers compte NULL");
         resultatTest(rubrique, !cpt1.virement(NULL, 100));
 
         bilanTestsRubrique(rubrique);
     }
-
-    civilisation.listeCivilisation();
-    civilisation.tableauDeBord();
 
     bilanTests();
 
