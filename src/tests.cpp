@@ -546,6 +546,10 @@ void executeTests(int mode){
             resultatTest(rubrique, getVariable((char *)"toto") == NULL);
             resultatTest(rubrique, unsetVariable((char *)"unset maVariable"));
             resultatTest(rubrique, getVariable((char *)"maVariable") == NULL);
+            Civilisation newCivilisation;
+            Element *testScript = newCivilisation.creeElementHumain(HOMME, (char *)"joseph", 2000);
+            testScript->execScript((char*)"scripts/testVariables.scr");
+            resultatTest(rubrique, strcmp(getVariable((char *)"variable1"), "50") == 0);
         }
 
         bilanTestsRubrique(rubrique);
