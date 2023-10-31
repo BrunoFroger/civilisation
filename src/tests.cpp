@@ -735,6 +735,14 @@ void executeTests(int mode){
         humain.acheteProduit(entrepriseToto,1);
         //civilisation.listeCivilisation();
         resultatTest(rubrique, (entrepriseToto->getNbCommandes() == 1));
+
+        baniereTest(rubrique, (char *)"test gestion variables user");
+        resultatTest(rubrique, pere->setVariable((char *)"set maVariable 50"));
+        resultatTest(rubrique, !pere->setVariable((char *)"set maVariable 50"));
+        resultatTest(rubrique, !pere->setVariable((char *)"set maVariable"));
+        resultatTest(rubrique, strcmp(pere->getVariable((char *)"maVariable"), "50") == 0);
+        resultatTest(rubrique, pere->getVariable((char *)"toto") == NULL);
+        bilanTestsRubrique(rubrique);
         
         bilanTestsRubrique(rubrique);
     }
@@ -829,10 +837,6 @@ void executeTests(int mode){
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"debaucher"));
         resultatTest(rubrique, (elementEntreprise->getNbSalaries() == 1));
         resultatTest(rubrique, elementEntreprise->execCommandeEntreprise((char *)"livraison"));
-
-        baniereTest(rubrique, (char *)"test execution scripts");
-        log(LOG_DEBUG, "a completer");
-        bilanTestsRubrique(rubrique);
     }
 
     //=======================================

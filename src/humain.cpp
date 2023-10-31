@@ -15,9 +15,8 @@
 
 extern Civilisation civilisation;
 
-char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible", "achat"};
+char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible", "achat", "set", "unset", "get"};
 char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital", "nbEnfants"};
-char VariablesDeScriptHumain[NB_VARIABLE_SCRIPT_HUM][50];
 
 //-----------------------------------------
 //
@@ -302,7 +301,7 @@ char Humain::getSexeChar(void){
 
 //-----------------------------------------
 //
-//          Humain::getSexeChar
+//          Humain::getSexeString
 //
 //-----------------------------------------
 char *Humain::getSexeString(void){
@@ -336,6 +335,11 @@ void Humain::initHumain(int id, int sexe, char *nom, int capitalInitial){
     this->employeur = NULL;
     this->pere = NULL;
     this->mere = NULL;
+    for (int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
+        strcpy(variablesDeScriptHumain[i].nom, "");
+        strcpy(variablesDeScriptHumain[i].valeur, "");
+    }
+    
 }
 
 //-----------------------------------------
@@ -413,6 +417,91 @@ bool Humain::evalueExpressionHumain(char *expression){
 
 //-----------------------------------------
 //
+//          Humain::setVariable
+//
+//-----------------------------------------
+bool Humain::setVariable(char *valeur){
+    char *tmp = &valeur[4];
+    char nomVariable [50] = "";
+    char valeurVariable[50] = "";
+    bool varOuVal = true;
+    int index = 0;
+    int j = 0;
+    //log(LOG_DEBUG, "Humain::setVariable => debut set '%s'", tmp);
+    for (int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
+        if (strlen(variablesDeScriptHumain[i].nom) == 0){
+            // on peut utiliser cette variable, elle est libre
+            //log(LOG_DEBUG, "Humain::setVariable => la variable %d est libre", i);
+            while (j < strlen(tmp)){
+                if (tmp[j] == ' '){
+                    varOuVal = false;
+                    j++;
+                    index=0;
+                    //log(LOG_DEBUG, "on passe du nom de variable a la valeur");
+                }
+                if (varOuVal){
+                    nomVariable[index++] = tmp[j++];
+                    nomVariable[index] = '\0';
+                } else {
+                    valeurVariable[index++] = tmp[j++];
+                    valeurVariable[index] = '\0';
+                }
+            }
+            if (strlen(valeurVariable)> 0){
+                // test si variable deja definie
+                for (int k = 0 ; k < NB_VARIABLE_SCRIPT_HUM ; k++){
+                    if (strcmp(variablesDeScriptHumain[k].nom, nomVariable) == 0){
+                        // cette variable existe deja : erreur
+                        log(LOG_ERROR, "la variable '%s' existe deja", nomVariable);
+                        return false;
+                    }
+                }
+                strcpy(variablesDeScriptHumain[i].nom,nomVariable);
+                strcpy(variablesDeScriptHumain[i].valeur,valeurVariable);
+                log(LOG_DEBUG,"affectation de la variable <%s> avec la valeur <%s> en position %d", variablesDeScriptHumain[i].nom, variablesDeScriptHumain[i].valeur, i);
+                return true;
+            } else {
+                log(LOG_ERROR, "commande 'set' : erreur de syntaxe, manque valeur ");
+                return false;
+            }
+        }
+    }
+    log(LOG_ERROR, "commande 'set' : nombre de variables depasse (%d) ", NB_VARIABLE_SCRIPT_HUM);
+    return false;
+}
+
+//-----------------------------------------
+//
+//          Humain::getVariable
+//
+//-----------------------------------------
+char *Humain::getVariable(char *nom){
+    //log(LOG_DEBUG, "Humain::getVariable => debut  get '%s'", nom);
+    for(int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
+        //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScriptHumain[i].nom);
+        if (strcmp(variablesDeScriptHumain[i].nom, nom) == 0){
+            // on a trouve la valeur avec le bon nom
+            //log(LOG_DEBUG, "on a trouver la bonne variable, on retourne sa valeur <%s>", variablesDeScriptHumain[i].valeur);
+            return variablesDeScriptHumain[i].valeur;
+        }
+    }
+    //log(LOG_DEBUG, "Humain::getVariable => on a pas trouve la variable <%s>", nom);
+    return NULL;
+}
+
+//-----------------------------------------
+//
+//          Humain::unsetVariable
+//
+//-----------------------------------------
+bool Humain::unsetVariable(char *valeur){
+    printf("Humain::unsetVariable => debut unset '%s'\n", valeur);
+
+    return false;
+}
+
+//-----------------------------------------
+//
 //          Humain::execCommandeHumain
 //
 //-----------------------------------------
@@ -422,6 +511,18 @@ bool Humain::execCommandeHumain(char *valeur){
         int tailleCommande = strlen(listeCommandesHumain[i]);
         if (strncmp(valeur, listeCommandesHumain[i], tailleCommande) == 0) {
             switch(i){ 
+                case 4: // set
+                    setVariable(valeur);
+                    return true;
+                    break;
+                case 5: // unset
+                    unsetVariable(valeur);
+                    return true;
+                    break;
+                case 6: // unset
+                    getVariable(valeur);
+                    return true;
+                    break;
                 case 0: // mortPossible
                     mortPossible();
                     return true;
@@ -439,7 +540,7 @@ bool Humain::execCommandeHumain(char *valeur){
                     char *fournisseur = &(valeur[tailleCommande +1]);
                     //printf(" nom du fournisseur = <%s>\n", fournisseur);
                     acheteProduit(Civilisation::getEntrepriseByNom(fournisseur), 1);
-                    return false;
+                    return true;
                     break;
             }
             break;
