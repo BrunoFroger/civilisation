@@ -29,12 +29,12 @@ Civilisation::Civilisation(){
     log(LOG_INFO, "     C I V I L I S A T I O N ");
     log(LOG_INFO, "===================================");
     log(LOG_INFO, "Creation d'une civilisation");
-    //log(LOG_DEBUG, "Civilisation::Civilisation => debut");
+    log(LOG_DEBUG, "Civilisation::Civilisation => debut");
     //this->courantElementId = 0;
     for (int i = 0 ; i < MAX_ELEMENTS ; i++){
         elements[i] = new Element(-1, TYPE_INDEFINI);
     }
-    //log(LOG_DEBUG, "Civilisation::Civilisation => fin");
+    log(LOG_DEBUG, "Civilisation::Civilisation => fin");
     nbHommes = 0;
     nbFemmes = 0;
     nbHumains = 0;
@@ -329,18 +329,11 @@ void Civilisation::evolutionCivilisation(void){
             case TYPE_ENTREPRISE:
                 log(LOG_INFO, "===================================");
                 ptr->evolutionEntreprise();
-                setLogLevel(LOG_DEBUG);
                 ptr->execScript();
                 break;
-            case TYPE_INDEFINI:
-                break;
             default:
-                log(LOG_ERROR, "===================================");
-                log(LOG_ERROR, "type (%d) d'element inconnu", ptr->getTypeElement());
-                log(LOG_ERROR, "===================================");
                 break;
          }
-        restoreLogLevel();
     }
     log(LOG_INFO, "===================================");
 }
@@ -371,7 +364,6 @@ void Civilisation::tableauDeBord(void){
     int _nbMaries = 0;
     int _nbVeufs = 0;
     int _nbDivorces = 0;
-    int _nbDeces = 0;
     int _nbEntreprises = 0;
     int _nbCommerces = 0;
     int _nbIndustries = 0;
@@ -392,7 +384,6 @@ void Civilisation::tableauDeBord(void){
             if (element->getStatusMarital() == STATUS_MARITAL_MARIE) _nbMaries++;
             if (element->getStatusMarital() == STATUS_MARITAL_VEUF) _nbVeufs++;
             if (element->getStatusMarital() == STATUS_MARITAL_DIVOR) _nbDivorces++;
-            if (element->getStatusMarital() == STATUS_MARITAL_DECES) _nbDeces++;
             _totalActifs += element->compteBancaireHumain->getSolde();
             _totalEpargne += element->compteBancaireHumain->getEpargne();
         } else if (element->getTypeElement() == TYPE_ENTREPRISE) {
@@ -433,10 +424,6 @@ void Civilisation::tableauDeBord(void){
     printf("%s", ligne); fputs(ligne, fic);
     snprintf(ligne, 200, "|  variables    NB Elements  = %5d / NB Humains  = %5d / NB Entreprises  = %5d                          |\n", _nbElements, getNbHumain(), getNbEntreprise());
     printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "|               affichage auto : liste(%5s) tableau de bord(%5s)                                          |\n", getBoolString(modeListeAuto), getBoolString(modeTDBAuto));
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "|               affichage liste : humain(%5s) entreprise(%5s) cpt banque(%5s)                           |\n", getBoolString(displayListeHumains), getBoolString(displayListeEntreprises), getBoolString(displayListeBanques));
-    printf("%s", ligne); fputs(ligne, fic);
     snprintf(ligne, 200, "+-----------------------------------++-----------------------------------++-----------------------------------+\n");
     printf("%s", ligne); fputs(ligne, fic);
     snprintf(ligne, 200, "|               humains             ||            entreprises            ||          comptes banquaires       |\n");
@@ -457,8 +444,6 @@ void Civilisation::tableauDeBord(void){
     snprintf(ligne, 200, "| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb divorce", _nbDivorces, "", "", "", "");
     printf("%s", ligne); fputs(ligne, fic);
     snprintf(ligne, 200, "| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb veuf", _nbVeufs, "", "", "", "");
-    printf("%s", ligne); fputs(ligne, fic);
-    snprintf(ligne, 200, "| %15s | %15d || %15s | %15s || %15s | %15s |\n","nb decedes", _nbDeces, "", "", "", "");
     printf("%s", ligne); fputs(ligne, fic);
     snprintf(ligne, 200, "+-----------------+-----------------++-----------------+-----------------++-----------------+-----------------+\n");
     printf("%s", ligne); fputs(ligne, fic);

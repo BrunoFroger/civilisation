@@ -22,6 +22,7 @@
 
     #define NB_COMMANDES_HUMAIN     4
     #define NB_VARIABLE_HUMAIN      5
+    #define NB_VARIABLE_SCRIPT_HUM  10
 
     class Entreprise;
 

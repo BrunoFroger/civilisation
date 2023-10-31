@@ -180,6 +180,7 @@ void changeLogLevel(char *logLevel){
     else if (strncmp(logLevel, "erreur", 6) == 0) setLogLevel(LOG_ERROR);
     else if (strncmp(logLevel, "warning", 7) == 0) setLogLevel(LOG_WARNING);
     else if (strncmp(logLevel, "info", 4) == 0) setLogLevel(LOG_INFO);
+    else if (strncmp(logLevel, "none", 4) == 0) setLogLevel(LOG_NONE);
     else log(LOG_ERROR, "miveau de log <%s> inconnu ; voir l'aide", logLevel);
 }
 

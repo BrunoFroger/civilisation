@@ -27,6 +27,11 @@
         char item2[500];
     } structExpression;
 
+    typedef struct {
+        char expression[500];
+        char ListeCommandeSiVrai[1000];
+        char ListeCommandeSiFaux[1000];
+    } structSi;
 
     extern void remove_extra_spaces(char *chaine);
 
@@ -46,13 +51,15 @@
             char *getNom(void);
             CompteBancaire *getCompteBancaire(void);
             bool testSiListeCommandeValide(char *valeur);
+            bool decomposeScript(char *script, char *instruction, char *listeInstructions);
+            bool decomposeSi(char *ligne, structSi *resultat);
 
         protected:
 
         private:
             int idElement;
             int typeElement;
-
+            bool evalueListeInstructions(char *listeInstructions);
     };
 
 #endif

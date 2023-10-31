@@ -171,6 +171,11 @@ bool Element::evalueExpression(char *expression){
 bool Element::executeExpression(char *expression){
     log(LOG_DEBUG, "Element::executeExpression => TODO");
     log(LOG_DEBUG, "Element::executeExpression => traitement de '%s'", expression);
+    // test si expression vide
+    if (strlen(expression) == 0){
+        log(LOG_DEBUG, "Element::executeExpression => expression vide, on retourne true");
+        return true;
+    } 
     // tests si expression simple ou complexe
     if (strncmp(expression, "si", 2) == 0){
         structSi resultatSi;
@@ -231,12 +236,11 @@ bool Element::testSiListeCommandeValide(char *valeur){
 //-----------------------------------------
 bool Element::execScript(char *filename){
     FILE *fic;
-    int numLigne=0;
     char ligne[500];
     char script[5000] = "";
-    char scriptRestant[5000] = "";
     char *tmp;
 
+    log(LOG_DEBUG, "Element::execScript => debut avec fichier <%s>", filename);
     fic = fopen(filename, "r");
     if (fic == NULL){
         log(LOG_ERROR, "Element::execScript => impossible d'ouvrir le fichier script <%s>", filename);
@@ -261,72 +265,239 @@ bool Element::execScript(char *filename){
         strcpy(ligne, "");
         fgets(ligne, 100, fic);
     }
+    fclose(fic);
     remove_extra_spaces(script);
     log(LOG_DEBUG, "script a analyser : \n----------------------\n'%s'\n----------------------", script);
-    tmp = &script[0];
-    char expression[500];
-    //structExpression expressionResultat;
-    do {
-        log(LOG_DEBUG, "---- decompose script -------\n");
-        decomposeScript(script, expression, scriptRestant);
-        executeExpression(expression);
-        strcpy(script, scriptRestant);
-    } while (strcmp(scriptRestant, "") != 0);
-    fclose(fic);
-    return true;
+    return evalueListeInstructions(script);
+}
 
-    //      code inutilisé
-    // a voir si reutilisable
-
-    if (tmp[0] != '#'){ // commentaire on passe
-        if (strlen(tmp) != 0){  // ligne vide on passe
-            //printf("ligne a analyser = '%s'\n", tmp);
-            if (strncmp(tmp, "si", 2) == 0){
-                //printf("Analyse d'une ligne contenant un 'si'\n");
-                structSi resultat;
-                if (!decomposeSi(tmp, &resultat)){
-                    log(LOG_ERROR, "erreur de syntaxe dans le fichier '%s' a la ligne %d (%s)\n", filename, numLigne, tmp);
-                    return false;
-                } else {
-                    // traitement de la ligne si
-                    if (!testSiListeCommandeValide(resultat.ListeCommandeSiVrai)){
-                        log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiVrai);
-                        return false;
-                    }
-                    if (!testSiListeCommandeValide(resultat.ListeCommandeSiFaux)){
-                        log(LOG_ERROR, "instruction '%s' inconnue\n", resultat.ListeCommandeSiFaux);
-                        return false;
-                    }
-                    log(LOG_DEBUG, "decomposition de l'expression %s\n", resultat.expression);
-                    /*
-                    int val1, val2;
-                    if (isVariable(resultat.expression1)){
-                        val1 = getIntValue(resultat.expression1);
-                    } else {
-                        val1 = atoi(resultat.expression1);
-                    }
-                    if (isVariable(resultat.expression2)){
-                        val2 = getIntValue(resultat.expression2);
-                    } else {
-                        val2 = atoi(resultat.expression2);
-                    }
-                    Element::evaluationExpressionInt(val1, resultat.operateur, val2);
-                    */
-                } 
-            } else {
-                log(LOG_ERROR, "instruction inconnue dans la ligne '%s'\n", ligne);
-                return false;
-            }
+//-----------------------------------------
+//
+//          Element::decomposeScript
+//
+//-----------------------------------------
+bool Element::decomposeScript(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
+    log(LOG_DEBUG, "Element::decomposeScript => debut");
+    remove_extra_spaces(ListeInstructionOrigine);
+    log(LOG_DEBUG, "Element::decomposeScript => Decomposition du script <%s>", ListeInstructionOrigine);
+    char instructionLocale[1000] = "";
+    char listeInstructionRestanteLocale[5000] = "";
+    char *tmp = ListeInstructionOrigine;
+    char mot[100] = "";
+    int index = 0;
+    if (strlen(ListeInstructionOrigine) > 0){
+        // extraction premier mot
+        while ((tmp[index] != ' ') && (tmp[index] != '\n')){
+            mot[index] = tmp[index];
+            index++;
+            mot[index] = '\0';
         }
+        log(LOG_DEBUG, "mot trouve : <%s>", mot);
+        if (testSiInstructionComplexe(mot)){
+            // on a trouvé une instruction compexe
+            log(LOG_DEBUG, "Element::decomposeScript => traitement d'une instruction complexe (%s)", mot);
+            if (strncmp(mot, "si", 2) == 0){
+                if (!extraireSi(ListeInstructionOrigine, instructionLocale, listeInstructionRestanteLocale)){
+                    return false;
+                }
+                // traitement du si
+                structSi resultat;
+                if (!decomposeSi(instructionLocale, &resultat)) return false;
+                if (!evalueListeInstructions(listeInstructionRestanteLocale)) return false;
+                //return true;
+            } else {
+                log(LOG_ERROR, "ERREUR : instruction complexe pas encore traitee .... (%s)", mot);
+            }
+        } else {
+            strcpy(instructionLocale, mot);
+            //strcpy(listeInstructionsRestante, &tmp[index]);
+        }
+        // c'est une instruction simple
+        remove_extra_spaces(instructionLocale);
+        remove_extra_spaces(listeInstructionsRestante);
+        log(LOG_DEBUG, "Element::decomposeScript => instruction à traiter = <%s>", instructionLocale);
+        log(LOG_DEBUG, "Element::decomposeScript => liste instr restante  = <%s>", listeInstructionsRestante);
+    } else {
+        log(LOG_DEBUG, "Element::decomposeScript => la liste a evaluer est vide, on return true");
     }
-    //printf("fin traitement de ligne\n");
-    if (!feof(fic)){
-        strcpy(ligne, "");
-        //printf("Lecture nouvelle ligne\n");
-        fgets(ligne, 500, fic);
-        //printf("'%s'", ligne);
-        numLigne++;
-    }
-    //printf("\n");
+    strcpy(instruction, instructionLocale);
+    strcpy(listeInstructionsRestante, listeInstructionRestanteLocale);
+    log(LOG_DEBUG, "Element::decomposeScript => fin, on return true : instruction = <%s>, reste = <%s>", instruction, listeInstructionsRestante);
     return true;
 }
+
+//-----------------------------------------
+//
+//          Element::decomposeSi
+//
+//-----------------------------------------
+bool Element::decomposeSi(char *ligne, structSi *resultat){
+
+    int i = 0;
+    char *tmp;
+    char buffer[200];
+    log(LOG_DEBUG, "Element::decomposeSi => -----------------------------");
+    log(LOG_DEBUG, "Element::decomposeSi => decomposeSi => debut <%s>", ligne);
+
+    strcpy(resultat->expression,"");
+    strcpy(resultat->ListeCommandeSiVrai,"");
+    strcpy(resultat->ListeCommandeSiFaux,"");
+    if (strncmp(ligne, "si", 2) != 0){
+        return false;
+    } else {
+        if ( ligne[strlen(ligne) - 1] == '\n'){ // suppr RC en fin de ligne
+            //printf("ligne avec retour chariot on le supprime\n");
+            ligne[strlen(ligne) - 1] = '\0';
+        }
+        tmp = &ligne[2];
+        /*
+        // recherche si 'finsi' dans la ligne, sinon, on concatene avec les lignes suivantes
+        while (strstr(ligne, "finsi") == NULL){
+            // le finsi n'est pas sur la ligne courante, on lit les suivantes et on concatene la chaine 
+            char ligneSupp[50];
+            fgets(ligneSupp, 50, fic);
+            if (feof(fic)){
+                log(LOG_ERROR, "finsi non trouve");
+                return false;
+            }
+            ligneSupp[strlen(ligneSupp) - 1] = '\0';
+            strcat(ligne, " ");
+            strcat(ligne, ligneSupp);
+            //printf("ligne supplementaire lue : '%s'\n", ligne);
+        }*/
+        //printf("ligne complete de si a traiter : '%s'\n", ligne);
+
+        // recuperation de l'expresion
+        i=0;
+        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
+        while (strncmp(tmp, "alors", 5) != 0){
+            if (tmp[0] == '\0') {
+                log(LOG_ERROR, "manque alors dans l'instruction si '%s'", tmp);
+                return false;
+            }
+            resultat->expression[i++] = *tmp++;
+            resultat->expression[i] = '\0';
+        }
+        //printf("expression = '%s'\n", resultat->expression);
+
+        // recherche du alors
+        i = 0;
+        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
+        while (*tmp != ' '){
+            buffer[i++] = *tmp++;
+            buffer[i] = '\0';
+        }
+        //printf("recherche alors = '%s'\n", buffer);
+        if (strcmp(buffer, "alors") != 0){
+            log(LOG_ERROR,"manque alors dans instruction si '%s'", buffer);
+            return false;
+        }
+
+        // recherche du sinon ou finsi (construction liste de commande si vrai)
+        i = 0;
+        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
+        //printf("tmp avant recherche liste commandes si vrai = '%s'\n", tmp);
+        while ((strncmp(tmp, "sinon", 4) != 0) && (strncmp(tmp, "finsi", 5) != 0)){
+            if (tmp[0] == '\0'){
+                // on est arrive en fin de chaine sans avoir trouve sinon ou finsi
+                log(LOG_ERROR, "finsi non trouve");
+                //printf("Element::decomposeSi => fin 184\n");
+                return false;
+            }
+                resultat->ListeCommandeSiVrai[i++] = *tmp++;
+                resultat->ListeCommandeSiVrai[i] = '\0';
+        }
+        //printf("listeCommandeSiVrai = '%s'\n", resultat->ListeCommandeSiVrai);
+        if (strncmp(tmp, "finsi", 5) == 0){
+            // fin de traitement du si
+            remove_extra_spaces(resultat->expression);
+            remove_extra_spaces(resultat->ListeCommandeSiVrai);
+            remove_extra_spaces(resultat->ListeCommandeSiFaux);
+            log(LOG_DEBUG, "Element::decomposeSi => expression          => '%s'", resultat->expression);
+            log(LOG_DEBUG, "Element::decomposeSi => ListeCommandeSiVrai => '%s'", resultat->ListeCommandeSiVrai);
+            log(LOG_DEBUG, "Element::decomposeSi => ListeCommandeSiFaux => '%s'", resultat->ListeCommandeSiFaux);
+            log(LOG_DEBUG, "Element::decomposeSi => fin du si sans sinon");
+            return true;
+        }
+
+        // recherche du sinon
+        i = 0;
+        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
+        while (*tmp != ' '){
+            buffer[i++] = *tmp++;
+            buffer[i] = '\0';
+        }
+        //printf("recherche sinon = '%s'\n", buffer);
+        if (strcmp(buffer, "sinon") != 0){
+            log(LOG_ERROR,"manque sinon dans instruction si");
+            return false;
+        }
+        // on continue avec les commandes si faux
+        i = 0;
+        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
+        while (strncmp(tmp, "finsi", 5) != 0){
+            if (tmp[0] == '\0'){
+                // on est arrive en fin de chaine sans avoir trouve finsi
+                log(LOG_ERROR, "...finsi non trouve");
+                //printf("Element::decomposeSi => fin 214\n");
+                return false;
+            }
+            resultat->ListeCommandeSiFaux[i++] = *tmp++;
+            resultat->ListeCommandeSiFaux[i] = '\0';
+        }
+        remove_extra_spaces(resultat->expression);
+        remove_extra_spaces(resultat->ListeCommandeSiVrai);
+        remove_extra_spaces(resultat->ListeCommandeSiFaux);
+        log(LOG_DEBUG, "Element::decomposeSi => expression          => '%s'", resultat->expression);
+        log(LOG_DEBUG, "Element::decomposeSi => ListeCommandeSiVrai => '%s'", resultat->ListeCommandeSiVrai);
+        log(LOG_DEBUG, "Element::decomposeSi => ListeCommandeSiFaux => '%s'", resultat->ListeCommandeSiFaux);
+        log(LOG_DEBUG, "Element::decomposeSi => fin du si avec sinon");
+    }
+    return true;
+}
+
+//-----------------------------------------
+//
+//          Element::evalueListeInstructions
+//
+//-----------------------------------------
+bool Element::evalueListeInstructions(char *listeInstructions){
+    log(LOG_DEBUG, "Element::evalueListeInstructions => debut du traitement de '%s'  .......     TODO   .....", listeInstructions);
+    // tester si c'est une instruction simple, 
+    // si oui, l'executer 
+    // sinon, la decomposer et relancer cette fonction avec la liste restante
+    char scriptRestant[2000];
+    char instruction[1000];
+    // test si liste vide, si oui, fin normale => return true
+    if (strlen(listeInstructions) == 0){
+        log(LOG_DEBUG, "Element::evalueListeInstructions => la liste a evaluer est vide, on return true");
+        return true;
+    } 
+    do {
+        log(LOG_DEBUG, "Element::evalueListeInstructions =>  '%s'", listeInstructions);
+        strcpy(instruction, (char *)"");
+        strcpy(scriptRestant, (char *)"");
+        printf("Element::evalueListeInstructions =>  entree dans decompose script\n");
+        bool res = decomposeScript(listeInstructions, instruction, scriptRestant);
+        printf("Element::evalueListeInstructions =>  sortie de decompose script\n");
+        if (!res){
+            log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans decomposeScript");
+            return false;
+        }
+        log(LOG_DEBUG, "Element::evalueListeInstructions => decomposeScropt OK, on essaye d'evaluer l'instruction extraite <%s>", instruction);
+        if (!executeExpression(instruction)){
+            log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans executeExpression");
+            return false;
+        } else{
+            log(LOG_DEBUG, "on a reussi a evaluer l'expression <%s> on evalue la liste restante <%s> ", instruction, scriptRestant);
+            if (!evalueListeInstructions(scriptRestant)){
+                return false;
+            }
+            return true;
+        } 
+        printf("appuyer sur enter (strcmp(scriptRestant, '""') = %d, scriptRestant = <%s>) \n", strcmp(scriptRestant, ""), scriptRestant);getchar();
+    } while (strcmp(scriptRestant, "") != 0);
+    log(LOG_DEBUG, "Element::evalueListeInstructions => fin du traitement de '%s'  .......     TODO   .....", listeInstructions);
+    return true;
+}
+

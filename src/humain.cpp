@@ -13,9 +13,11 @@
 #include "../inc/element.hpp"
 #include "../inc/civilisation.hpp"
 
+extern Civilisation civilisation;
 
 char listeCommandesHumain[NB_COMMANDES_HUMAIN][30] = {"mortPossible", "chercheConjoint", "naissancePossible", "achat"};
 char listeVariablesHumain[NB_VARIABLE_HUMAIN][20] = {"sexe", "nom", "age", "statusMarital", "nbEnfants"};
+char VariablesDeScriptHumain[NB_VARIABLE_SCRIPT_HUM][50];
 
 //-----------------------------------------
 //
@@ -394,17 +396,17 @@ bool Humain::evalueExpressionHumain(char *expression){
 
     if (Humain::isVariable(data1)){
         val1 = getIntValue(data1);
-        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data1 est une variable : '%s' => '%d'\n", data1, val1);
+        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data1 est une variable : '%s' => '%d'", data1, val1);
     } else {
         val1 = atoi(data1);
     }
     if (Humain::isVariable(data2)){
         val2 = getIntValue(data2);
-        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data2 est une variable : '%s' => '%d'\n", data2, val2);
+        log(LOG_DEBUG, "Humain::evalueExpressionHumain => data2 est une variable : '%s' => '%d'", data2, val2);
     } else {
         val2 = atoi(data2);
     }
-    log(LOG_DEBUG, "Humain::evalueExpressionHumain => apres evaluation : calcul de '%d' '%s' '%d'\n", val1, op, val2);
+    log(LOG_DEBUG, "Humain::evalueExpressionHumain => apres evaluation : calcul de '%d' '%s' '%d'", val1, op, val2);
     return evaluationExpressionInt(val1, op, val2);
     //return res;
 }
@@ -433,9 +435,11 @@ bool Humain::execCommandeHumain(char *valeur){
                     return true;
                     break;
                 case 3: // achat
+                    //printf(" !!!!!!!        a ecrire    !!!!!!!!\n");
                     char *fournisseur = &(valeur[tailleCommande +1]);
+                    //printf(" nom du fournisseur = <%s>\n", fournisseur);
                     acheteProduit(Civilisation::getEntrepriseByNom(fournisseur), 1);
-                    return true;
+                    return false;
                     break;
             }
             break;
@@ -586,9 +590,9 @@ bool Humain::naissancePossible(void){
             if (conjoint != NULL){
                 log(LOG_INFO, "Humain::naissancePossible => naissance pour %s et %s", nom, conjoint->getNomHumain());
                 if (sexe == HOMME){
-                    naissance(this, conjoint);
+                    naissance(&civilisation, this, conjoint);
                 } else {
-                    naissance(conjoint, this);
+                    naissance(&civilisation, conjoint, this);
                 }
                 return true;
             }

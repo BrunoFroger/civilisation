@@ -24,6 +24,10 @@ char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
 CompteBancaire *compteBancaireFournisseurNull = new CompteBancaire(NULL);
 CompteBancaire *compteBancaireHeritageNull = new CompteBancaire(NULL);
 
+#define NB_INSTRUCTION_COMPLEXES 3
+
+char listeInstructionComplexe[NB_INSTRUCTION_COMPLEXES][20] = {"si", "pour", "tantque"};
+
 bool modeListeAuto = false;
 bool modeTDBAuto = false;
 
@@ -190,18 +194,18 @@ char *getPrenomAleatoire(int sexe){
 //           naissance
 //
 //-----------------------------------------
-Element *naissance(Humain *pere, Humain *mere){
+Element *naissance(Civilisation *civilisation, Humain *pere, Humain *mere){
     log(LOG_INFO, "tools naissance essai entre %s et %s => TODO", pere->getNomHumain(), mere->getNomHumain());
     Element *tmpElement;
     for (int i = 0 ; i < MAX_HUMAIN ; i++){
         //log(LOG_INFO, "tools naissance verification si l'élément %d est libre", i);
-        tmpElement = civilisation.getElement(i);
+        tmpElement = civilisation->getElement(i);
         if (tmpElement->getElementId() == -1){
             //log(LOG_INFO, "tools naissance l'élément %d est libre", i);
             if ((pere->getNbEnfants() < MAX_ENFANTS) && (mere->getNbEnfants() < MAX_ENFANTS)){
                 int sexe = getSexeAleatoire();           // TODO genere aleatoirement HOMME ou FEMME
                 char *prenom = getPrenomAleatoire(sexe);   // Generer prenom depuis liste a definir
-                tmpElement = civilisation.creeElementHumain(sexe, prenom, 1000);
+                tmpElement = civilisation->creeElementHumain(sexe, prenom, 1000);
                 log(LOG_INFO, "tools naissance => %s et %s ont %s comme enfant", pere->getNomHumain(), mere->getNomHumain(), tmpElement->getNomHumain());
                 pere->ajouteEnfant(tmpElement);
                 mere->ajouteEnfant(tmpElement);
@@ -243,17 +247,25 @@ bool mariage(Humain *homme, Humain *femme){
 void remove_extra_spaces(char* str) {
     int i, j;
     int len = strlen(str);
+    // suppression des doublons
     for (i = 0, j = 0; i < len; i++) {
         //if (str[i] == '\n') str[i] =' ';
         if (str[i] != ' ' || (i > 0 && str[i - 1] != ' ')) {
             str[j++] = str[i];
         }
     }
+    // suppression des blancs en fin de ligne
     while (str[j - 1] == ' '){
         str[j - 1] = '\0';
         j--;
     }
     str[j] = '\0';
+    // suppression des blancs en debut de ligne
+    /*while (str[0] == ' '){
+        for (int i = 0 ; i < strlen(str) ; i++){
+            str[i] = str[+1];
+        }
+    }*/
 }
 
 //-----------------------------------------
@@ -318,206 +330,122 @@ bool evaluationExpressionChar(char *data1, char *test, char *data2){
 
 //-----------------------------------------
 //
-//          decomposeSi
+//          testSiInstructionComplexe
 //
 //-----------------------------------------
-bool decomposeSi(char *ligne, structSi *resultat){
-
-    int i = 0;
-    char *tmp;
-    char buffer[200];
-    log(LOG_DEBUG, "Tools.cpp => -----------------------------");
-    log(LOG_DEBUG, "Tools.cpp => decomposeSi => debut ");
-
-    strcpy(resultat->expression,"");
-    strcpy(resultat->ListeCommandeSiVrai,"");
-    strcpy(resultat->ListeCommandeSiFaux,"");
-    log(LOG_DEBUG, "Tools.cpp => decomposeSi => decomposition de '%s' ", ligne);
-    if (strncmp(ligne, "si", 2) != 0){
-        return false;
-    } else {
-        if ( ligne[strlen(ligne) - 1] == '\n'){ // suppr RC en fin de ligne
-            //printf("ligne avec retour chariot on le supprime\n");
-            ligne[strlen(ligne) - 1] = '\0';
-        }
-        tmp = &ligne[2];
-
-        // recuperation de l'expresion
-        i=0;
-        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
-        while (strncmp(tmp, "alors", 5) != 0){
-            if (tmp[0] == '\0') {
-                log(LOG_ERROR, "manque alors dans l'instruction si '%s'", tmp);
-                return false;
-            }
-            resultat->expression[i++] = *tmp++;
-            resultat->expression[i] = '\0';
-        }
-        //printf("expression = '%s'\n", resultat->expression);
-
-        // recherche du alors
-        i = 0;
-        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
-        while (*tmp != ' '){
-            buffer[i++] = *tmp++;
-            buffer[i] = '\0';
-        }
-        //printf("recherche alors = '%s'\n", buffer);
-        if (strcmp(buffer, "alors") != 0){
-            log(LOG_ERROR,"manque alors dans instruction si '%s'", buffer);
-            return false;
-        }
-
-        // recherche du sinon ou finsi (construction liste de commande si vrai)
-        i = 0;
-        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
-        //printf("tmp avant recherche liste commandes si vrai = '%s'\n", tmp);
-        if (strncmp(tmp, "si", 2) == 0) {
-            // gestion du si imbriqué
-            log(LOG_DEBUG,"on commence un si imbrique '%s'", tmp);
-            while ((strncmp(tmp, "finsi", 5) != 0)){
-                if (tmp[0] == '\0'){
-                    // on est arrive en fin de chaine sans avoir trouve sinon ou finsi
-                    log(LOG_ERROR, "finsi non trouve dans si imbrique");
-                    return false;
-                }
-                    resultat->ListeCommandeSiVrai[i++] = *tmp++;
-                    resultat->ListeCommandeSiVrai[i] = '\0';
-            }
-            strcat(resultat->ListeCommandeSiVrai, (char *)"finsi");
-            tmp += 5;
-            log(LOG_DEBUG, "si imbrique = '%s'", resultat->ListeCommandeSiVrai);
-            log(LOG_DEBUG, "chaine restant a traiter = '%s'", tmp);
-            structSi resultat1;
-            decomposeSi(resultat->ListeCommandeSiVrai, &resultat1);
-            strcpy(resultat->ListeCommandeSiVrai, resultat1.ListeCommandeSiVrai);
-            i = strlen(resultat->ListeCommandeSiVrai);
-        }
-        while ((strncmp(tmp, "sinon", 4) != 0) && (strncmp(tmp, "finsi", 5) != 0)){
-            if (tmp[0] == '\0'){
-                // on est arrive en fin de chaine sans avoir trouve sinon ou finsi
-                log(LOG_ERROR, "finsi non trouve");
-                //printf("Element::decomposeSi => fin 184\n");
-                return false;
-            }
-                resultat->ListeCommandeSiVrai[i++] = *tmp++;
-                resultat->ListeCommandeSiVrai[i] = '\0';
-        }
-        //printf("listeCommandeSiVrai = '%s'\n", resultat->ListeCommandeSiVrai);
-        if (strncmp(tmp, "finsi", 5) == 0){
-            // fin de traitement du si
-            remove_extra_spaces(resultat->expression);
-            remove_extra_spaces(resultat->ListeCommandeSiVrai);
-            remove_extra_spaces(resultat->ListeCommandeSiFaux);
-            log(LOG_DEBUG, "Tools.cpp => expression     = '%s'", resultat->expression);
-            log(LOG_DEBUG, "Tools.cpp => alors          = '%s'", resultat->ListeCommandeSiVrai);
-            log(LOG_DEBUG, "Tools.cpp => sinon          = '%s'", resultat->ListeCommandeSiFaux);
-            log(LOG_DEBUG, "Tools.cpp => -------- pas de sinon -------");
+bool testSiInstructionComplexe(char *instruction){
+    //log(LOG_DEBUG, "tests si instruction <%s> complexe", instruction);
+    char *commande;
+    for (int i = 0 ; i < NB_INSTRUCTION_COMPLEXES ; i++){
+        commande = listeInstructionComplexe[i];
+        //log(LOG_DEBUG, "comparaison de <%s> avec <%s> de taille %d", instruction, commande, strlen(commande));
+        if (strncmp(instruction, commande, strlen(commande)) == 0){
+            //log(LOG_DEBUG, "<%s> est bien une instruction complexe", instruction);
             return true;
-        }
-
-        // recherche du sinon
-        i = 0;
-        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
-        while (*tmp != ' '){
-            buffer[i++] = *tmp++;
-            buffer[i] = '\0';
-        }
-        //printf("recherche sinon = '%s'\n", buffer);
-        if (strcmp(buffer, "sinon") != 0){
-            log(LOG_ERROR,"manque sinon dans instruction si");
-            return false;
-        }
-        // on continue avec les commandes si faux
-        i = 0;
-        while (*tmp == ' ') tmp++;  // suppression des blancs avant chaque item
-        while (strncmp(tmp, "finsi", 5) != 0){
-            if (tmp[0] == '\0'){
-                // on est arrive en fin de chaine sans avoir trouve finsi
-                log(LOG_ERROR, "...finsi non trouve");
-                //printf("Element::decomposeSi => fin 214\n");
-                return false;
-            }
-            resultat->ListeCommandeSiFaux[i++] = *tmp++;
-            resultat->ListeCommandeSiFaux[i] = '\0';
-        }
-        remove_extra_spaces(resultat->expression);
-        remove_extra_spaces(resultat->ListeCommandeSiVrai);
-        remove_extra_spaces(resultat->ListeCommandeSiFaux);
-        log(LOG_DEBUG, "Tools.cpp => expression     = '%s'", resultat->expression);
-        log(LOG_DEBUG, "Tools.cpp => alors          = '%s'", resultat->ListeCommandeSiVrai);
-        log(LOG_DEBUG, "Tools.cpp => sinon          = '%s'", resultat->ListeCommandeSiFaux);
-        log(LOG_DEBUG, "Tools.cpp => -------- avec sinon ---------");
-        return true;
+        } 
     }
+    return false;
 }
 
 //-----------------------------------------
 //
-//          decomposeScript
+//          extraireSi
 //
 //-----------------------------------------
-bool decomposeScript(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
-    log(LOG_DEBUG, "tools decomposeScript => debut");
-    log(LOG_DEBUG, "tools decomposeScript => Decomposition du script <%s>", ListeInstructionOrigine);
+bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
+    log(LOG_DEBUG,"extraireSi de la liste d'instructions <%s>", ListeInstructionOrigine);
+    //char *tmp = ListeInstructionOrigine;
+    int index = 0;
+    int niveauSi = 0;
+    //bool fin = false;
     strcpy(instruction, (char *)"");
     strcpy(listeInstructionsRestante, (char *)"");
-    if (strlen(ListeInstructionOrigine) > 0){
-        int j = 0;
-        // analyse si la liste d'origine commence par un mot clé d'une instruction complexe
-        // multiligne possible
-        if (strncmp(ListeInstructionOrigine, "si", 2) == 0){ // traitement d'un si 
-            // recherche du finsi
-            char *tmp = ListeInstructionOrigine;
-            while (strncmp(&tmp[j], "finsi", 5) != 0){
-                j++;
-                if (j > strlen(tmp)){
-                    log(LOG_ERROR, "finsi non trouvé dans %s", ListeInstructionOrigine);
-                    return false;
-                }
-                //log(LOG_DEBUG, "TODO => Finir le dev");
-            } 
-            /*        
-            printf("tools decomposeScript => traitement d'un si\n");
-            char *tmp = ListeInstructionOrigine;
-            while (strncmp(tmp, "finsi ", 6) != 0){
-                if (tmp - ListeInstructionOrigine >= strlen(ListeInstructionOrigine)){
-                    // on a pas trouvé le finsi
-                    log(LOG_ERROR, "pas de finsi dans le script");
-                    return false;
-                }
-                instruction[j++] = tmp[0];
-                tmp++;
-                instruction[j] = '\0';
-            }*/
-            strncat(instruction, tmp, j+5);
-            if (strlen(tmp) > j+6){
-                strcpy(listeInstructionsRestante, tmp+j+6);
-            } else {
-                strcpy(listeInstructionsRestante, "");
+    strcat(ListeInstructionOrigine, " ");   // pour le cas ou le script termine sur un finsi
+    if (strncmp(ListeInstructionOrigine, "si ", 3) != 0){
+        log(LOG_ERROR, "%s ne commence pas par si");
+        return false;
+    }
+    bool insideSi = true;
+    log(LOG_DEBUG,"debut separation si du reste de la commande");
+    strcpy(instruction, "si ");
+    index += 3;
+    printf("construction du si : <");
+    for (int i = 3 ; i < strlen(ListeInstructionOrigine) ; i++){
+        if (insideSi){
+            //printf("on teste le caractere '%c'\n", ListeInstructionOrigine[i]);
+            //printf("%c", ListeInstructionOrigine[i]);
+            //tmp = &ListeInstructionOrigine[i];
+            if (strncmp(&ListeInstructionOrigine[i], "si ", 3) == 0){
+                niveauSi++;
+                log(LOG_DEBUG, "c'est un si imbrique, on incremente le niveauSi : %d", niveauSi);
             }
-        } else { // traitement d'un instruction simple finissant par une fin de ligne
-            for (int i = 0 ; i < strlen(ListeInstructionOrigine) ; i++){
-                // test si 
-                while (ListeInstructionOrigine[i] != '\n'){
-                    instruction[j++] = ListeInstructionOrigine[i++];
-                    instruction[j] = '\0';
-                }
-                if (i < strlen(ListeInstructionOrigine)){
-                    strcpy(listeInstructionsRestante, &ListeInstructionOrigine[i+1]);
+            if (strncmp(&ListeInstructionOrigine[i], "finsi ", 6) == 0){
+                log(LOG_DEBUG, "finsi detecte");
+                // on a  trouve le finsi
+                // on verifie qu'on est pas dans un si imbrique
+                if (niveauSi > 0){
+                    niveauSi--;
+                    log(LOG_DEBUG, "c'est la fin d'un si imbrique, on decremente le niveauSi : %d", niveauSi);
+                    strcat(instruction, "finsi ");
+                    i += 5;
+                    index += 6;
+                    continue;
                 } else {
-                    strcpy(listeInstructionsRestante, "");
+                    // c'est le finSi de plus haut niveau
+                    insideSi = false;
                 }
-                break;
+                strcat(instruction, "finsi ");
+                i += 5;
+                index = 0;
+                printf(">\nconstruction du reste : <");
+                continue;
+            }
+            printf("%c", ListeInstructionOrigine[i]);
+            instruction[index++] = ListeInstructionOrigine[i];
+            instruction[index] = '\0';
+        } else {
+            listeInstructionsRestante[index++] = ListeInstructionOrigine[i];
+            listeInstructionsRestante[index] = '\0';
+        }
+    }
+    printf(">\n");
+    remove_extra_spaces(instruction);
+    remove_extra_spaces(listeInstructionsRestante);
+    log(LOG_DEBUG, "extraireSi => bloc Si = <%s> ; instructions restantes = <%s>", instruction, listeInstructionsRestante); 
+
+    if (insideSi) return false;
+    return true;
+
+    /*while (!fin){
+        if (niveauSi == 0){
+            if (strncmp(tmp, "si", 5) == 0){
+                niveauSi++;
+                log(LOG_DEBUG, "c'est un si imbrique, on incremente le niveauSi : %d", niveauSi);
+            } else if (strncmp(&tmp[index], "finsi", 5) == 0){
+                // on a trouve le finSi correspondant
+                strncpy(instruction, ListeInstructionOrigine, index+5);
+                //strncpy(instruction, ListeInstructionOrigine, index);
+                strcpy(listeInstructionsRestante, &ListeInstructionOrigine[index+5]);
+                remove_extra_spaces(instruction);
+                remove_extra_spaces(listeInstructionsRestante);
+                log(LOG_DEBUG, "extraireSi => fin OK : instruction = <%s>, instructions restantes = <%s>", instruction, listeInstructionsRestante);
+                return true;
+            }
+        } else {
+            // recherche du finSi imbriqueelse 
+            if (strncmp(tmp, "finsi", 5) == 0){
+                // on a trouve le finSi du si imbrique
+                niveauSi--;
             }
         }
-        //remove_extra_spaces(instruction);
-        //remove_extra_spaces(listeInstructionsRestante);
-        log(LOG_DEBUG, "tools decomposeScript => instruction à traiter = <%s>", instruction);
-        log(LOG_DEBUG, "tools decomposeScript => liste instr restante  = <%s>", listeInstructionsRestante);
-        return true;
+        if (index >= strlen(ListeInstructionOrigine)){
+            // on a pas trouve le finSi
+            log(LOG_ERROR, "fin de script sans avoir trouve le finsi correspondant dans <%s>", ListeInstructionOrigine);
+            return false;
+        }
+        index++;
     }
-    return false;
+    return false;*/
 }
 
 //-----------------------------------------
@@ -542,14 +470,4 @@ void setAuto(char *parametre){
     } else {
         log(LOG_INFO, "desactivation affichage automatique de '%s'", parametre);
     }
-}
-
-//-----------------------------------------
-//
-//          getBoolString
-//
-//-----------------------------------------
-char *getBoolString(bool val){
-    if (val) return (char *)"true";
-    return (char *)"false";
 }

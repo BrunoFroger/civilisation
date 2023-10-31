@@ -26,7 +26,7 @@ Ce fichier doit contenir le comportement qui régit chaque évolution de l'objet
 	<opTest> = "=" | "!=" | "<" | ">" | "<=" | ">="
 	<Variable> = 'voir ci dessous la liste des variables disponibles'
 	<valeur> = nombre
-	<affectation> = <variable> "=" <valeur>
+	<affectation> = set <variable> "=" <valeur>
 	
 	<listeCommandes> = <commande> | <listeCommandes>
 	<commande> = 'voir ci dessous la liste des commandes disponibles'
@@ -74,7 +74,7 @@ Ce fichier doit contenir le comportement qui régit chaque évolution de l'objet
 	
 	
 ## Differents niveau de log
-	LOG_ERROR   0 : signale les erreurs d'exécution	
+	LOG_ERROR   0 : signale les erreurs d'exécution
 	LOG_WARNING 1 : signale avertissement lors de l'exécution
 	LOG_INFO'   2 : message informatif sans 
 	LOG_DEBUG   3 : utilise pour la mise au point du programme

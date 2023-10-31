@@ -14,8 +14,9 @@
 #include "../inc/civilisation.hpp"
 #include "../inc/aide.hpp"
 
-char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher", "livraison"};
+char listeCommandesEntreprise[NB_COMMANDES_ENTREPRISE][30] = {"produire", "embaucher", "debaucher", "livraison", "creeFilliale"};
 char listeVariablesEntreprise[NB_VARIABLE_ENTREPRISE][20] = {"nom", "nbSalarie", "nbCommande", "stock"};
+char VariablesDeScriptEntreprise[NB_VARIABLE_SCRIPT_ENT][50];
 
 extern Civilisation civilisation;
 
@@ -32,6 +33,7 @@ Entreprise::Entreprise(){
     for (int i = 0 ; i < MAX_COMMANDES ; i++){
         listeCommandes[i].status = COMMANDE_VIDE;
     }
+    cptRefCommande = 0;
 }
 
 //-----------------------------------------
@@ -142,64 +144,29 @@ void Entreprise::initEntreprise(int id, int activite, char *nom, int capitalInit
 
 //-----------------------------------------
 //
-//          Entreprise::getRefCommande
-//
-//-----------------------------------------
-int Entreprise::getRefCommande(void){
-    int newRef = 0;
-    for (int i = 0 ; i < MAX_COMMANDES ; i++){
-        if (listeCommandes[i].reference > newRef){
-            newRef = listeCommandes[i].reference;
-        }
-    }
-    newRef++;
-    return newRef;
-}
-
-//-----------------------------------------
-//
 //          Entreprise::creeCommande
 //
 //-----------------------------------------
 structCommande *Entreprise::creeCommande(Humain *client, int quantite){
     //bool result = false;
-    // recherche si dans les filliales une des entreprise a moins de commandes en cours
-    // traitement uniquement pour la maison mere
-    if (this->maisonMere == NULL){
-        log(LOG_DEBUG, "recherche si une filiale est moins chargee en commande");
-        int minCommande = nbCommandes;
-        Entreprise *candidateGestionCommande = this;
-        for (int i = 0 ; i < MAX_FILIALES ; i++){
-            if (listeFiliales[i] != NULL){
-                Entreprise *filiale = listeFiliales[i];
-                if (filiale->getNbCommandes() < minCommande){
-                    candidateGestionCommande = filiale;
-                    minCommande = filiale->getNbCommandes();
-                }
+    if (getNbCommandes() < MAX_COMMANDES){
+        log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
+        log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s (%d)", client->getNomHumain(), quantite, getNomEntreprise(), getIdEntreprise());
+        for (int i = 0 ; i < MAX_COMMANDES ; i++){
+            structCommande *tmpCde = &listeCommandes[i];
+            if (tmpCde->status == COMMANDE_VIDE){
+                tmpCde->client = client;
+                tmpCde->reference = cptRefCommande++;
+                tmpCde->quantité = quantite;
+                tmpCde->prixUnitaire = this->prixProduit;
+                tmpCde->status = COMMANDE_INIT;
+                log(LOG_DEBUG, "Entreprise::creeCommande => commande enregistree avec succes (id = %d)", i);
+                nbCommandes++;
+                return tmpCde;
             }
         }
-        if (candidateGestionCommande != this){
-            // une filiale est moins chargee, on lui transfere cette commande
-            log(LOG_INFO, "on transfere la commande a l'entreprise %s (%d)", candidateGestionCommande->getNomEntreprise(), candidateGestionCommande->getIdEntreprise());
-            return candidateGestionCommande->creeCommande(client, quantite);
-        }
     }
-    log(LOG_DEBUG, "Entreprise::creeCommande => TODO");
-    log(LOG_DEBUG, "Entreprise::creeCommande %s passe commande de %d à %s (%d)\n", client->getNomHumain(), quantite, getNomEntreprise(), getIdEntreprise());
-    for (int i = 0 ; i < MAX_COMMANDES ; i++){
-        structCommande *tmpCde = &listeCommandes[i];
-        if (tmpCde->status == COMMANDE_VIDE){
-            tmpCde->client = client;
-            tmpCde->reference = getRefCommande();
-            tmpCde->quantité = quantite;
-            tmpCde->prixUnitaire = this->prixProduit;
-            tmpCde->status = COMMANDE_INIT;
-            log(LOG_DEBUG, "Entreprise::creeCommande enregistree avec succes (id = %d)", i);
-            nbCommandes++;
-            return tmpCde;
-        }
-    }
-    log(LOG_DEBUG, "Entreprise::creeCommande le tableau des commandes est plein\n");
+    log(LOG_DEBUG, "Entreprise::creeCommande le tableau des commandes est plein");
     return NULL;
 }
 
@@ -245,7 +212,10 @@ void Entreprise::livraison(Humain *client){
                 log(LOG_ERROR, "livraison de %d produit a %s impossible (pas assez de stock)", tmpCde->quantité, client->getNomHumain());
                 return;
             }
+
+            //return;
         }
+        //break;
     }
 }
 
@@ -584,7 +554,7 @@ char *Entreprise::listeVariables(void){
 //
 //-----------------------------------------
 bool Entreprise::debaucher(void){
-    if (nbSalaries == 0) return false;
+    if (nbSalaries == 0) return true;
     log(LOG_DEBUG,"Humain::debaucher : TODO modifier pour selectionner aleatoirement un salarie");
     for (int i = 0 ; i < MAX_EMPLOYES ; i++){
         Humain *employe = listeEmployes[i];

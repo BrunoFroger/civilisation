@@ -27,8 +27,9 @@
     #define COMMANDE_REGLEE     5
     #define COMMANDE_FERMEE     6
 
-    #define NB_COMMANDES_ENTREPRISE 4
+    #define NB_COMMANDES_ENTREPRISE 5
     #define NB_VARIABLE_ENTREPRISE  4
+    #define NB_VARIABLE_SCRIPT_ENT  10
 
     #define NB_VARIABLES_SCRIPT_OBLIGATOIRES   6
     // nom, cout salarie, prix produit, cout produit
@@ -95,13 +96,13 @@
             int capitalInitial;
             Humain  *listeEmployes[MAX_EMPLOYES];
             structCommande listeCommandes[MAX_COMMANDES];
-            int getRefCommande(void);
             bool debaucher();
             Humain *getSalarie(void);
             Entreprise *maisonMere;
             Entreprise *listeFiliales[MAX_FILIALES];
             int nbDemandeEmbauche;
             Humain *patron;
+            int cptRefCommande;
     };
 
 #endif

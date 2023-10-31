@@ -111,7 +111,6 @@ void baniereDebutRubrique(char *rubrique){
     log(LOG_DEBUG, "");
     log(LOG_DEBUG, "=====================================================");
     gettimeofday(&debutRubrique, tmpTime);
-    nbTestsRubrique=0;
 }
 
 //-----------------------------------------
@@ -189,7 +188,7 @@ void bilanTests(void){
     long dureeTests = myDifftime(&debutTests, &finTests);
     //log(LOG_INFO, "durée des tests : %ld",dureeTests);
     printf("+-------------------------------------------------------------------+\n");
-    printf("|                 Bilan des tests (durees en microsecondes)         |\n");
+    printf("|                 Bilan des tests (duree en microsecondes)          |\n");
     printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
     printf("|                  rubrique      |  NB |  OK |  KO |  %% OK |  duree |\n");
     printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
@@ -259,7 +258,7 @@ bool resultatTest(char *rubrique, bool status){
     nbTests++;
     nbTestsRubrique++;
     if (status){
-        printf("    Test n° %d OK dans %s\n", nbTestsRubrique, rubrique);
+        printf("    Test n° %d OK \n", nbTestsRubrique);
         nbOK++;
         nbOKRubrique++;
     } else {
@@ -454,8 +453,23 @@ void executeTests(int mode){
             strcpy(opeTest, "<=");
             printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1, opeTest, val2));
-        } else {
-            log(LOG_DEBUG, "Bloc evaluationExpressionInt non executé\n");
+        } 
+
+        if (1 || exec_all ){ // test extraire Si 
+            baniereTest(rubrique, (char *)"test extraire si simple");
+            char ligne[5000] = "";
+            char expression[200];
+            char expressionsRestantes[200];
+            snprintf(ligne, sizeof(ligne),  "si age = 0 alors mortPossible sinon chercheConjoint finsi naissancePossible");
+            resultatTest(rubrique, extraireSi(ligne, expression, expressionsRestantes));
+            resultatTest(rubrique, (strcmp(expression, "si age = 0 alors mortPossible sinon chercheConjoint finsi") == 0));
+            resultatTest(rubrique, (strcmp(expressionsRestantes, "naissancePossible") == 0));
+
+            baniereTest(rubrique, (char *)"test extraire si imbrique");
+            snprintf(ligne, sizeof(ligne),  "si age = 0 alors mortPossible sinon si age > 20 alors chercheConjoint finsi naissancePossible finsi achat-aubonpain");
+            resultatTest(rubrique, extraireSi(ligne, expression, expressionsRestantes));
+            resultatTest(rubrique, (strcmp(expression, "si age = 0 alors mortPossible sinon si age > 20 alors chercheConjoint finsi naissancePossible finsi") == 0));
+            resultatTest(rubrique, (strcmp(expressionsRestantes, "achat-aubonpain") == 0));
         }
 
         if (1 || exec_all ){ // test decompose si 
@@ -477,72 +491,49 @@ void executeTests(int mode){
             resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiFaux, "naissancePossible") == 0));
         }
 
-        if (1 || exec_all ){ // test decompose si imbriques
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "test decompose si imbriques");
-            char ligne[5000] = "";
-            structSi resultat;
-
-            snprintf(ligne, sizeof(ligne), "si test1 alors si test2 alors commande1 sinon commande2 finsi sinon commande3 finsi commande4");
-            log(LOG_DEBUG, "test decomposition de '%s'", ligne);
-            resultatTest(rubrique, decomposeSi(ligne, &resultat));
-            resultatTest(rubrique, strcmp(resultat.ListeCommandeSiVrai, "commande1") == 0);
-            resultatTest(rubrique, strcmp(resultat.ListeCommandeSiFaux, "commande3") == 0);
-        }
-
         if (1 || exec_all ){ // test decomposeScript
-            log(LOG_DEBUG, "-----------------------------------------------------");
-            log(LOG_DEBUG, "test decomposeScript");
-            char script[5000] = "";
-            char instruction[100] = "";
-            char listeInstructions[5000] = "";
-            bool res = true;
-            snprintf(script, sizeof(script), "#commentaire\nchercheConjoint");
-            res = decomposeScript(script, instruction, listeInstructions);
-            res &= (strcmp(instruction, "#commentaire") == 0);
-            res &= (strcmp(listeInstructions, "chercheConjoint") == 0);
-            resultatTest(rubrique, res);
-            snprintf(script, sizeof(script), "#commentaire\nchercheConjoint\ntoto");
-            res = decomposeScript(script, instruction, listeInstructions);
-            res &= (strcmp(instruction, "#commentaire") == 0);
-            res &= (strcmp(listeInstructions, "chercheConjoint\ntoto") == 0);
-            resultatTest(rubrique, res);
+            baniereTest(rubrique, (char *)"test decomposeScript");
+            Civilisation newCivilisation;
+            Element *testScript = newCivilisation.creeElementHumain(HOMME, (char *)"joseph", 2000);
+            char script[5000];
+            char instruction[1000];
+            char listeInstructions[5000];
+            strcpy(script, (char*)"");
+            strcpy(instruction, (char*)"");
+            strcpy(listeInstructions, (char*)"");
 
-            snprintf(script, sizeof(script), "#commentaire\n chercheConjoint");
-            res = decomposeScript(script, instruction, listeInstructions);
-            res &= (strcmp(instruction, "#commentaire") == 0);
-            res &= (strcmp(listeInstructions, " chercheConjoint") == 0);
-            resultatTest(rubrique, res);
+            log(LOG_DEBUG, "------------------------------------------");
+            snprintf(script, sizeof(script), "");
+            resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
+            resultatTest(rubrique, (strcmp(instruction, "") == 0));
+            resultatTest(rubrique, (strcmp(listeInstructions, "") == 0));
 
-            snprintf(script, sizeof(script), "si toto alors titi finsi commande");
-            res = decomposeScript(script, instruction, listeInstructions);
-            res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
-            res &= (strcmp(listeInstructions, "commande") == 0);
-            resultatTest(rubrique, res);
+            log(LOG_DEBUG, "------------------------------------------");
+            snprintf(script, sizeof(script), "toto");
+            resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
+            resultatTest(rubrique, (strcmp(instruction, "toto") == 0));
+            resultatTest(rubrique, (strcmp(listeInstructions, "") == 0));
 
-            snprintf(script, sizeof(script), "si toto alors titi finsi commande\n ");
-            res = decomposeScript(script, instruction, listeInstructions);
-            res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
-            res &= (strcmp(listeInstructions, "commande\n ") == 0);
-            resultatTest(rubrique, res);
+            log(LOG_DEBUG, "------------------------------------------");
+            snprintf(script, sizeof(script), "si age = 0 alors mortPossible sinon naissancePossible finsi");
+            resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
+            resultatTest(rubrique, (strcmp(instruction, "si age = 0 alors mortPossible sinon naissancePossible finsi") == 0));
+            resultatTest(rubrique, (strcmp(listeInstructions, "") == 0));
 
-            snprintf(script, sizeof(script), "si toto alors titi finsi \n commande");
-            res = decomposeScript(script, instruction, listeInstructions);
-            res &= (strcmp(instruction, "si toto alors titi finsi") == 0);
-            res &= (strcmp(listeInstructions, "\n commande") == 0);
-            resultatTest(rubrique, res);
+            log(LOG_DEBUG, "------------------------------------------");
+            snprintf(script, sizeof(script), "si age = 0 alors mortPossible finsi naissancePossible");
+            resultatTest(rubrique,testScript->decomposeScript(script, instruction, listeInstructions));
+            printf("fin de la fonction decompose script\n");
+            resultatTest(rubrique,(strcmp(instruction, "si age = 0 alors mortPossible finsi") == 0));
+            resultatTest(rubrique,(strcmp(listeInstructions, "naissancePossible") == 0));
 
-            snprintf(script, sizeof(script), "si toto \n tata alors titi \n tutu finsi commande1\n commande2\n ");
-            res = decomposeScript(script, instruction, listeInstructions);
-            res &= (strcmp(instruction, "si toto \n tata alors titi \n tutu finsi") == 0);
-            res &= (strcmp(listeInstructions, "commande1\n commande2\n ") == 0);
-            resultatTest(rubrique, res);
+            log(LOG_DEBUG, "------------------------------------------");
+            snprintf(script, sizeof(script), "si age = 0 alors mortPossible naissancePossible ");
+            resultatTest(rubrique, !(testScript->decomposeScript(script, instruction, listeInstructions)));
 
-            snprintf(script, sizeof(script), "si toto alors titi commande\n ");
-            res = decomposeScript(script, instruction, listeInstructions);
-            resultatTest(rubrique, !res);
-        } else {
-            log(LOG_DEBUG, "Bloc decomposeScript non executé\n");
+            log(LOG_DEBUG, "------------------------------------------");
+            snprintf(script, sizeof(script), "si age = 0 alors mortPossible finsi si age > 20 alors naissancePossible finsi ");
+            resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
         }
 
         bilanTestsRubrique(rubrique);
@@ -744,11 +735,6 @@ void executeTests(int mode){
         humain.acheteProduit(entrepriseToto,1);
         //civilisation.listeCivilisation();
         resultatTest(rubrique, (entrepriseToto->getNbCommandes() == 1));
-
-        log(LOG_DEBUG, "-----------------------------------------------------");
-        log(LOG_DEBUG, "test script humain avec si imbrique");
-        Element *testScriptHumain = civilisation.creeElementHumain(HOMME, (char *)"humainScript", 1000);
-        resultatTest(rubrique, testScriptHumain->execScript((char *)"scripts/testSiImbriqueHumain.scr"));
         
         bilanTestsRubrique(rubrique);
     }
