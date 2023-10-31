@@ -1,7 +1,7 @@
 #############################################################
 #                   M a k e f i l e 
 # 
-#     généré automatiquement le 31/10/2023 à 11:32:43
+#     généré automatiquement le 31/10/2023 à 15:03:39
 #         avec buildMakefile (version du 23 Aug 2023)
 #                 (c) B. Froger 
 # 
@@ -123,7 +123,8 @@ $(OBJDIR)/main.o: $(SRCDIR)/main.cpp \
 	$(INCDIR)/analyseParametres.hpp \
 	$(INCDIR)/aide.hpp \
 	$(INCDIR)/analyseLigneCommande.hpp \
-	$(INCDIR)/lectureClavier.hpp
+	$(INCDIR)/lectureClavier.hpp \
+	$(INCDIR)/tools.hpp
 	@$(CC) $(CCFLAGS) $< -c -o $@
 	@echo "Compilation de $< OK"
 

@@ -18,6 +18,7 @@
 #include "../inc/aide.hpp"
 #include "../inc/analyseLigneCommande.hpp"
 #include "../inc/lectureClavier.hpp"
+#include"../inc/tools.hpp"
 
 Civilisation civilisation;
 int nbEvolutions = 0;
@@ -25,11 +26,11 @@ int nbRepetitions = 0;
 char configFilename[100] = "scripts/civilisation.scr";
 
 int main(int argc, char **argv){
+    initTools();
     char ligneSaisie[100];
     if (!analyseParametres(argc, argv)){
         exit (1);
     }
-    initGenerateurAleatoire();
     initHistoriqueCommande();
     
     civilisation.chargeConfiguration(configFilename);

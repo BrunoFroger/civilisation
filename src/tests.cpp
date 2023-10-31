@@ -536,6 +536,18 @@ void executeTests(int mode){
             resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
         }
 
+
+        if (1 || exec_all ){ // test variables de script
+            baniereTest(rubrique, (char *)"test gestion variables de script");
+            resultatTest(rubrique, setVariable((char *)"set maVariable 50"));
+            resultatTest(rubrique, !setVariable((char *)"set maVariable 50"));
+            resultatTest(rubrique, !setVariable((char *)"set maVariable"));
+            resultatTest(rubrique, strcmp(getVariable((char *)"maVariable"), "50") == 0);
+            resultatTest(rubrique, getVariable((char *)"toto") == NULL);
+            resultatTest(rubrique, unsetVariable((char *)"unset maVariable"));
+            resultatTest(rubrique, getVariable((char *)"maVariable") == NULL);
+        }
+
         bilanTestsRubrique(rubrique);
     }
 
@@ -735,13 +747,6 @@ void executeTests(int mode){
         humain.acheteProduit(entrepriseToto,1);
         //civilisation.listeCivilisation();
         resultatTest(rubrique, (entrepriseToto->getNbCommandes() == 1));
-
-        baniereTest(rubrique, (char *)"test gestion variables user");
-        resultatTest(rubrique, pere->setVariable((char *)"set maVariable 50"));
-        resultatTest(rubrique, !pere->setVariable((char *)"set maVariable 50"));
-        resultatTest(rubrique, !pere->setVariable((char *)"set maVariable"));
-        resultatTest(rubrique, strcmp(pere->getVariable((char *)"maVariable"), "50") == 0);
-        resultatTest(rubrique, pere->getVariable((char *)"toto") == NULL);
         bilanTestsRubrique(rubrique);
         
         bilanTestsRubrique(rubrique);

@@ -19,6 +19,8 @@
     extern bool modeListeAuto;
     extern bool modeTDBAuto;
 
+    extern void initTools(void);
+    extern void initVariablesDeScript(void);
     extern void initGenerateurAleatoire(void);
     extern void remove_extra_spaces(char* str);
     extern bool evaluationExpressionInt(int data1, char *test, int data2);
@@ -30,5 +32,7 @@
     extern void setAuto(char *parametre);
     extern bool testSiInstructionComplexe(char *instruction);
     extern bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante);
-
+    extern char *getVariable(char *nom);
+    extern bool setVariable(char *valeur);
+    extern bool unsetVariable(char *valeur);
 #endif

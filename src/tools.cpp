@@ -14,6 +14,7 @@
 #include "../inc/civilisation.hpp"
 #include "../inc/humain.hpp"
 #include "../inc/compteBancaire.hpp"
+#include"../inc/tools.hpp"
 
 #define TAILLE_PRENOM   30
 
@@ -25,11 +26,35 @@ CompteBancaire *compteBancaireFournisseurNull = new CompteBancaire(NULL);
 CompteBancaire *compteBancaireHeritageNull = new CompteBancaire(NULL);
 
 #define NB_INSTRUCTION_COMPLEXES 3
-
 char listeInstructionComplexe[NB_INSTRUCTION_COMPLEXES][20] = {"si", "pour", "tantque"};
+
+#define NB_VARIABLE_SCRIPT_HUM  10
+typedef struct{
+    char nom[50];
+    char valeur[50];
+} structVariable;
+structVariable variablesDeScript[NB_VARIABLE_SCRIPT_HUM];
 
 bool modeListeAuto = false;
 bool modeTDBAuto = false;
+
+char **tabPrenomMasculin = NULL;
+char **tabPrenomFeminin = NULL;
+bool tableauPrenomsOK = false;
+int nbPrenomsMasculin = 0;
+int nbPrenomsFeminin = 0;
+
+//-----------------------------------------
+//
+//          initVariablesDeScript
+//
+//-----------------------------------------
+void initVariablesDeScript(void){
+    for (int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
+        strcpy(variablesDeScript[i].nom, "");
+        strcpy(variablesDeScript[i].valeur, "");
+    }
+}
 
 //-----------------------------------------
 //
@@ -59,12 +84,6 @@ int getSexeAleatoire(void){
     else
         return HOMME;
 }
-
-char **tabPrenomMasculin = NULL;
-char **tabPrenomFeminin = NULL;
-bool tableauPrenomsOK = false;
-int nbPrenomsMasculin = 0;
-int nbPrenomsFeminin = 0;
 
 //-----------------------------------------
 //
@@ -171,8 +190,6 @@ char *tmpPrenom;
 int idxPrenom;
 char *getPrenomAleatoire(int sexe){
     //log(LOG_DEBUG, "Tools.cpp getPrenomAleatoire => debut (a affiner)");
-    if (tabPrenomMasculin == NULL) initTableauPrenomsMasculins();
-    if (tabPrenomFeminin == NULL) initTableauPrenomsFeminins();
 
     int nbPrenom;
     char **tabPrenoms;
@@ -415,37 +432,6 @@ bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeIns
 
     if (insideSi) return false;
     return true;
-
-    /*while (!fin){
-        if (niveauSi == 0){
-            if (strncmp(tmp, "si", 5) == 0){
-                niveauSi++;
-                log(LOG_DEBUG, "c'est un si imbrique, on incremente le niveauSi : %d", niveauSi);
-            } else if (strncmp(&tmp[index], "finsi", 5) == 0){
-                // on a trouve le finSi correspondant
-                strncpy(instruction, ListeInstructionOrigine, index+5);
-                //strncpy(instruction, ListeInstructionOrigine, index);
-                strcpy(listeInstructionsRestante, &ListeInstructionOrigine[index+5]);
-                remove_extra_spaces(instruction);
-                remove_extra_spaces(listeInstructionsRestante);
-                log(LOG_DEBUG, "extraireSi => fin OK : instruction = <%s>, instructions restantes = <%s>", instruction, listeInstructionsRestante);
-                return true;
-            }
-        } else {
-            // recherche du finSi imbriqueelse 
-            if (strncmp(tmp, "finsi", 5) == 0){
-                // on a trouve le finSi du si imbrique
-                niveauSi--;
-            }
-        }
-        if (index >= strlen(ListeInstructionOrigine)){
-            // on a pas trouve le finSi
-            log(LOG_ERROR, "fin de script sans avoir trouve le finsi correspondant dans <%s>", ListeInstructionOrigine);
-            return false;
-        }
-        index++;
-    }
-    return false;*/
 }
 
 //-----------------------------------------
@@ -470,4 +456,111 @@ void setAuto(char *parametre){
     } else {
         log(LOG_INFO, "desactivation affichage automatique de '%s'", parametre);
     }
+}
+
+//-----------------------------------------
+//
+//          setVariable
+//
+//-----------------------------------------
+bool setVariable(char *valeur){
+    char *tmp = &valeur[4];
+    char nomVariable [50] = "";
+    char valeurVariable[50] = "";
+    bool varOuVal = true;
+    int index = 0;
+    int j = 0;
+    //log(LOG_DEBUG, "tools : setVariable => debut set '%s'", tmp);
+    for (int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
+        if (strlen(variablesDeScript[i].nom) == 0){
+            // on peut utiliser cette variable, elle est libre
+            //log(LOG_DEBUG, "Humain::setVariable => la variable %d est libre", i);
+            while (j < strlen(tmp)){
+                if (tmp[j] == ' '){
+                    varOuVal = false;
+                    j++;
+                    index=0;
+                    //log(LOG_DEBUG, "on passe du nom de variable a la valeur");
+                }
+                if (varOuVal){
+                    nomVariable[index++] = tmp[j++];
+                    nomVariable[index] = '\0';
+                } else {
+                    valeurVariable[index++] = tmp[j++];
+                    valeurVariable[index] = '\0';
+                }
+            }
+            if (strlen(valeurVariable)> 0){
+                // test si variable deja definie
+                for (int k = 0 ; k < NB_VARIABLE_SCRIPT_HUM ; k++){
+                    if (strcmp(variablesDeScript[k].nom, nomVariable) == 0){
+                        // cette variable existe deja : erreur
+                        log(LOG_ERROR, "la variable '%s' existe deja", nomVariable);
+                        return false;
+                    }
+                }
+                strcpy(variablesDeScript[i].nom,nomVariable);
+                strcpy(variablesDeScript[i].valeur,valeurVariable);
+                log(LOG_DEBUG,"tools : affectation de la variable <%s> avec la valeur <%s> en position %d", variablesDeScript[i].nom, variablesDeScript[i].valeur, i);
+                return true;
+            } else {
+                log(LOG_ERROR, "commande 'set' : erreur de syntaxe, manque valeur ");
+                return false;
+            }
+        }
+    }
+    log(LOG_ERROR, "commande 'set' : nombre de variables depasse (%d) ", NB_VARIABLE_SCRIPT_HUM);
+    return false;
+}
+
+//-----------------------------------------
+//
+//          getVariable
+//
+//-----------------------------------------
+char *getVariable(char *nom){
+    //log(LOG_DEBUG, "tools : getVariable => debut  get '%s'", nom);
+    for(int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
+        //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScriptHumain[i].nom);
+        if (strcmp(variablesDeScript[i].nom, nom) == 0){
+            // on a trouve la valeur avec le bon nom
+            //log(LOG_DEBUG, "on a trouver la bonne variable, on retourne sa valeur <%s>", variablesDeScriptHumain[i].valeur);
+            return variablesDeScript[i].valeur;
+        }
+    }
+    //log(LOG_DEBUG, "tools : getVariable => on a pas trouve la variable <%s>", nom);
+    return NULL;
+}
+
+//-----------------------------------------
+//
+//          Humain::unsetVariable
+//
+//-----------------------------------------
+bool unsetVariable(char *nom){
+    char *tmp = &nom[6];
+    printf("tools : unsetVariable => debut unset '%s'\n", tmp);
+    for(int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
+        //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScript[i].nom);
+        if (strcmp(variablesDeScript[i].nom, tmp) == 0){
+            // on a trouve la valeur avec le bon nom
+            strcpy(variablesDeScript[i].nom,"");
+            strcpy(variablesDeScript[i].valeur,"");
+            log(LOG_DEBUG, "on a trouver la bonne variable, on l'efface");
+            return true;
+        }
+    }
+    return false;
+}
+
+//-----------------------------------------
+//
+//          initTools
+//
+//-----------------------------------------
+void initTools(void){
+    initVariablesDeScript();
+    initGenerateurAleatoire();
+    if (tabPrenomMasculin == NULL) initTableauPrenomsMasculins();
+    if (tabPrenomFeminin == NULL) initTableauPrenomsFeminins();
 }

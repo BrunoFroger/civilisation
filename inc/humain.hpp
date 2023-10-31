@@ -22,14 +22,9 @@
 
     #define NB_COMMANDES_HUMAIN     7
     #define NB_VARIABLE_HUMAIN      5
-    #define NB_VARIABLE_SCRIPT_HUM  10
 
     class Entreprise;
 
-    typedef struct{
-        char nom[50];
-        char valeur[50];
-    } structVariableHumain;
 
     class Humain{
         public:
@@ -68,9 +63,6 @@
             bool testSiCommandeValideHumain(char *valeur);
             bool testSiListeCommandeValideHumain(char *valeur);
             void valideAchatProduit(Entreprise *entreprise, int montant);
-            char *getVariable(char *nom);
-            bool setVariable(char *valeur);
-            bool unsetVariable(char *valeur);
             
             CompteBancaire *compteBancaireHumain;
 
@@ -89,7 +81,6 @@
             Humain *mere;
             Humain *conjoint;
             Humain *enfants[MAX_ENFANTS];
-            structVariableHumain variablesDeScriptHumain[NB_VARIABLE_SCRIPT_HUM];
     };
 
 #endif
