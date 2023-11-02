@@ -227,8 +227,10 @@ void bilanTestsRubrique(char *rubrique){
     gettimeofday(&finRubrique, tmpTime);
     long dureeRubrique = myDifftime(&debutRubrique, &finRubrique);
     if (nbTestsRubrique > 0){
-        printf("    %d tests executés dans la rubrique %s\n", nbTestsRubrique, rubrique);
-        printf("    Durée de la rubrique = %ld\n", dureeRubrique);
+        if (getLogLevel() != LOG_NONE){
+            printf("    %d tests executés dans la rubrique %s\n", nbTestsRubrique, rubrique);
+            printf("    Durée de la rubrique = %ld\n", dureeRubrique);
+        }
         for (int i = 0; i < NB_RUBRIQUES ; i++){
             //printf("construction ligne %d de la rubrique %s (%s)=> ", i, rubrique, tableauresultatsTests[i].nomRubrique);
             if (strcmp(tableauresultatsTests[i].nomRubrique, rubrique) == 0){
@@ -258,12 +260,16 @@ bool resultatTest(char *rubrique, bool status){
     nbTests++;
     nbTestsRubrique++;
     if (status){
-        printf("    Test n° %d OK \n", nbTestsRubrique);
+        if (getLogLevel() != LOG_NONE){
+            printf("    Test n° %d OK \n", nbTestsRubrique);
+        }
         nbOK++;
         nbOKRubrique++;
     } else {
         color(31);
-        printf("    Test n° %d KO dans %s\n", nbTestsRubrique, rubrique);
+        if (getLogLevel() != LOG_NONE){
+            printf("    Test n° %d KO dans %s\n", nbTestsRubrique, rubrique);
+        }
         color(0);
         nbKO++;
         nbKORubrique++;
@@ -286,7 +292,7 @@ bool resultatTest(char *rubrique, bool status){
 void executeTests(int mode){
     //printf("Executions des tests du programme civilisation mode = %d\n", mode);
     initTableauTests();
-    setLogLevel(LOG_DEBUG);
+    //setLogLevel(LOG_DEBUG);
     baniereDebutTests();
     switch (mode){
         case TEST_MODE_ALL:
@@ -340,7 +346,7 @@ void executeTests(int mode){
             for (int i = 0 ; i < 100 ; i++){
                 if (getSexeAleatoire() == HOMME) nbHommes++; else nbFemmes++;
             }
-            printf("nbHommes = %d, nbFemmes = %d\n", nbHommes, nbFemmes);
+            //printf("nbHommes = %d, nbFemmes = %d\n", nbHommes, nbFemmes);
             resultatTest(rubrique, (nbHommes >= 40));
             resultatTest(rubrique, (nbFemmes >= 40));
         }
@@ -396,62 +402,62 @@ void executeTests(int mode){
             char opeTest[100];
             val1=10; val2 =10;
             strcpy(opeTest, "=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, "=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, "!=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=20; val2 =20;
             strcpy(opeTest, "!=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, ">");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, ">");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=10; val2 =20;
             strcpy(opeTest, "<");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, "<");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, ">=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1,opeTest, val2));
 
             val1=5; val2 =10;
             strcpy(opeTest, ">=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, !evaluationExpressionInt(val1, opeTest, val2));
 
             val1=30; val2 =20;
             strcpy(opeTest, "<=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, !evaluationExpressionInt(val1,opeTest, val2));
 
             val1=5; val2 =10;
             strcpy(opeTest, "<=");
-            printf("evaluation de %d %s %d \n", val1, opeTest, val2);
+            //printf("evaluation de %d %s %d \n", val1, opeTest, val2);
             resultatTest(rubrique, evaluationExpressionInt(val1, opeTest, val2));
         } 
 
@@ -523,15 +529,15 @@ void executeTests(int mode){
             log(LOG_DEBUG, "------------------------------------------");
             snprintf(script, sizeof(script), "si age = 0 alors mortPossible sinon naissancePossible finsi");
             resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
-            printf("instruction = %s\n", instruction);
-            printf("listeInstructions = %s\n", listeInstructions);
+            //printf("instruction = %s\n", instruction);
+            //printf("listeInstructions = %s\n", listeInstructions);
             resultatTest(rubrique, (strcmp(instruction, "si age = 0 alors mortPossible sinon naissancePossible finsi") == 0));
             resultatTest(rubrique, (strcmp(listeInstructions, "") == 0));
 
             log(LOG_DEBUG, "------------------------------------------");
             snprintf(script, sizeof(script), "si age = 0 alors mortPossible finsi naissancePossible");
             resultatTest(rubrique,testScript->decomposeScript(script, instruction, listeInstructions));
-            printf("fin de la fonction decompose script\n");
+            //printf("fin de la fonction decompose script\n");
             resultatTest(rubrique,(strcmp(instruction, "si age = 0 alors mortPossible finsi") == 0));
             resultatTest(rubrique,(strcmp(listeInstructions, "naissancePossible") == 0));
 
@@ -561,13 +567,13 @@ void executeTests(int mode){
             Civilisation newCivilisation;
             Element *testScript = newCivilisation.creeElementHumain(HOMME, (char *)"joseph", 2000);
             testScript->execScript((char*)"scripts/testVariables.scr");
-            printf("scripts/testVariables.scr\n");
+            //("scripts/testVariables.scr\n");
             resultatTest(rubrique, testScript->execScript((char*)"scripts/testVariables.scr"));
             if (getVariable((char *)"variable1") != NULL){
-                printf("variable1 = %s\n", getVariable((char *)"variable1"));
+                //printf("variable1 = %s\n", getVariable((char *)"variable1"));
                 resultatTest(rubrique, strcmp(getVariable((char *)"variable1"), "50") == 0);
             } else {
-                printf("false\n");
+                //printf("false\n");
                 resultatTest(rubrique, false);
             }
         }
@@ -727,15 +733,15 @@ void executeTests(int mode){
         //civilisation.listeCivilisation();
         log(LOG_DEBUG, "-----------------------------------------------------");
         log(LOG_DEBUG, "test naissance");
-        newCivilisation->listeCivilisation();
+        //newCivilisation->listeCivilisation();
         ancienNbHumain = newCivilisation->getNbHumain();
-        printf("ancienNbHumain = %d\n", ancienNbHumain);
+        //printf("ancienNbHumain = %d\n", ancienNbHumain);
         Element *enfant = naissance(newCivilisation, pere, mere);
         log(LOG_DEBUG, "creation d'un enfant en position %d", enfant->getElementId());
         resultatTest(rubrique, (enfant->getPere() == pere->getIdHumain()));
         resultatTest(rubrique, (enfant->getMere() == mere->getIdHumain()));
-        newCivilisation->listeCivilisation();
-        printf("getNbHumain = %d\n", newCivilisation->getNbHumain());
+        //newCivilisation->listeCivilisation();
+        //printf("getNbHumain = %d\n", newCivilisation->getNbHumain());
         resultatTest(rubrique, (newCivilisation->getNbHumain() == ancienNbHumain + 1));
         //newCivilisation.listeCivilisation();
 

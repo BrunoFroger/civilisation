@@ -100,13 +100,13 @@ int Humain::calculExpressionHumain(char *data1, char op, char *data2){
     log(LOG_DEBUG, "Humain::calculExpressionHumain => debut : calcul de <%s> <%c> <%s>\n", data1, op, data2);
     if (Humain::isVariable(data1)){
         val1 = getIntValue(data1);
-        printf("data1 est une variable : <%s> => <%d>\n", data1, val1);
+        //printf("data1 est une variable : <%s> => <%d>\n", data1, val1);
     } else {
         val1 = atoi(data1);
     }
     if (Humain::isVariable(data2)){
         val2 = getIntValue(data2);
-        printf("data2 est une variable : <%s> => <%d>\n", data2, val2);
+        //printf("data2 est une variable : <%s> => <%d>\n", data2, val2);
     } else {
         val2 = atoi(data2);
     }
@@ -229,7 +229,7 @@ int Humain::getIntValue(char *valeur){
     if (getVariable(valeur) != NULL){
         return atoi(getVariable(valeur));
     } 
-    printf("Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
+    log(LOG_ERROR, "Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
     return -1;
 }
 
@@ -387,7 +387,7 @@ bool Humain::evalueExpressionHumain(char *expression){
     if (i >= strlen(expression)) return false;
     while((expression[i] == ' ') && (i < strlen(expression))) i++;
     while ((expression[i] != ' ') && (i < strlen(expression))){
-        putchar(expression[i]);
+        //putchar(expression[i]);
         op[j++] = expression[i++];
         op[j] = '\0';
     } 
@@ -560,9 +560,9 @@ void Humain::mortPossible(void){
             if (heritage > 0){
                 if (conjoint != NULL){
                     log(LOG_INFO, "transfert du capital de (%s) a son conjoint (%s) => %d", this->nom, this->conjoint->getNomHumain(), compteBancaireHumain->getSolde());
-                    printf("capital du conjoint avant heritage = %d\n", conjoint->compteBancaireHumain->getSolde());
+                    //printf("capital du conjoint avant heritage = %d\n", conjoint->compteBancaireHumain->getSolde());
                     compteBancaireHumain->virement(conjoint->compteBancaireHumain, compteBancaireHumain->getSolde());
-                    printf("capital du conjoint apres heritage = %d\n", conjoint->compteBancaireHumain->getSolde());
+                    //printf("capital du conjoint apres heritage = %d\n", conjoint->compteBancaireHumain->getSolde());
                     log(LOG_DEBUG, "transfert heritage vers conjoint OK");
                     conjoint->setStatusMarital(STATUS_MARITAL_VEUF);
                     conjoint->setConjoint(NULL);

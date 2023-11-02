@@ -516,9 +516,9 @@ bool Element::evalueListeInstructions(char *listeInstructions){
         log(LOG_DEBUG, "Element::evalueListeInstructions =>  '%s'", listeInstructions);
         strcpy(instruction, (char *)"");
         strcpy(scriptRestant, (char *)"");
-        printf("Element::evalueListeInstructions =>  entree dans decompose script\n");
+        //printf("Element::evalueListeInstructions =>  entree dans decompose script\n");
         res = decomposeScript(listeInstructions, instruction, scriptRestant);
-        printf("Element::evalueListeInstructions =>  sortie de decompose script\n");
+        //printf("Element::evalueListeInstructions =>  sortie de decompose script\n");
         if (!res){
             log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans decomposeScript");
             return false;

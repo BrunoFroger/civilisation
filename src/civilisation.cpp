@@ -552,7 +552,7 @@ void Civilisation::chargeConfiguration(char *configFilename){
             type = atoi(tmp);
 
             while((ligne[i] != ',' )  && (i < strlen(ligne))){
-                printf("%d : %c\n", i, ligne[i]);
+                //printf("%d : %c\n", i, ligne[i]);
                 i++;
             } 
             i++;

@@ -99,3 +99,12 @@ void restoreLogLevel(void){
     log(LOG_DEBUG, "restoreLogLevel %d", oldLogLevel);
     logLevelLimit = oldLogLevel;
 }
+
+//-----------------------------------------
+//
+//          getLogLevel
+//
+//-----------------------------------------
+int getLogLevel(void){
+    return logLevelLimit;
+}

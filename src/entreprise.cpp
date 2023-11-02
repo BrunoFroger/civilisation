@@ -334,7 +334,7 @@ char *Entreprise::getNomCommercialEntreprise(void){
 //-----------------------------------------
 bool Entreprise::verseSalaire(int salaire, Humain *salarie){
     if (compteBancaireEntreprise->getSolde() < salaire){
-        printf("errreur : l'entreprise n'a pas asssez de fond pour payer le salaire\n");
+        log(LOG_ERROR,"errreur : l'entreprise n'a pas asssez de fond pour payer le salaire\n");
         return false;
     }
     this->compteBancaireEntreprise->virement(salarie->compteBancaireHumain, salaire);
@@ -644,7 +644,7 @@ bool Entreprise::evalueExpressionEntreprise(char *expression){
     if (i >= strlen(expression)) return false;
     while((expression[i] == ' ') && (i < strlen(expression))) i++;
     while ((expression[i] != ' ') && (i < strlen(expression))){
-        putchar(expression[i]);
+        //putchar(expression[i]);
         op[j++] = expression[i++];
         op[j] = '\0';
     } 
@@ -695,7 +695,7 @@ int Entreprise::getIntValue(char *valeur){
     if (getVariable(valeur) != NULL){
         return atoi(getVariable(valeur));
     } 
-    printf("Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
+    log(LOG_ERROR,"Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
     return -1;
 }
 

@@ -540,7 +540,7 @@ char *getVariable(char *nom){
 //-----------------------------------------
 bool unsetVariable(char *nom){
     char *tmp = &nom[6];
-    printf("tools : unsetVariable => debut unset '%s'\n", tmp);
+    log(LOG_DEBUG, "tools : unsetVariable => debut unset '%s'\n", tmp);
     for(int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
         //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScript[i].nom);
         if (strcmp(variablesDeScript[i].nom, tmp) == 0){
