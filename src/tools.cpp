@@ -25,8 +25,8 @@ char fichierPrenomsFeminin[50] = "datas/liste_des_prenoms_feminin.txt";
 CompteBancaire *compteBancaireFournisseurNull = new CompteBancaire(NULL);
 CompteBancaire *compteBancaireHeritageNull = new CompteBancaire(NULL);
 
-#define NB_INSTRUCTION_COMPLEXES 3
-char listeInstructionComplexe[NB_INSTRUCTION_COMPLEXES][20] = {"si", "pour", "tantque"};
+#define NB_INSTRUCTION_COMPLEXES 5
+char listeInstructionComplexe[NB_INSTRUCTION_COMPLEXES][20] = {"si", "set", "unset", "pour", "tantque"};
 
 #define NB_VARIABLE_SCRIPT_HUM  10
 typedef struct{
@@ -370,7 +370,7 @@ bool testSiInstructionComplexe(char *instruction){
 //
 //-----------------------------------------
 bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante){
-    log(LOG_DEBUG,"extraireSi de la liste d'instructions <%s>", ListeInstructionOrigine);
+    log(LOG_DEBUG,"tools.extraireSi => extraction du si de la liste d'instructions <%s>", ListeInstructionOrigine);
     //char *tmp = ListeInstructionOrigine;
     int index = 0;
     int niveauSi = 0;
@@ -383,10 +383,10 @@ bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeIns
         return false;
     }
     bool insideSi = true;
-    log(LOG_DEBUG,"debut separation si du reste de la commande");
+    log(LOG_DEBUG,"tools.extraireSi => debut separation si du reste de la commande");
     strcpy(instruction, "si ");
     index += 3;
-    printf("construction du si : <");
+    //printf("tools.extraireSi => construction du si : <");
     for (int i = 3 ; i < strlen(ListeInstructionOrigine) ; i++){
         if (insideSi){
             //printf("on teste le caractere '%c'\n", ListeInstructionOrigine[i]);
@@ -414,10 +414,10 @@ bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeIns
                 strcat(instruction, "finsi ");
                 i += 5;
                 index = 0;
-                printf(">\nconstruction du reste : <");
+                //printf(">\nconstruction du reste : <");
                 continue;
             }
-            printf("%c", ListeInstructionOrigine[i]);
+            //printf("%c", ListeInstructionOrigine[i]);
             instruction[index++] = ListeInstructionOrigine[i];
             instruction[index] = '\0';
         } else {
@@ -425,7 +425,7 @@ bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeIns
             listeInstructionsRestante[index] = '\0';
         }
     }
-    printf(">\n");
+    //printf(">\n");
     remove_extra_spaces(instruction);
     remove_extra_spaces(listeInstructionsRestante);
     log(LOG_DEBUG, "extraireSi => bloc Si = <%s> ; instructions restantes = <%s>", instruction, listeInstructionsRestante); 
@@ -470,7 +470,7 @@ bool setVariable(char *valeur){
     bool varOuVal = true;
     int index = 0;
     int j = 0;
-    //log(LOG_DEBUG, "tools : setVariable => debut set '%s'", tmp);
+    log(LOG_DEBUG, "tools : setVariable => debut set '%s'", tmp);
     for (int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
         if (strlen(variablesDeScript[i].nom) == 0){
             // on peut utiliser cette variable, elle est libre
@@ -494,9 +494,10 @@ bool setVariable(char *valeur){
                 // test si variable deja definie
                 for (int k = 0 ; k < NB_VARIABLE_SCRIPT_HUM ; k++){
                     if (strcmp(variablesDeScript[k].nom, nomVariable) == 0){
-                        // cette variable existe deja : erreur
-                        log(LOG_ERROR, "la variable '%s' existe deja", nomVariable);
-                        return false;
+                        // cette variable existe deja : on la met a jour
+                        log(LOG_DEBUG, "la variable '%s' existe deja, on met a jour sa nouvelle valeur '%s'", nomVariable, valeurVariable);
+                        strcpy(variablesDeScript[k].valeur,valeurVariable);
+                        return true;
                     }
                 }
                 strcpy(variablesDeScript[i].nom,nomVariable);
@@ -521,10 +522,10 @@ bool setVariable(char *valeur){
 char *getVariable(char *nom){
     //log(LOG_DEBUG, "tools : getVariable => debut  get '%s'", nom);
     for(int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
-        //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScriptHumain[i].nom);
+        //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScript[i].nom);
         if (strcmp(variablesDeScript[i].nom, nom) == 0){
             // on a trouve la valeur avec le bon nom
-            //log(LOG_DEBUG, "on a trouver la bonne variable, on retourne sa valeur <%s>", variablesDeScriptHumain[i].valeur);
+            //log(LOG_DEBUG, "on a trouver la bonne variable, on retourne sa valeur <%s>", variablesDeScript[i].valeur);
             return variablesDeScript[i].valeur;
         }
     }

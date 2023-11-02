@@ -53,6 +53,8 @@
             bool testSiListeCommandeValide(char *valeur);
             bool decomposeScript(char *script, char *instruction, char *listeInstructions);
             bool decomposeSi(char *ligne, structSi *resultat);
+            bool decomposeSet(char *ligne, char *listeInstructionRestante);
+            bool isVariable(char *nomVariable);
 
         protected:
 

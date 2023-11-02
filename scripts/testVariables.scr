@@ -1,6 +1,6 @@
 
 set variable1 100
 
-if variable1 = 100 alors
+si variable1 = 100 alors
     set variable1 50
 finsi

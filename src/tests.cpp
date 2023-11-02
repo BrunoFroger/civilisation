@@ -188,7 +188,7 @@ void bilanTests(void){
     long dureeTests = myDifftime(&debutTests, &finTests);
     //log(LOG_INFO, "durée des tests : %ld",dureeTests);
     printf("+-------------------------------------------------------------------+\n");
-    printf("|                 Bilan des tests (duree en microsecondes)          |\n");
+    printf("|                 Bilan des tests (durees en microsecondes)         |\n");
     printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
     printf("|                  rubrique      |  NB |  OK |  KO |  %% OK |  duree |\n");
     printf("+--------------------------------+-----+-----+-----+-------+--------+\n");
@@ -489,6 +489,12 @@ void executeTests(int mode){
             resultatTest(rubrique, (strcmp(resultat.expression, "age = 0") == 0));
             resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiVrai, "mortPossible") == 0));
             resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiFaux, "naissancePossible") == 0));
+
+            snprintf(ligne, sizeof(ligne),  "si age = 0 alors set variable 1 50 finsi");
+            resultatTest(rubrique, testScript->decomposeSi(ligne, &resultat));
+            resultatTest(rubrique, (strcmp(resultat.expression, "age = 0") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiVrai, "set variable 1 50") == 0));
+            resultatTest(rubrique, (strcmp(resultat.ListeCommandeSiFaux, "") == 0));
         }
 
         if (1 || exec_all ){ // test decomposeScript
@@ -517,6 +523,8 @@ void executeTests(int mode){
             log(LOG_DEBUG, "------------------------------------------");
             snprintf(script, sizeof(script), "si age = 0 alors mortPossible sinon naissancePossible finsi");
             resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
+            printf("instruction = %s\n", instruction);
+            printf("listeInstructions = %s\n", listeInstructions);
             resultatTest(rubrique, (strcmp(instruction, "si age = 0 alors mortPossible sinon naissancePossible finsi") == 0));
             resultatTest(rubrique, (strcmp(listeInstructions, "") == 0));
 
@@ -536,20 +544,32 @@ void executeTests(int mode){
             resultatTest(rubrique, testScript->decomposeScript(script, instruction, listeInstructions));
         }
 
-
         if (1 || exec_all ){ // test variables de script
             baniereTest(rubrique, (char *)"test gestion variables de script");
+            resultatTest(rubrique, setVariable((char *)"set maVariable 100"));
+            resultatTest(rubrique, strcmp(getVariable((char *)"maVariable"), "100") == 0);
             resultatTest(rubrique, setVariable((char *)"set maVariable 50"));
-            resultatTest(rubrique, !setVariable((char *)"set maVariable 50"));
-            resultatTest(rubrique, !setVariable((char *)"set maVariable"));
             resultatTest(rubrique, strcmp(getVariable((char *)"maVariable"), "50") == 0);
+            resultatTest(rubrique, !setVariable((char *)"set maVariable"));
             resultatTest(rubrique, getVariable((char *)"toto") == NULL);
             resultatTest(rubrique, unsetVariable((char *)"unset maVariable"));
             resultatTest(rubrique, getVariable((char *)"maVariable") == NULL);
+        }
+
+        if (1 || exec_all ){ // test script avec variables
+            baniereTest(rubrique, (char *)"test script avec variables");
             Civilisation newCivilisation;
             Element *testScript = newCivilisation.creeElementHumain(HOMME, (char *)"joseph", 2000);
             testScript->execScript((char*)"scripts/testVariables.scr");
-            resultatTest(rubrique, strcmp(getVariable((char *)"variable1"), "50") == 0);
+            printf("scripts/testVariables.scr\n");
+            resultatTest(rubrique, testScript->execScript((char*)"scripts/testVariables.scr"));
+            if (getVariable((char *)"variable1") != NULL){
+                printf("variable1 = %s\n", getVariable((char *)"variable1"));
+                resultatTest(rubrique, strcmp(getVariable((char *)"variable1"), "50") == 0);
+            } else {
+                printf("false\n");
+                resultatTest(rubrique, false);
+            }
         }
 
         bilanTestsRubrique(rubrique);

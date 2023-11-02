@@ -43,7 +43,7 @@ Element::Element(){
 //-----------------------------------------
 Element::Element(int id, int type){
     //printf("initialisation element %d, %d\n", id, type);
-    log(LOG_DEBUG, "Element::Element(int id, int type)");
+    //log(LOG_DEBUG, "Element::Element(int id (%d), int type(%d))", id, type);
     this->idElement = id;
     this->typeElement = type;
     switch (type){
@@ -303,10 +303,20 @@ bool Element::decomposeScript(char *ListeInstructionOrigine, char *instruction, 
                 // traitement du si
                 structSi resultat;
                 if (!decomposeSi(instructionLocale, &resultat)) return false;
-                if (!evalueListeInstructions(listeInstructionRestanteLocale)) return false;
+                //if (!evalueListeInstructions(listeInstructionRestanteLocale)) return false;
+                evalueListeInstructions(listeInstructionRestanteLocale);
+                log(LOG_DEBUG, "Element::decomposeScript => fin de decomposition du 'si' ");
                 //return true;
+            } else if(strncmp(mot, "set", 3) == 0){
+                log(LOG_DEBUG, "Element::decomposeScript => .......    T O D O    ........ => decomposition du 'set' a developper");
+                if (!decomposeSet(ListeInstructionOrigine, listeInstructionRestanteLocale)) return false;
+                //if (!evalueListeInstructions(listeInstructionRestanteLocale)) return false;
+                evalueListeInstructions(listeInstructionRestanteLocale);
+                log(LOG_DEBUG, "Element::decomposeScript => fin de decomposition du 'set' ");
+                //return false;
             } else {
                 log(LOG_ERROR, "ERREUR : instruction complexe pas encore traitee .... (%s)", mot);
+                return false;
             }
         } else {
             strcpy(instructionLocale, mot);
@@ -324,6 +334,34 @@ bool Element::decomposeScript(char *ListeInstructionOrigine, char *instruction, 
     strcpy(listeInstructionsRestante, listeInstructionRestanteLocale);
     log(LOG_DEBUG, "Element::decomposeScript => fin, on return true : instruction = <%s>, reste = <%s>", instruction, listeInstructionsRestante);
     return true;
+}
+
+//-----------------------------------------
+//
+//          Element::decomposeSet
+//
+//-----------------------------------------
+bool Element::decomposeSet(char *ligne, char *ListeInstructionRestante){
+    char buffer[500] = "";
+    char *tmp = ligne;
+    int cptSeparateur = 0;
+    log(LOG_DEBUG, "Element::decomposeSet => -----------------------------");
+    log(LOG_DEBUG, "Element::decomposeSet => debut <%s>", ligne);
+    int i = 0;
+    while(cptSeparateur < 3){
+        if (tmp[0] == ' '){
+            cptSeparateur++;
+        } 
+        buffer[i++] = tmp[0];
+        buffer[i] = '\0';
+        tmp++;
+    }
+    remove_extra_spaces(buffer);
+    log(LOG_DEBUG, "Element::decomposeSet => execution de setVariable(%s)", buffer);
+    strcpy(ListeInstructionRestante, tmp);
+    log(LOG_DEBUG, "Element::decomposeSet => listeInstruction restante = '%s'", ListeInstructionRestante);
+    return setVariable(buffer);
+    //return false;
 }
 
 //-----------------------------------------
@@ -462,6 +500,7 @@ bool Element::decomposeSi(char *ligne, structSi *resultat){
 //
 //-----------------------------------------
 bool Element::evalueListeInstructions(char *listeInstructions){
+    bool res = false;
     log(LOG_DEBUG, "Element::evalueListeInstructions => debut du traitement de '%s'  .......     TODO   .....", listeInstructions);
     // tester si c'est une instruction simple, 
     // si oui, l'executer 
@@ -473,31 +512,55 @@ bool Element::evalueListeInstructions(char *listeInstructions){
         log(LOG_DEBUG, "Element::evalueListeInstructions => la liste a evaluer est vide, on return true");
         return true;
     } 
-    do {
+    //do {
         log(LOG_DEBUG, "Element::evalueListeInstructions =>  '%s'", listeInstructions);
         strcpy(instruction, (char *)"");
         strcpy(scriptRestant, (char *)"");
         printf("Element::evalueListeInstructions =>  entree dans decompose script\n");
-        bool res = decomposeScript(listeInstructions, instruction, scriptRestant);
+        res = decomposeScript(listeInstructions, instruction, scriptRestant);
         printf("Element::evalueListeInstructions =>  sortie de decompose script\n");
         if (!res){
             log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans decomposeScript");
             return false;
         }
-        log(LOG_DEBUG, "Element::evalueListeInstructions => decomposeScropt OK, on essaye d'evaluer l'instruction extraite <%s>", instruction);
+        log(LOG_DEBUG, "Element::evalueListeInstructions => decomposeScript OK, on essaye d'evaluer l'instruction extraite <%s>", instruction);
         if (!executeExpression(instruction)){
             log(LOG_DEBUG, "Element::evalueListeInstructions => erreur dans executeExpression");
             return false;
         } else{
-            log(LOG_DEBUG, "on a reussi a evaluer l'expression <%s> on evalue la liste restante <%s> ", instruction, scriptRestant);
-            if (!evalueListeInstructions(scriptRestant)){
-                return false;
+            log(LOG_DEBUG, "Element::evalueListeInstructions => Element::evalueListeInstructions => on a reussi a evaluer l'expression <%s> on evalue la liste restante <%s> ", instruction, scriptRestant);
+            //if (!evalueListeInstructions(scriptRestant)){
+            //    return false;
+            //}
+            if (strlen(scriptRestant) > 0){
+                evalueListeInstructions(scriptRestant);
             }
-            return true;
         } 
-        printf("appuyer sur enter (strcmp(scriptRestant, '""') = %d, scriptRestant = <%s>) \n", strcmp(scriptRestant, ""), scriptRestant);getchar();
-    } while (strcmp(scriptRestant, "") != 0);
+        //res = (strcmp(scriptRestant, "") == 0);
+        //printf("fin evalueListeInstructions => appuyer sur enter test scriptRestant vide '' : (strcmp('%s', '') = %d) \n", scriptRestant, res);getchar();
+    //} while (res);
     log(LOG_DEBUG, "Element::evalueListeInstructions => fin du traitement de '%s'  .......     TODO   .....", listeInstructions);
     return true;
 }
 
+//-----------------------------------------
+//
+//          Humain::isVariable
+//
+//-----------------------------------------
+bool Element::isVariable(char *valeur){
+    //printf("isvariable : test de la variable %s\n", valeur);
+    // en fonction du type on verifie si c'est une variable specifique du type
+    if (typeElement == TYPE_HUMAIN){
+        Humain *tmpHumain = this;
+        if (tmpHumain->isVariable(valeur)) return true;
+    } else if(typeElement == TYPE_ENTREPRISE){
+        Entreprise *tmpEntreprise = this;
+        if(tmpEntreprise->isVariable(valeur)) return true;
+    }
+
+    // sinon test si c'est une variable generique de script
+    if (getVariable(valeur) != NULL) return true;
+
+    return false;
+}

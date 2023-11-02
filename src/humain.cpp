@@ -226,6 +226,9 @@ int Humain::getIntValue(char *valeur){
         //printf("Humain::getIntValue : variable %s = %d\n", valeur, statusMarital);
         return statusMarital;
     }
+    if (getVariable(valeur) != NULL){
+        return atoi(getVariable(valeur));
+    } 
     printf("Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
     return -1;
 }
@@ -356,6 +359,9 @@ bool Humain::isVariable(char *valeur){
             //log(LOG_ERROR, "commande <%s> inconnue", valeur);
         }
     }
+    // cherche si la variable est une variable de script
+    if (getVariable(valeur) != NULL) return true;
+
     return false;
 }
 
