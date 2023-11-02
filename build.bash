@@ -1,5 +1,9 @@
 #!/bin/bash
 
+if [ ! -f makefile ]; then
+    buildMakefile
+fi
+
 if [ $# -ne 0 ]; then
     if [[ "$1" == "all" ]]; then
         shift 1
