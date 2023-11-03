@@ -97,7 +97,7 @@ int Humain::calculExpressionHumain(char *data1, char op, char *data2){
     int val1;
     int val2;
     int res = false;
-    log(LOG_DEBUG, "Humain::calculExpressionHumain => debut : calcul de <%s> <%c> <%s>\n", data1, op, data2);
+    log(LOG_DEBUG, "Humain::calculExpressionHumain => debut : calcul de <%s> <%c> <%s>", data1, op, data2);
     if (Humain::isVariable(data1)){
         val1 = getIntValue(data1);
         //printf("data1 est une variable : <%s> => <%d>\n", data1, val1);
@@ -110,7 +110,7 @@ int Humain::calculExpressionHumain(char *data1, char op, char *data2){
     } else {
         val2 = atoi(data2);
     }
-    log(LOG_DEBUG, "Humain::calculExpressionHumain => apres evaluation : calcul de <%d> <%c> <%d>\n", val1, op, val2);
+    log(LOG_DEBUG, "Humain::calculExpressionHumain => apres evaluation : calcul de <%d> <%c> <%d>", val1, op, val2);
     switch(op){
         case '+' : 
             res = val1 + val2;
@@ -125,7 +125,7 @@ int Humain::calculExpressionHumain(char *data1, char op, char *data2){
             res = val1 / val2;
             break;
     }
-    log(LOG_DEBUG, "Humain::calculExpressionHumain => resultat : <%d> <%c> <%d> = <%d>\n", val1, op, val2, res);
+    log(LOG_DEBUG, "Humain::calculExpressionHumain => resultat : <%d> <%c> <%d> = <%d>", val1, op, val2, res);
     return res;
 }
 
@@ -167,7 +167,7 @@ bool Humain::chercheConjoint(void){
 void Humain::evolutionHumain(void){
     if (statusMarital != STATUS_MARITAL_DECES){
         this->age++;
-        log(LOG_INFO, "Humain::evolution => evolution de '%s' : age = %d", this->nom, this->age);
+        log(LOG_DEBUG, "Humain::evolution => evolution de '%s' : age = %d", this->nom, this->age);
     }
 }
 
@@ -226,8 +226,8 @@ int Humain::getIntValue(char *valeur){
         //printf("Humain::getIntValue : variable %s = %d\n", valeur, statusMarital);
         return statusMarital;
     }
-    if (getVariable(valeur) != NULL){
-        return atoi(getVariable(valeur));
+    if (getVariableGlobale(valeur) != NULL){
+        return atoi(getVariableGlobale(valeur));
     } 
     log(LOG_ERROR, "Humain::getIntValue : pas trouve d'équivalence pour %s\n", valeur);
     return -1;
@@ -360,7 +360,7 @@ bool Humain::isVariable(char *valeur){
         }
     }
     // cherche si la variable est une variable de script
-    if (getVariable(valeur) != NULL) return true;
+    if (getVariableGlobale(valeur) != NULL) return true;
 
     return false;
 }
@@ -423,21 +423,21 @@ bool Humain::evalueExpressionHumain(char *expression){
 //
 //-----------------------------------------
 bool Humain::execCommandeHumain(char *valeur){
-    log(LOG_INFO,"Humain::execCommandeHumain <%s> : TODO", valeur);
+    log(LOG_DEBUG,"Humain::execCommandeHumain <%s> : TODO", valeur);
     for (int i = 0 ; i < NB_COMMANDES_HUMAIN ; i++){
         int tailleCommande = strlen(listeCommandesHumain[i]);
         if (strncmp(valeur, listeCommandesHumain[i], tailleCommande) == 0) {
             switch(i){ 
                 case 4: // set
-                    setVariable(valeur);
+                    setVariableGlobale(valeur);
                     return true;
                     break;
                 case 5: // unset
-                    unsetVariable(valeur);
+                    unsetVariableGlobale(valeur);
                     return true;
                     break;
                 case 6: // unset
-                    getVariable(valeur);
+                    getVariableGlobale(valeur);
                     return true;
                     break;
                 case 0: // mortPossible

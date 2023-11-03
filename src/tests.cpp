@@ -552,14 +552,14 @@ void executeTests(int mode){
 
         if (1 || exec_all ){ // test variables de script
             baniereTest(rubrique, (char *)"test gestion variables de script");
-            resultatTest(rubrique, setVariable((char *)"set maVariable 100"));
-            resultatTest(rubrique, strcmp(getVariable((char *)"maVariable"), "100") == 0);
-            resultatTest(rubrique, setVariable((char *)"set maVariable 50"));
-            resultatTest(rubrique, strcmp(getVariable((char *)"maVariable"), "50") == 0);
-            resultatTest(rubrique, !setVariable((char *)"set maVariable"));
-            resultatTest(rubrique, getVariable((char *)"toto") == NULL);
-            resultatTest(rubrique, unsetVariable((char *)"unset maVariable"));
-            resultatTest(rubrique, getVariable((char *)"maVariable") == NULL);
+            resultatTest(rubrique, setVariableGlobale((char *)"set maVariable 100"));
+            resultatTest(rubrique, strcmp(getVariableGlobale((char *)"maVariable"), "100") == 0);
+            resultatTest(rubrique, setVariableGlobale((char *)"set maVariable 50"));
+            resultatTest(rubrique, strcmp(getVariableGlobale((char *)"maVariable"), "50") == 0);
+            resultatTest(rubrique, !setVariableGlobale((char *)"set maVariable"));
+            resultatTest(rubrique, getVariableGlobale((char *)"toto") == NULL);
+            resultatTest(rubrique, unsetVariableGlobale((char *)"unset maVariable"));
+            resultatTest(rubrique, getVariableGlobale((char *)"maVariable") == NULL);
         }
 
         if (1 || exec_all ){ // test script avec variables
@@ -569,9 +569,9 @@ void executeTests(int mode){
             testScript->execScript((char*)"scripts/testVariables.scr");
             //("scripts/testVariables.scr\n");
             resultatTest(rubrique, testScript->execScript((char*)"scripts/testVariables.scr"));
-            if (getVariable((char *)"variable1") != NULL){
-                //printf("variable1 = %s\n", getVariable((char *)"variable1"));
-                resultatTest(rubrique, strcmp(getVariable((char *)"variable1"), "50") == 0);
+            if (getVariableGlobale((char *)"variable1") != NULL){
+                //printf("variable1 = %s\n", getVariableGlobale((char *)"variable1"));
+                resultatTest(rubrique, strcmp(getVariableGlobale((char *)"variable1"), "50") == 0);
             } else {
                 //printf("false\n");
                 resultatTest(rubrique, false);
@@ -779,6 +779,12 @@ void executeTests(int mode){
         resultatTest(rubrique, (entrepriseToto->getNbCommandes() == 1));
         bilanTestsRubrique(rubrique);
         
+        baniereTest(rubrique, (char *)"test execution script humain.scr");
+        int oldNbCommandes = entreprise->getNbCommandes();
+        resultatTest(rubrique, clientToto->execScript((char *)"scripts/humain.scr"));
+        int newNbCommandes = entreprise->getNbCommandes();
+        resultatTest(rubrique, (newNbCommandes == (oldNbCommandes + 1)));
+
         bilanTestsRubrique(rubrique);
     }
 

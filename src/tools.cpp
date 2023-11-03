@@ -460,21 +460,21 @@ void setAuto(char *parametre){
 
 //-----------------------------------------
 //
-//          setVariable
+//          setVariableGlobale
 //
 //-----------------------------------------
-bool setVariable(char *valeur){
+bool setVariableGlobale(char *valeur){
     char *tmp = &valeur[4];
     char nomVariable [50] = "";
     char valeurVariable[50] = "";
     bool varOuVal = true;
     int index = 0;
     int j = 0;
-    log(LOG_DEBUG, "tools : setVariable => debut set '%s'", tmp);
+    log(LOG_DEBUG, "tools : setVariableGlobale => debut set '%s'", tmp);
     for (int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
         if (strlen(variablesDeScript[i].nom) == 0){
             // on peut utiliser cette variable, elle est libre
-            //log(LOG_DEBUG, "Humain::setVariable => la variable %d est libre", i);
+            //log(LOG_DEBUG, "Humain::setVariableGlobale => la variable %d est libre", i);
             while (j < strlen(tmp)){
                 if (tmp[j] == ' '){
                     varOuVal = false;
@@ -516,11 +516,11 @@ bool setVariable(char *valeur){
 
 //-----------------------------------------
 //
-//          getVariable
+//          getVariableGlobale
 //
 //-----------------------------------------
-char *getVariable(char *nom){
-    //log(LOG_DEBUG, "tools : getVariable => debut  get '%s'", nom);
+char *getVariableGlobale(char *nom){
+    //log(LOG_DEBUG, "tools : getVariableGlobale => debut  get '%s'", nom);
     for(int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
         //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScript[i].nom);
         if (strcmp(variablesDeScript[i].nom, nom) == 0){
@@ -529,18 +529,18 @@ char *getVariable(char *nom){
             return variablesDeScript[i].valeur;
         }
     }
-    //log(LOG_DEBUG, "tools : getVariable => on a pas trouve la variable <%s>", nom);
+    //log(LOG_DEBUG, "tools : getVariableGlobale => on a pas trouve la variable <%s>", nom);
     return NULL;
 }
 
 //-----------------------------------------
 //
-//          Humain::unsetVariable
+//          Humain::unsetVariableGlobale
 //
 //-----------------------------------------
-bool unsetVariable(char *nom){
+bool unsetVariableGlobale(char *nom){
     char *tmp = &nom[6];
-    log(LOG_DEBUG, "tools : unsetVariable => debut unset '%s'\n", tmp);
+    log(LOG_DEBUG, "tools : unsetVariableGlobale => debut unset '%s'\n", tmp);
     for(int i = 0 ; i < NB_VARIABLE_SCRIPT_HUM ; i++){
         //log(LOG_DEBUG, "comparaison avec variable %d : <%s>", i, variablesDeScript[i].nom);
         if (strcmp(variablesDeScript[i].nom, tmp) == 0){

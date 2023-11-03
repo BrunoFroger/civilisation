@@ -239,6 +239,6 @@ void analyseLigneCommande(char *ligneCommande){
             changeLogLevel(&(ligneCommande[9]));
         }
     } else {
-        printf("commande <%s> inconnue (tapez 'aide' pour la liste des commandes disponibles\n)", ligneCommande);
+        printf("commande <%s> inconnue (tapez 'aide' pour la liste des commandes disponibles)\n", ligneCommande);
     }
 }

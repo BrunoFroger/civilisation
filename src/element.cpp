@@ -169,7 +169,6 @@ bool Element::evalueExpression(char *expression){
 //
 //-----------------------------------------
 bool Element::executeExpression(char *expression){
-    log(LOG_DEBUG, "Element::executeExpression => TODO");
     log(LOG_DEBUG, "Element::executeExpression => traitement de '%s'", expression);
     // test si expression vide
     if (strlen(expression) == 0){
@@ -240,13 +239,18 @@ bool Element::execScript(char *filename){
     char script[5000] = "";
     char *tmp;
 
-    log(LOG_DEBUG, "Element::execScript => debut avec fichier <%s>", filename);
+    if (typeElement == TYPE_HUMAIN){
+        strcpy(ligne, this->getNomHumain());
+    } else {
+        strcpy(ligne, this->getNomEntreprise());
+    }
+    //log(LOG_DEBUG, "Element::execScript => debut avec fichier <%s>", filename);
     fic = fopen(filename, "r");
     if (fic == NULL){
         log(LOG_ERROR, "Element::execScript => impossible d'ouvrir le fichier script <%s>", filename);
         return false;
     }
-    log(LOG_DEBUG, "Element::execScript => execution du script '%s'", filename);
+    log(LOG_INFO, "Execution du script %s pour %s", filename, ligne);
     strcpy(ligne, "");
     fgets(ligne, 100, fic);
     while (!feof(fic)){
@@ -357,10 +361,10 @@ bool Element::decomposeSet(char *ligne, char *ListeInstructionRestante){
         tmp++;
     }
     remove_extra_spaces(buffer);
-    log(LOG_DEBUG, "Element::decomposeSet => execution de setVariable(%s)", buffer);
+    log(LOG_DEBUG, "Element::decomposeSet => execution de setVariableGlobale(%s)", buffer);
     strcpy(ListeInstructionRestante, tmp);
     log(LOG_DEBUG, "Element::decomposeSet => listeInstruction restante = '%s'", ListeInstructionRestante);
-    return setVariable(buffer);
+    return setVariableGlobale(buffer);
     //return false;
 }
 
@@ -560,7 +564,7 @@ bool Element::isVariable(char *valeur){
     }
 
     // sinon test si c'est une variable generique de script
-    if (getVariable(valeur) != NULL) return true;
+    if (getVariableGlobale(valeur) != NULL) return true;
 
     return false;
 }

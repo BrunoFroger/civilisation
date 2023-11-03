@@ -32,7 +32,7 @@
     extern void setAuto(char *parametre);
     extern bool testSiInstructionComplexe(char *instruction);
     extern bool extraireSi(char *ListeInstructionOrigine, char *instruction, char *listeInstructionsRestante);
-    extern char *getVariable(char *nom);
-    extern bool setVariable(char *valeur);
-    extern bool unsetVariable(char *valeur);
+    extern char *getVariableGlobale(char *nom);
+    extern bool setVariableGlobale(char *valeur);
+    extern bool unsetVariableGlobale(char *valeur);
 #endif

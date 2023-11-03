@@ -44,19 +44,19 @@ void log(int logLevel, const char *format, ...){
     snprintf(logDate, sizeof(logDate), "%02d-%02d-%04d %02d:%02d:%02d", day, mois, an, h, min, s);
 
     switch (logLevel){
-        case -1:
-            strcpy(logLevelString, "NONE");
-            break;
-        case 0:
+        case LOG_ERROR:
             strcpy(logLevelString, "ERROR");
             break;
-        case 1:
+        case LOG_NONE:
+            strcpy(logLevelString, "NONE");
+            break;
+        case LOG_WARNING:
             strcpy(logLevelString, "WARNING");
             break;
-        case 2:
+        case LOG_INFO:
             strcpy(logLevelString, "INFO");
             break;
-        case 3:
+        case LOG_DEBUG:
             strcpy(logLevelString, "DEBUG");
             break;
         default:
@@ -69,9 +69,9 @@ void log(int logLevel, const char *format, ...){
         if (sizeof(args) > 1) {
             vsnprintf(message, sizeof(message), format, args);
         }
-        if (logLevel == 0) color(31);   // erreur
-        if (logLevel == 1) color(33);   // warning
-        if (logLevel == 3) color(34);   // debug
+        if (logLevel == LOG_ERROR) color(31);   // erreur
+        if (logLevel == LOG_WARNING) color(33);   // warning
+        if (logLevel == LOG_DEBUG) color(34);   // debug
         snprintf(ligne, sizeof(ligne), "civilisation (%s) %s => %s", logLevelString, logDate, message);
         printf("%s\n",ligne);
         color(0);

@@ -25,7 +25,7 @@ bool analyseParametres(int argc, char **argv){
     log(LOG_DEBUG, "analyseParametres");
     if (argc > 1){
         for (int i = 1 ; i < argc ; i++){
-            log(LOG_DEBUG, "Analyse du parametre %s\n", argv[i]);
+            log(LOG_DEBUG, "Analyse du parametre %s", argv[i]);
             if (strcmp(argv[i], "tests") == 0){
                 log(LOG_INFO, "     execution des tests ");
                 log(LOG_INFO, "===================================");

@@ -8,11 +8,11 @@
 #ifndef __LOG__
 #define __LOG__
 
-    #define LOG_NONE    -1
     #define LOG_ERROR   0
-    #define LOG_WARNING 1
-    #define LOG_INFO    2
-    #define LOG_DEBUG   3
+    #define LOG_NONE    1
+    #define LOG_WARNING 2
+    #define LOG_INFO    3
+    #define LOG_DEBUG   4
 
     extern void log(int logLevel, const char *format, ...);
     extern void setLogLevel(int logLevel);
